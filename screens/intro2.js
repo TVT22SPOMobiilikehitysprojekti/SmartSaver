@@ -6,7 +6,7 @@ const IntroScreen2 = () => {
     { id: 1, name: 'USD' },
     { id: 2, name: 'EUR' },
     { id: 3, name: 'GBP' },
-    // Add more currencies as needed
+    // muokataan myöhemmin
   ];
 
   return (
