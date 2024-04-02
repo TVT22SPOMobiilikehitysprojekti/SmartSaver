@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const IntroScreen2 = () => {
+const IntroScreen2 = ({navigation}) => {
   const currencies = [
     { id: 1, name: 'USD' },
     { id: 2, name: 'EUR' },

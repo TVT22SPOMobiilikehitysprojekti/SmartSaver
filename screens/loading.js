@@ -17,6 +17,7 @@ const LoadingScreen = () => {
 const styles = StyleSheet.create({
    
   container: {
+    backgroundColor: '#16C7FF',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

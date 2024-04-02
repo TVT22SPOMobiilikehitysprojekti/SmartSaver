@@ -1,23 +1,37 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import LoadingScreen from './screens/loading';
-import IntroScreen from './screens/intro1';
+import IntroScreen2 from './screens/intro2'; // assuming you've moved your IntroScreen2 component to a separate file
+import IntroScreen from './screens/intro1'; // assuming you've moved your IntroScreen component to a separate file
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setShowIntro(true);
     }, 3000);
+
+    return () => clearTimeout(timer); // Clear the timer if the component unmounts before 3 seconds
   }, []);
 
   return (
-    <View style={styles.container}>
-      {showIntro ? <IntroScreen /> : <LoadingScreen />}
+    <NavigationContainer>
+      <Stack.Navigator>
+        {showIntro ? (
+          <Stack.Screen Color = {'#16C7FF'}name="SmartSaver" component={IntroScreen} />
+        ) : (
+          <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
+        )}
+          <Stack.Screen name="Intro2" component={IntroScreen2} />
+      </Stack.Navigator>
       <StatusBar style="auto" />
-    </View>
+    </NavigationContainer>
   );
 }
 
@@ -27,5 +41,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#16C7FF',
     alignItems: 'center',
     justifyContent: 'center',
+
   },
+  screen: {
+    backgroundColor: '#16C7FF',
+    flex: 1,
+},
 });
