@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { Pressable, StyleSheet, View, Text, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 
 const IntroScreen2 = ({navigation}) => {
   const currencies = [
@@ -20,8 +21,24 @@ const IntroScreen2 = ({navigation}) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <Text>{item.name}</Text>}
       />
+      <Pressable style={styles.button} onPress={() => navigation.navigate('Intro3')}>
+        <Text style={styles.buttonText}>Next</Text>
+      </Pressable>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+});
 
 export default IntroScreen2;

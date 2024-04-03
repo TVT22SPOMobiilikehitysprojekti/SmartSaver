@@ -2,10 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import LoadingScreen from './screens/loading';
-import IntroScreen2 from './screens/intro2'; // assuming you've moved your IntroScreen2 component to a separate file
-import IntroScreen from './screens/intro1'; // assuming you've moved your IntroScreen component to a separate file
+import IntroScreen from './screens/intro1';
+import IntroScreen2 from './screens/intro2';
+import IntroScreen3 from './screens/intro3';
+import IntroScreen4 from './screens/intro4';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MoneyInputScreen from './screens/intro3';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +32,9 @@ export default function App() {
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         )}
           <Stack.Screen name="Intro2" component={IntroScreen2} />
+          <Stack.Screen name="Intro3" component={IntroScreen3} />
+          <Stack.Screen name="Intro4" component={IntroScreen4} />
+
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
