@@ -1,50 +1,96 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import LoadingScreen from './screens/loading';
-import IntroScreen2 from './screens/intro2'; // assuming you've moved your IntroScreen2 component to a separate file
-import IntroScreen from './screens/intro1'; // assuming you've moved your IntroScreen component to a separate file
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-const Stack = createNativeStackNavigator();
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import { Menu, IconButton } from 'react-native-paper'; // Import IconButton from react-native-paper
 
 export default function App() {
-  const [showIntro, setShowIntro] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowIntro(true);
-    }, 3000);
-
-    return () => clearTimeout(timer); // Clear the timer if the component unmounts before 3 seconds
-  }, []);
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {showIntro ? (
-          <Stack.Screen Color = {'#16C7FF'}name="SmartSaver" component={IntroScreen} />
-        ) : (
-          <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
-        )}
-          <Stack.Screen name="Intro2" component={IntroScreen2} />
-      </Stack.Navigator>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>SmartSaver</Text>
+        <TouchableOpacity onPress={openMenu}>
+          <View style={styles.menuIconContainer}>
+            <Text style={styles.menuIcon}>.</Text>
+            <Text style={styles.menuIcon}>.</Text>
+            <Text style={styles.menuIcon}>.</Text>
+          </View>
+        </TouchableOpacity>
+        <Menu
+          visible={menuVisible}
+          onDismiss={closeMenu}
+          anchor={<Text style={{ display: 'none' }}></Text>}
+        >
+          <Menu.Item onPress={() => {}} title="Add savings goal" />
+          <Menu.Item onPress={() => {}} title="Add expense/income" />
+        </Menu>
+      </View>
+      <View style={styles.body}>
+        <Calendar
+          // Add any calendar props you need here
+        />
+      </View>
+      <TouchableOpacity style={styles.plusButton} onPress={openMenu}>
+        <IconButton icon="plus" color="white" size={30} />
+      </TouchableOpacity>
       <StatusBar style="auto" />
-    </NavigationContainer>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 0, // Adjust the top padding according to your preference
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 390,
+    height: 100,
+    marginBottom: 20,
     backgroundColor: '#16C7FF',
+    paddingHorizontal: 10,
+  },
+  headerText: {
+    marginTop: 30,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  menuIconContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingTop: 30,
+  },
+  menuIcon: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  body: {
     alignItems: 'center',
     justifyContent: 'center',
-
+    width: '100%',
   },
-  screen: {
-    backgroundColor: '#16C7FF',
-    flex: 1,
-},
+  plusButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'lightgreen',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 60,
+    height: 60,
+  },
 });
+ 
