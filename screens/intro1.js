@@ -10,7 +10,7 @@ const IntroScreen = () => {
       <Text style={styles.intro}>Welcome to the SmartSaver</Text>
       <Text style={styles.idea}>The idea of the application is simple: just input your income, expenses, and savings goal, and the app takes care of the rest!</Text>
 
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Intro2')}>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.buttonText}>Get Started!</Text>
       </Pressable>
     </View>

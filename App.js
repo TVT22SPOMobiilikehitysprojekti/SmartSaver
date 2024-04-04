@@ -32,11 +32,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         {showIntro ? (
-           <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          <Stack.Screen name="SmartSaver" component={IntroScreen} />          
         ) : (
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         )}
-          <Stack.Screen name="SmartSaver" component={IntroScreen} />
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
           <Stack.Screen name="Intro2" component={IntroScreen2} />
           <Stack.Screen name="Intro3" component={IntroScreen3} />
           <Stack.Screen name="Intro4" component={IntroScreen4} />

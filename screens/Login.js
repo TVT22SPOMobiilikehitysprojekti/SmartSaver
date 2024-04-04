@@ -3,9 +3,10 @@ import { StyleSheet, Button, Text, TextInput, View, SafeAreaView } from "react-n
 import Constants from 'expo-constants';
 import { getAuth , signInWithEmailAndPassword} from '../firebase/Config';
 
-export default function Login(setLogin){
-    const {username, setUserName} = useState('');
-    const {password, setPassword} = useState('');
+
+export default function Login({navigation, setLogin}){
+    const [username, setUserName] = useState('');
+    const [password, setPassword] = useState('');
     
     const handleSignIn = () => {
         signInWithEmailAndPassword(getAuth(), username, password)
@@ -13,6 +14,7 @@ export default function Login(setLogin){
                 // Signed in
                 const user = userCredential.user;
                 console.log('User signed in:', user);
+                navigation.navigate('SmartSaver');
                 // Add navigation logic here to navigate to the next screen
             })
             .catch((error) => {
