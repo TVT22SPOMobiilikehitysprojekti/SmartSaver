@@ -12,7 +12,7 @@ import Savings from './screens/savings';
 import SettingsScreen from './screens/settings';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {firestore} from './firebase/Config';
+
 
 const Stack = createNativeStackNavigator();
 
