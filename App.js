@@ -8,7 +8,6 @@ import IntroScreen3 from './screens/intro3';
 import IntroScreen4 from './screens/intro4';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MoneyInputScreen from './screens/intro3';
 
 const Stack = createNativeStackNavigator();
 

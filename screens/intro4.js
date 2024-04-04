@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 
 const IntroScreen4 = ({ navigation }) => {
   return (
@@ -11,10 +11,11 @@ const IntroScreen4 = ({ navigation }) => {
         Also remember to go add your savings goal!
       </Text>
 
-      {/* Placeholder for your logo - replace with Image component */}
-      <View style={styles.logoPlaceholder}>
-        <Text style={styles.logoText}>Your Logo Here</Text>
-      </View>
+      
+      <Image
+        source={require('../assets/smartsaver_logo.png')}
+        style={styles.logo}
+      />
 
       <Pressable style={styles.button} onPress={() => console.log('Let’s go!')}>
         <Text style={styles.buttonText}>Let's go!</Text>
@@ -68,6 +69,11 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: 'white',
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
   },
 });
 
