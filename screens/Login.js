@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import { StyleSheet, Button, Text, TextInput, View, SafeAreaView } from "react-native";
 import Constants from 'expo-constants';
-import {getAuth, signInWithEmailAndPassword} from './firebase/Config';
+import { getAuth , signInWithEmailAndPassword} from '../firebase/Config';
 
-export default function Login(){
-    const {username, setUserName} = useState('test1@foo.com');
-    const {password, setPassword} = useState('test123');
-
+export default function Login(setLogin){
+    const {username, setUserName} = useState('');
+    const {password, setPassword} = useState('');
+    
     const handleSignIn = () => {
         signInWithEmailAndPassword(getAuth(), username, password)
             .then((userCredential) => {

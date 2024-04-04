@@ -18,6 +18,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(false);
+  const [logged,setLogged] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
