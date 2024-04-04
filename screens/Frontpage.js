@@ -1,7 +1,7 @@
 // Import necessary libraries
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
-
+import PieChartComponent from '../components/MyPieChart';
 const Frontpage = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -33,7 +33,10 @@ const Frontpage = ({ navigation }) => {
           <View style={styles.balanceInfo}>
             <Text style={styles.balanceText}>Balanceshowercomponent?</Text>
           </View>
-    
+          {/* Balance Info */}
+          <View >
+            <PieChartComponent />
+          </View>    
             {/* Footer with buttons */}
       <View style={styles.footer}>
         <Pressable style={[styles.iconButton, styles.piggyButton]} onPress={() => navigation.navigate('Savings')}>
