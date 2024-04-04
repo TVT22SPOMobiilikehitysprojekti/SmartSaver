@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Login from './screens/Login';
 import LoadingScreen from './screens/loading';
 import IntroScreen from './screens/intro1';
 import IntroScreen2 from './screens/intro2';
@@ -12,9 +13,8 @@ import SettingsScreen from './screens/settings';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {firestore} from './firebase/Config';
+
 const Stack = createNativeStackNavigator();
-
-
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(false);
@@ -31,10 +31,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         {showIntro ? (
-          <Stack.Screen name="SmartSaver" component={IntroScreen} />
+           <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         ) : (
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         )}
+          <Stack.Screen name="SmartSaver" component={IntroScreen} />
           <Stack.Screen name="Intro2" component={IntroScreen2} />
           <Stack.Screen name="Intro3" component={IntroScreen3} />
           <Stack.Screen name="Intro4" component={IntroScreen4} />
