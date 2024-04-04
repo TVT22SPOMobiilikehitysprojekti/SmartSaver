@@ -42,13 +42,21 @@ npx expo start
 tähä er diagrammi
 
 ## FIGMA
-![figma1](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/faa3406d-e0a3-4c18-b725-f5e4d94e4ebd)
-![figma2](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/87556713-a400-4fc6-80f5-737833d78ba3)
-![figma2 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/a93162f3-8074-41d5-87f9-2bd6e0ab3802)
-![figma3](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/17561797-4570-437b-8ede-606fc94b50c2)
-![figma3 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/ab1e9a31-c89f-47d8-b443-df170c381472)
-![figma4](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/df391500-c410-4469-85e6-a345a9f9d5c2)
-![figma4 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/a65fc781-43b9-4d3d-83c8-bf70b8def641)
-![figma5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/f56dcbff-4b68-4a6e-897e-b82915a28591)
-![figma6](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/893096ba-2765-44a8-8d63-d6726f656bb3)
+![figma1](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/1c2e1916-a434-4273-9ac7-213e632140f2)
+![figma2](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/7020074f-8c51-4b0c-ad6b-46ea9d7120be)
+![figma3](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/ce02d7e0-9ab4-45d2-b80d-9f00c3da52ba)
+
+![figma4](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/43ee882c-058a-4e0c-b9fe-fdb2436f466e)
+![figma5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/7db7a0cf-624f-4dd3-8728-79b0791422db)
+![figma6](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/ed874c62-3368-4db0-a333-8ef5dae6e629)
+
+![figma7](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/1469362b-b989-4b4b-982e-abdfbc07a51d)
+![figma8](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/e5fc887f-c6ab-414d-8814-35f171d0f7ba)
+![figma9](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/19cacdaa-a5b5-4768-8b25-676c1cbae5ce)
+
+![figma10](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/055474c9-70f0-4d42-969e-5f2deef7455e)
+![figma11](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/01535ce7-c8d3-4122-8040-f50c7e0fb605)
+![figma12](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/66e2a52b-1ca0-45a3-ab9d-6ca1846e2a94)
+
+![figma13](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/f097ec09-1cab-4467-bea6-c09cf0d105d6)
 
