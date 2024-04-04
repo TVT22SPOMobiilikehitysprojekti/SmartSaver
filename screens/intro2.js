@@ -13,7 +13,7 @@ const IntroScreen2 = ({navigation}) => {
   ];
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Let’s go step by step!</Text>
       <Text>Step 1: What currency do you use? (Can be changed later in settings)</Text>
       <FlatList
@@ -29,15 +29,23 @@ const IntroScreen2 = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#34a4eb',
+  },
   button: {
-    backgroundColor: 'blue',
-    padding: 10,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: 10,
+    marginBottom: 20,
   },
   buttonText: {
+    fontSize: 20,
     color: 'white',
-    textAlign: 'center',
   },
 });
 

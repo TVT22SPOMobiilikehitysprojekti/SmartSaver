@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white',
   },
+
 });
 
 export default IntroScreen3;
