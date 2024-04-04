@@ -1,0 +1,122 @@
+// Import necessary libraries
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+
+const Frontpage = ({ navigation }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
+
+  // Example navigation function for a menu item
+  const navigateToSavings = () => {
+    closeMenu();
+    navigation.navigate('Savings');
+  };
+
+    return (
+        <View style={styles.container}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.headerText}>SmartSaver</Text>
+            <Pressable style={styles.button} onPress={() => navigation.navigate('Settings')}>
+              <Text style={styles.menuDots}>:</Text>
+            </Pressable>
+          </View>
+    
+          {/* Calendar */}
+          <View style={styles.calendarContainer}>
+            {/* Placeholder for your calendar component */}
+          </View>
+    
+          {/* Balance Info */}
+          <View style={styles.balanceInfo}>
+            <Text style={styles.balanceText}>Balanceshowercomponent?</Text>
+          </View>
+    
+            {/* Footer with buttons */}
+      <View style={styles.footer}>
+        <Pressable style={[styles.iconButton, styles.piggyButton]} onPress={() => navigation.navigate('Savings')}>
+          <Image
+            source={require('../assets/piggy-icon.png')}
+            style={styles.iconImage}
+          />
+        </Pressable>
+        <Pressable style={[styles.iconButton, styles.addButton]}>
+          <Image
+            source={require('../assets/plus-icon.png')} 
+            style={styles.iconImage}
+          />
+        </Pressable>
+      </View>
+    </View>
+  );
+};
+    
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: '#fff',
+      },
+      header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#EFEFEF',
+      },
+      headerText: {
+        fontSize: 24,
+      },
+      menuDots: {
+        fontSize: 24,
+      },
+      calendarContainer: {
+        // Set your calendar styles
+      },
+      balanceInfo: {
+        padding: 20,
+        backgroundColor: '#EFEFEF',
+      },
+      balanceText: {
+        fontSize: 18,
+      },
+      footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        position: 'absolute', // Position the footer at the bottom
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 10,
+        backgroundColor: 'transparent', // Set to transparent or your desired color
+      },
+      iconButton: {
+        width: 60, // Set the width & height to make it a circle
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 3, // Adds a drop shadow on Android
+        shadowOffset: { width: 1, height: 1 }, // Drop shadow for iOS
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+      },
+      piggyButton: {
+        backgroundColor: 'red', // Replace with your desired color
+        borderRadius: 30, // Half of the width and height to make it a circle
+        marginLeft: 10, // Adjust as necessary
+      },
+      addButton: {
+        backgroundColor: 'green', // Replace with your desired color
+        borderRadius: 30, // Half of the width and height to make it a circle
+        marginRight: 10, // Adjust as necessary
+      },
+      iconImage: {
+        width: 30, // Size as necessary
+        height: 30, // Size as necessary
+        resizeMode: 'contain', // Ensures the icon fits without stretching
+      },
+    });
+    
+
+export default Frontpage;
