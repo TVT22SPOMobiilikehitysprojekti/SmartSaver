@@ -29,7 +29,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         {showIntro ? (
-          <Stack.Screen Color = {'#16C7FF'}name="SmartSaver" component={IntroScreen} />
+          <Stack.Screen name="SmartSaver" component={IntroScreen} />
         ) : (
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         )}
