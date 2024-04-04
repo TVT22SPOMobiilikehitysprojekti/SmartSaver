@@ -46,7 +46,7 @@ tähä er diagrammi
 ![figma2](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/87556713-a400-4fc6-80f5-737833d78ba3)
 ![figma2 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/a93162f3-8074-41d5-87f9-2bd6e0ab3802)
 ![figma3](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/17561797-4570-437b-8ede-606fc94b50c2)
-![figma3 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/82ec8033-32f6-455a-a677-88f9b2693)
+![figma3 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/ab1e9a31-c89f-47d8-b443-df170c381472)
 ![figma4](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/df391500-c410-4469-85e6-a345a9f9d5c2)
 ![figma4 5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/a65fc781-43b9-4d3d-83c8-bf70b8def641)
 ![figma5](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/f56dcbff-4b68-4a6e-897e-b82915a28591)
