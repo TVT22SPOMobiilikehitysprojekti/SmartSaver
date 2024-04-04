@@ -7,8 +7,8 @@ const IntroScreen = () => {
 
   return (
     <View style={styles.screen}>
-      <Text style={styles.intro}>Welcome to the SmartSaver</Text>
-      <Text style={styles.idea}>The idea of the application is simple: just input your income, expenses, and savings goal, and the app takes care of the rest!</Text>
+      <Text style={styles.header}>Welcome to the SmartSaver</Text>
+      <Text style={styles.subtitle}>The idea of the application is simple: just input your income, expenses, and savings goal, and the app takes care of the rest!</Text>
 
       <Pressable style={styles.button} onPress={() => navigation.navigate('Intro2')}>
         <Text style={styles.buttonText}>Get Started!</Text>
@@ -18,20 +18,26 @@ const IntroScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  intro: {
-    backgroundColor: '#34a4eb',
-    fontSize: 20,
+  header: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: 'white',
     marginBottom: 10,
   },
+  subtitle: {
+    fontSize: 18,
+    color: 'white',
+    textAlign: 'center',
+    marginHorizontal: 30,
+    marginBottom: 20,
+  },
     screen: {
+        justifyContent: 'center',
+        position: 'center',
+        padding: top = 100,
         backgroundColor: '#34a4eb',
         flex: 1,
     },
-  idea: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
   button: {
     display: 'flex',
     backgroundColor: '#4CAF50',

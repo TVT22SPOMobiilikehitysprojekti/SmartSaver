@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 
+
 const Frontpage = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -26,7 +27,7 @@ const Frontpage = ({ navigation }) => {
     
           {/* Calendar */}
           <View style={styles.calendarContainer}>
-            {/* Placeholder for your calendar component */}
+            
           </View>
     
           {/* Balance Info */}
