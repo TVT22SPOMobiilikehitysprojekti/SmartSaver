@@ -15,7 +15,7 @@ A simple budget tracking application built with React and Expo, designed to help
 
 1. Clone the repository:
 ```
-git clone [https://github.com/your-username/budget-tracker-app.git](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver.git)
+git clone https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver.git
 ```
 2. Navigate into the project directory:
 ```
