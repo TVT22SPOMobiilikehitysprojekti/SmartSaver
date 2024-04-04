@@ -7,6 +7,8 @@ import IntroScreen2 from './screens/intro2';
 import IntroScreen3 from './screens/intro3';
 import IntroScreen4 from './screens/intro4';
 import Frontpage from './screens/frontpage';
+import Savings from './screens/savings';
+import SettingsScreen from './screens/settings';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -35,6 +37,8 @@ export default function App() {
           <Stack.Screen name="Intro3" component={IntroScreen3} />
           <Stack.Screen name="Intro4" component={IntroScreen4} />
           <Stack.Screen name="Frontpage" component={Frontpage} />
+          <Stack.Screen name="Savings" component={Savings} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
 
       </Stack.Navigator>
       <StatusBar style="auto" />
