@@ -8,9 +8,9 @@ import {
   SafeAreaView,
 } from "react-native";
 import Constants from "expo-constants";
-import { getAuth, signInWithEmailAndPassword } from "../firebase/Config";
+import { getAuth, createUserWithEmailAndPassword } from "../firebase/Config";
 
-export default function Register() {
+export default function Register({navigation}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
