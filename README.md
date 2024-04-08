@@ -39,7 +39,7 @@ npx expo start
 
 ## ER Diagram
 
-tähä er diagrammi
+![ER-Diagram_plan](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/775d00b9-6617-4840-9031-4bb574c204af)
 
 ## FIGMA
 ![figma1](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/assets/112471010/1c2e1916-a434-4273-9ac7-213e632140f2)
