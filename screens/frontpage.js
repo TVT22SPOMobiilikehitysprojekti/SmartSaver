@@ -61,13 +61,13 @@ const Frontpage = ({ navigation }) => {
         </Pressable>
         {showChildPressables && (
           <View style={styles.childPressablesContainer}>
-            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('jotaki')}>
+            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('transaction')}>
               <Image 
               source={require('../assets/plus-icon.png')} 
               style={styles.iconImage} 
               />
             </Pressable>
-            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('jonnekki')}>
+            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('addSavings')}>
               <Image 
               source={require('../assets/plus-icon.png')} 
               style={styles.iconImage} 
