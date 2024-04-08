@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Login from './screens/Login';
+import Register from './screens/Register';
 import LoadingScreen from './screens/loading';
 import IntroScreen from './screens/intro1';
 import IntroScreen2 from './screens/intro2';
@@ -36,6 +37,7 @@ export default function App() {
         ) : (
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         )}
+         <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
           <Stack.Screen name="Intro2" component={IntroScreen2} />
           <Stack.Screen name="Intro3" component={IntroScreen3} />
