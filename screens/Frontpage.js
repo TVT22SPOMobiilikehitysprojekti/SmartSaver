@@ -2,11 +2,25 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import PieChartComponent from '../components/MyPieChart';
+import CalendarComponent from '../components/Calendar';
+
+
 const Frontpage = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [showChildPressables, setShowChildPressables] = useState(false);
+  const [displayText, setDisplayText] = useState('');
 
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
+  const handlebuttonpress = () => {
+    const button1 = 'transaction';
+    const button2 = 'addSavings';
+    setDisplayText ('${button1}\${button2}');
+  };
+
+  const toggleChildPressables = () => {
+    setShowChildPressables(!showChildPressables);
+  };
 
   // Example navigation function for a menu item
   const navigateToSavings = () => {
@@ -26,7 +40,7 @@ const Frontpage = ({ navigation }) => {
     
           {/* Calendar */}
           <View style={styles.calendarContainer}>
-            {/* Placeholder for your calendar component */}
+            <CalendarComponent />
           </View>
     
           {/* Balance Info */}
@@ -45,12 +59,28 @@ const Frontpage = ({ navigation }) => {
             style={styles.iconImage}
           />
         </Pressable>
-        <Pressable style={[styles.iconButton, styles.addButton]}>
+        <Pressable style={[styles.iconButton, styles.addButton]} onPress={() => { toggleChildPressables(); handlebuttonpress();}}>
           <Image
             source={require('../assets/plus-icon.png')} 
             style={styles.iconImage}
           />
         </Pressable>
+        {showChildPressables && (
+          <View style={styles.childPressablesContainer}>
+            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('transaction')}>
+              <Image 
+              source={require('../assets/plus-icon.png')} 
+              style={styles.iconImage} 
+              />
+            </Pressable>
+            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('addSavings')}>
+              <Image 
+              source={require('../assets/plus-icon.png')} 
+              style={styles.iconImage} 
+              />
+            </Pressable>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -118,6 +148,18 @@ const Frontpage = ({ navigation }) => {
         width: 30, // Size as necessary
         height: 30, // Size as necessary
         resizeMode: 'contain', // Ensures the icon fits without stretching
+      },
+      childPressablesContainer: {
+        position: 'absolute', // Position the child pressables absolutely
+        bottom: 80, // Adjust as necessary to position them above the parent button
+        flexDirection: 'column', // Change to column to make them appear vertically
+        alignItems: 'center', // Center the child buttons horizontally
+        width: '184%',
+        
+      },
+      childButton: {
+         // Set the width & height to make it a circle
+        // Additional styles for child buttons
       },
     });
     
