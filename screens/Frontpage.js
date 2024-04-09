@@ -58,7 +58,10 @@ const Frontpage = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.headerText}>SmartSaver</Text>
         <Pressable onPress={() => setModalVisible(true)}>
-          <Text style={styles.menuDots}>:</Text>
+        <Image
+            source={require('../assets/3dots.png')}
+            style={styles.iconImageDots}
+          />
         </Pressable>
       </View>
 
@@ -85,8 +88,7 @@ const Frontpage = ({ navigation }) => {
               style={styles.modalButton}
               onPress={() => {
                 setModalVisible(!modalVisible);
-                // Add navigation or actions for settings
-                console.log('Settings Pressed');
+                navigation.navigate('Settings');
               }}>
               <Text style={styles.textStyle}>Settings</Text>
             </TouchableOpacity>
@@ -125,13 +127,13 @@ const Frontpage = ({ navigation }) => {
             <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('transaction')}>
               <Image 
               source={require('../assets/plus-icon.png')} 
-              style={styles.iconImage} 
+              style={styles.iconImageChild} 
               />
             </Pressable>
             <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('addSavings')}>
               <Image 
               source={require('../assets/plus-icon.png')} 
-              style={styles.iconImage} 
+              style={styles.iconImageChild} 
               />
             </Pressable>
           </View>
@@ -152,11 +154,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#EFEFEF',
+    height: 100,
   },
   headerText: {
+    marginTop: 10,
     fontSize: 24,
+    fontWeight: 'bold',
   },
   menuDots: {
+    marginTop: 10,
     fontSize: 24,
   },
   calendarContainer: {
@@ -192,18 +198,30 @@ const styles = StyleSheet.create({
   piggyButton: {
     backgroundColor: 'red',
     borderRadius: 30,
-    marginLeft: 10,
+    marginLeft: 20,
+    width: 40,
+    height: 40,
   },
   addButton: {
     backgroundColor: 'green',
     borderRadius: 30,
-    marginRight: 10,
+    marginRight: 20,
+    marginBottom: 20,
+    width: 40,
+    height: 40,
   },
   iconImage: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
+    width: 80,
+    height: 80,
+    marginLeft: 0,
   },
+  iconImageChild: {
+    width: 80,
+    height: 80,
+    marginRight: 10,
+  },
+ 
+  
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -249,6 +267,11 @@ const styles = StyleSheet.create({
          // Set the width & height to make it a circle
         // Additional styles for child buttons
       },
+  iconImageDots: {
+    width: 50,
+    height: 50,
+    marginTop: 10,
+  },
 });
 
 
