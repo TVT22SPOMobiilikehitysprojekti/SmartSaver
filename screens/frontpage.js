@@ -8,9 +8,15 @@ import CalendarComponent from '../components/Calendar';
 const Frontpage = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showChildPressables, setShowChildPressables] = useState(false);
+  const [displayText, setDisplayText] = useState('');
 
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
+  const handlebuttonpress = () => {
+    const button1 = 'transaction';
+    const button2 = 'addSavings';
+    setDisplayText ('${button1}\${button2}');
+  };
 
   const toggleChildPressables = () => {
     setShowChildPressables(!showChildPressables);
@@ -53,7 +59,7 @@ const Frontpage = ({ navigation }) => {
             style={styles.iconImage}
           />
         </Pressable>
-        <Pressable style={[styles.iconButton, styles.addButton]} onPress={toggleChildPressables}>
+        <Pressable style={[styles.iconButton, styles.addButton]} onPress={() => { toggleChildPressables(); handlebuttonpress();}}>
           <Image
             source={require('../assets/plus-icon.png')} 
             style={styles.iconImage}
