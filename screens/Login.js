@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
     const navigation = useNavigation();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('testi9@foo.com');
+    const [password, setPassword] = useState('123456');
 
     const onLogin = async () => {
         try {
