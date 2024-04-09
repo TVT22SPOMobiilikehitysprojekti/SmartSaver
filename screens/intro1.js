@@ -8,9 +8,9 @@ const IntroScreen = () => {
   return (
     <View style={styles.screen}>
       <Text style={styles.intro}>Welcome to the SmartSaver</Text>
-      <Text style={styles.idea}>The idea of the application is simple: just input your income, expenses, and savings goal, and the app takes care of the rest!</Text>
+      <Text style={styles.idea}>The idea of the application is simple:{'\n'} just input your income, expenses,{'\n'} and savings goal, and the app takes{'\n'} care of the rest!</Text>
 
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Register')}>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('Intro2')}>
         <Text style={styles.buttonText}>Get Started!</Text>
       </Pressable>
     </View>
@@ -20,16 +20,22 @@ const IntroScreen = () => {
 const styles = StyleSheet.create({
   intro: {
     backgroundColor: '#34a4eb',
-    fontSize: 20,
+    fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 10,
+    marginTop: 100,
+    textAlign: 'center',
+    color: 'white',
   },
     screen: {
         backgroundColor: '#34a4eb',
         flex: 1,
     },
   idea: {
-    fontSize: 16,
+    marginTop: 30,
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 20,
     marginBottom: 10,
   },
   button: {
@@ -38,13 +44,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 5,
-    marginTop: 10,
-    marginBottom: 20,
+    position: 'absolute',
+    bottom: 50,
+    left: '50%',
+    transform: [{ translateX: -80 }],
     justifyContent: 'center',
     alignItems: 'center',
     maxWidth: 200,
-    marginLeft: 'auto',
-    marginRight: 'auto',
   },
   buttonText: {
     fontSize: 20,

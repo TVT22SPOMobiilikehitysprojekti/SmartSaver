@@ -1,72 +1,120 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Button,
-  Text,
-  TextInput,
-  View,
-  SafeAreaView,
-} from "react-native";
-import Constants from "expo-constants";
-import { getAuth, createUserWithEmailAndPassword } from "../firebase/Config";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/Config';
+import { useNavigation } from '@react-navigation/native';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
-export default function Register({navigation}) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const db = getFirestore();
 
-  const handleSignUp = () => {
-    const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed up
-        const user = userCredential.user;
-        navigation.navigate('SmartSaver');
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
+const Signup = () => {
+  const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = async () => {
+      try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          console.log(userCredential.user);
+
+          const uid = userCredential.user.uid;
+          const userRef = doc(db, 'Users', uid);
+          await setDoc(userRef, { email });
+
+          navigation.navigate('Intro1');
+      } catch (error) {
+          console.log(error.code, error.message);
+      }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.form}>
-        <TextInput
+    <View style={styles.container}>
+      <Image
+        source={require('../assets/smartsaver_logo.png')}
+        style={styles.logo}
+      />
+      <Text style={styles.header}>SmartSaver</Text>
+      <Text style={styles.welcomeMessage}>Welcome to SmartSaver</Text>
+      <TextInput
           style={styles.input}
-          placeholder="Email"
           value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
-        <TextInput
+          onChangeText={setEmail}
+          placeholder="Email address"
+          autoCapitalize="none"
+      />
+      <TextInput
           style={styles.input}
+          value={password}
+          onChangeText={setPassword}
           placeholder="Password"
           secureTextEntry
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-        <Button title="Sign Up" onPress={handleSignUp} />
-      </View>
-    </SafeAreaView>
+      />
+      <TouchableOpacity style={styles.button} onPress={onSubmit}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
+      <Text style={styles.signInText}>
+          Already have an account?{' '}
+          <Text onPress={() => navigation.navigate('Login')} style={styles.signInLink}>
+              Sign in
+          </Text>
+      </Text>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f4f7',
+    padding: 20,
   },
-  form: {
-    width: "80%",
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#34a4eb',
+    marginBottom: 24,
+  },
+  welcomeMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 24,
   },
   input: {
-    height: 40,
-    borderColor: "gray",
+    height: 50,
+    width: '100%',
+    marginVertical: 10,
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    padding: 10,
+    borderRadius: 5,
+    borderColor: '#34a4eb',
+    backgroundColor: '#ffffff',
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  signInText: {
+    marginTop: 20,
+  },
+  signInLink: {
+    color: '#34a4eb',
+    fontWeight: 'bold',
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
   },
 });
+
+export default Signup;

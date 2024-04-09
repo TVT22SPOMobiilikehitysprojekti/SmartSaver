@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const IntroScreen4 = ({ navigation }) => {
+const IntroScreen4 = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>What next?</Text>
@@ -17,9 +20,9 @@ const IntroScreen4 = ({ navigation }) => {
         style={styles.logo}
       />
 
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Frontpage')}>
-        <Text style={styles.buttonText}>Let's go!</Text>
-      </Pressable>
+<Pressable style={styles.button} onPress={() => navigation.navigate('Frontpage')}>
+    <Text style={styles.buttonText}>Let's go!</Text>
+  </Pressable>
     </View>
   );
 };
