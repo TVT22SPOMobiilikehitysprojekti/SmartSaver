@@ -22,30 +22,20 @@ const IntroScreen = () => {
 const styles = StyleSheet.create({
 
   intro: {
-    backgroundColor: '#34a4eb',
+    display: 'flex',
     fontSize: 35,
-
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 10,
-    marginTop: 100,
     textAlign: 'center',
     color: 'white',
   },
-  subtitle: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    marginHorizontal: 30,
-    marginBottom: 20,
-  },
-    screen: {
+  screen: {
         justifyContent: 'center',
         position: 'center',
-        padding: top = 100,
         backgroundColor: '#34a4eb',
         flex: 1,
-      
+  },    
   idea: {
     marginTop: 30,
     color: 'white',

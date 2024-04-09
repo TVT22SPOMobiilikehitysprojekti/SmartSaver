@@ -98,10 +98,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   header: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 10,
+    marginTop: 50,
+
   },
   subtitle: {
     fontSize: 18,
