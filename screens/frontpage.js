@@ -3,10 +3,26 @@ import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity, Aler
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase/Config'; 
 import PieChartComponent from '../components/MyPieChart';
+import CalendarComponent from '../components/Calendar';
+
 
 
 const Frontpage = ({ navigation }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showChildPressables, setShowChildPressables] = useState(false);
+  const [displayText, setDisplayText] = useState('');
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
+  const handlebuttonpress = () => {
+    const button1 = 'transaction';
+    const button2 = 'addSavings';
+    setDisplayText ('${button1}\${button2}');
+  };
+
+  const toggleChildPressables = () => {
+    setShowChildPressables(!showChildPressables);
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -23,6 +39,7 @@ const Frontpage = ({ navigation }) => {
     return unsubscribe; // Cleanup function
   }, []);
 
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -35,6 +52,7 @@ const Frontpage = ({ navigation }) => {
       });
   };
 
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -43,6 +61,16 @@ const Frontpage = ({ navigation }) => {
           <Text style={styles.menuDots}>:</Text>
         </Pressable>
       </View>
+
+       {/* Calendar */}
+          <View style={styles.calendarContainer}>
+            <CalendarComponent />
+          </View>
+       {/* Balance Info */}
+          <View style={styles.balanceInfo}>
+            <Text style={styles.balanceText}>Balanceshowercomponent?</Text>
+          </View>
+      
 
       <Modal
         animationType="slide"
@@ -70,6 +98,7 @@ const Frontpage = ({ navigation }) => {
               }}>
               <Text style={styles.textStyle}>Logout</Text>
             </TouchableOpacity>
+
           </View>
         </View>
       </Modal>
@@ -85,12 +114,28 @@ const Frontpage = ({ navigation }) => {
             style={styles.iconImage}
           />
         </Pressable>
-        <Pressable style={[styles.iconButton, styles.addButton]}>
+        <Pressable style={[styles.iconButton, styles.addButton]} onPress={() => { toggleChildPressables(); handlebuttonpress();}}>
           <Image
             source={require('../assets/plus-icon.png')}
             style={styles.iconImage}
           />
         </Pressable>
+        {showChildPressables && (
+          <View style={styles.childPressablesContainer}>
+            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('transaction')}>
+              <Image 
+              source={require('../assets/plus-icon.png')} 
+              style={styles.iconImage} 
+              />
+            </Pressable>
+            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('addSavings')}>
+              <Image 
+              source={require('../assets/plus-icon.png')} 
+              style={styles.iconImage} 
+              />
+            </Pressable>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -113,6 +158,16 @@ const styles = StyleSheet.create({
   },
   menuDots: {
     fontSize: 24,
+  },
+  calendarContainer: {
+   // Set your calendar styles
+  },
+  balanceInfo: {
+  padding: 20,
+  backgroundColor: '#EFEFEF',
+  },
+  balanceText: {
+  fontSize: 18,
   },
   footer: {
     flexDirection: 'row',
@@ -182,6 +237,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  childPressablesContainer: {
+        position: 'absolute', // Position the child pressables absolutely
+        bottom: 80, // Adjust as necessary to position them above the parent button
+        flexDirection: 'column', // Change to column to make them appear vertically
+        alignItems: 'center', // Center the child buttons horizontally
+        width: '184%',
+        
+      },
+  childButton: {
+         // Set the width & height to make it a circle
+        // Additional styles for child buttons
+      },
 });
+
 
 export default Frontpage;
