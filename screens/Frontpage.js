@@ -1,122 +1,99 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity } from 'react-native';
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase/Config'; 
 import PieChartComponent from '../components/MyPieChart';
 import CalendarComponent from '../components/Calendar';
+import { useNavigation } from '@react-navigation/native';
 
-
-
-const Frontpage = ({ navigation }) => {
-  const [menuVisible, setMenuVisible] = useState(false);
+const Frontpage = () => {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [showChildPressables, setShowChildPressables] = useState(false);
-  const [displayText, setDisplayText] = useState('');
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
-  const handlebuttonpress = () => {
-    const button1 = 'transaction';
-    const button2 = 'addSavings';
-    setDisplayText ('${button1}\${button2}');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigation.navigate('Login');
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => console.log("Signed out successfully"))
+      .catch((error) => console.error("Sign out error:", error));
+  };
+
+  const handleMenuPress = () => {
+    setModalVisible(true);
   };
 
   const toggleChildPressables = () => {
     setShowChildPressables(!showChildPressables);
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        console.log("User is signed in with uid:", user.uid);
-      } else {
-        // User is signed out
-        console.log("User is signed out");
-        navigation.navigate('Login');
-      }
-    });
-
-    return unsubscribe; // Cleanup function
-  }, []);
-
-
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        console.log("Signed out successfully");
-        // Optionally navigate the user to the login screen
-        // navigation.navigate('Login');
-      })
-      .catch((error) => {
-        console.error("Sign out error:", error);
-      });
+  const handlebuttonpress = () => {
+    const button1 = 'transaction';
+    const button2 = 'addSavings';
+    setDisplayText(`${button1}\n${button2}`);
   };
-
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>SmartSaver</Text>
-        <Pressable onPress={() => setModalVisible(true)}>
-        <Image
-            source={require('../assets/3dots.png')}
-            style={styles.iconImageDots}
-          />
-        </Pressable>
+        <View style={styles.iconImageDotsContainer}>
+          <Pressable onPress={handleMenuPress}>
+            <Image
+              source={require('../assets/3dots.png')}
+              style={styles.iconImageDots}
+            />
+          </Pressable>
+        </View>
       </View>
-
-       {/* Calendar */}
-          <View style={styles.calendarContainer}>
-            <CalendarComponent />
-          </View>
-       {/* Balance Info */}
-          <View style={styles.balanceInfo}>
-            <Text style={styles.balanceText}>Balanceshowercomponent?</Text>
-          </View>
-      
-
+      <View style={styles.calendarContainer}>
+        <CalendarComponent />
+      </View>
+      <View style={styles.balanceInfo}>
+        <Text style={styles.balanceText}>Balanceshowercomponent?</Text>
+      </View>
       <Modal
-        animationType="slide"
+        animationType="none"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
+        onRequestClose={() => setModalVisible(false)}>
+        <TouchableOpacity
+          style={styles.modalBackground}
+          onPress={() => setModalVisible(false)}>
           <View style={styles.modalView}>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-                navigation.navigate('Settings');
-              }}>
-              <Text style={styles.textStyle}>Settings</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+              <Text style={styles.modalButton}>Settings</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-                handleLogout();
-              }}>
-              <Text style={styles.textStyle}>Logout</Text>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={styles.modalButton}>Logout</Text>
             </TouchableOpacity>
-
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
-
       <View>
         <PieChartComponent />
       </View>
-
       <View style={styles.footer}>
-        <Pressable style={[styles.iconButton, styles.piggyButton]} onPress={() => navigation.navigate('Savings')}>
+        <Pressable
+          style={[styles.iconButton, styles.piggyButton]}
+          onPress={() => navigation.navigate('Savings')}>
           <Image
             source={require('../assets/piggy-icon.png')}
             style={styles.iconImage}
           />
         </Pressable>
-        <Pressable style={[styles.iconButton, styles.addButton]} onPress={() => { toggleChildPressables(); handlebuttonpress();}}>
+        <Pressable
+          style={[styles.iconButton, styles.addButton]}
+          onPress={() => {
+            toggleChildPressables();
+          }}>
           <Image
             source={require('../assets/plus-icon.png')}
             style={styles.iconImage}
@@ -124,16 +101,20 @@ const Frontpage = ({ navigation }) => {
         </Pressable>
         {showChildPressables && (
           <View style={styles.childPressablesContainer}>
-            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('transaction')}>
-              <Image 
-              source={require('../assets/plus-icon.png')} 
-              style={styles.iconImageChild} 
+            <Pressable
+              style={[styles.iconButton, styles.childButton]}
+              onPress={() => navigation.navigate('transaction')}>
+              <Image
+                source={require('../assets/plus-icon.png')}
+                style={styles.iconImageChild}
               />
             </Pressable>
-            <Pressable style={[styles.iconButton, styles.childButton]} onPress={() => navigation.navigate('addSavings')}>
-              <Image 
-              source={require('../assets/plus-icon.png')} 
-              style={styles.iconImageChild} 
+            <Pressable
+              style={[styles.iconButton, styles.childButton]}
+              onPress={() => navigation.navigate('addSavings')}>
+              <Image
+                source={require('../assets/plus-icon.png')}
+                style={styles.iconImageChild}
               />
             </Pressable>
           </View>
@@ -161,19 +142,23 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  menuDots: {
+  iconImageDotsContainer: {
+    position: 'absolute',
+    right: 20,
+    top: 20,
+  },
+  iconImageDots: {
+    width: 50,
+    height: 50,
     marginTop: 10,
-    fontSize: 24,
   },
-  calendarContainer: {
-   // Set your calendar styles
-  },
+  calendarContainer: {},
   balanceInfo: {
-  padding: 20,
-  backgroundColor: '#EFEFEF',
+    padding: 20,
+    backgroundColor: '#EFEFEF',
   },
   balanceText: {
-  fontSize: 18,
+    fontSize: 18,
   },
   footer: {
     flexDirection: 'row',
@@ -220,59 +205,46 @@ const styles = StyleSheet.create({
     height: 80,
     marginRight: 10,
   },
- 
-  
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    borderRadius: 10,
+    padding: 1,
+    alignItems: 'flex-start',
+    position: 'absolute',
+    top: -5,
+    left: '60%',
+    right: 0,
+    width: 'fit-content',
+  
+ 
   },
   modalButton: {
-    backgroundColor: "#2196F3",
-    borderRadius: 20,
+    backgroundColor: 'grey',
+    borderRadius: 10,
     padding: 10,
     elevation: 2,
     marginTop: 10,
+    
   },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   childPressablesContainer: {
-        position: 'absolute', // Position the child pressables absolutely
-        bottom: 80, // Adjust as necessary to position them above the parent button
-        flexDirection: 'column', // Change to column to make them appear vertically
-        alignItems: 'center', // Center the child buttons horizontally
-        width: '184%',
-        
-      },
-  childButton: {
-         // Set the width & height to make it a circle
-        // Additional styles for child buttons
-      },
-  iconImageDots: {
-    width: 50,
-    height: 50,
-    marginTop: 10,
+    position: 'absolute',
+    bottom: 80,
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '184%',
   },
+  childButton: {},
 });
-
 
 export default Frontpage;
