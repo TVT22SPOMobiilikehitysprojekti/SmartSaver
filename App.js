@@ -12,6 +12,7 @@ import Frontpage from './screens/frontpage';
 import Savings from './screens/savings';
 import SettingsScreen from './screens/settings';
 import TransactionScreen from './screens/transaction';
+import addSavingScreen from './screens/addSavings';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,7 @@ export default function App() {
             <Stack.Screen name="Savings" component={Savings} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Transaction" component={TransactionScreen} />
+            <Stack.Screen name="AddSavings" component={addSavingScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

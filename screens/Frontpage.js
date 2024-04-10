@@ -103,7 +103,7 @@ const Frontpage = () => {
           <View style={styles.childPressablesContainer}>
             <Pressable
               style={[styles.iconButton, styles.childButton]}
-              onPress={() => navigation.navigate('addSavings')}>
+              onPress={() => navigation.navigate('AddSavings')}>
               <Image
                 source={require('../assets/LippuIcon.png')}
                 style={styles.iconImageChild}
