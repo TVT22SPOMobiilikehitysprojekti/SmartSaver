@@ -28,6 +28,7 @@ const Frontpage = () => {
 
   const handleMenuPress = () => {
     setModalVisible(true);
+
   };
 
   const toggleChildPressables = () => {
