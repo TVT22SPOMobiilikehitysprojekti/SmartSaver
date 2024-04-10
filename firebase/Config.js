@@ -25,6 +25,8 @@ const firestore = getFirestore();
 const auth = getAuth(app);
 const db = getFirestore(app)
 const TRANSACTIONS = 'Transaction'
+const user = auth.currentUser;
+const id = user.uid
 
 export { app,
         firestore,
@@ -41,4 +43,5 @@ export { app,
         db,
         where,
         setDoc,
+        id
       };
