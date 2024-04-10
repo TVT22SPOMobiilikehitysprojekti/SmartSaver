@@ -111,7 +111,7 @@ const Frontpage = () => {
             </Pressable>
             <Pressable
               style={[styles.iconButton, styles.childButton]}
-              onPress={() => navigation.navigate('transaction')}>
+              onPress={() => navigation.navigate('Transaction')}>
               <Image
                 source={require('../assets/PlusLogoBlue.png')}
                 style={styles.iconImageChild}
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     bottom: 80,
     flexDirection: 'column',
     alignItems: 'center',
-    width: '184%',
+    width: '185%',
   },
   childButton: {},
 });
