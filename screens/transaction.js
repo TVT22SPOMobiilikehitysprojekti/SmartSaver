@@ -1,59 +1,68 @@
 import React, { useState } from 'react';
-import { View, TextInput, Switch, StyleSheet, Text, Pressable } from 'react-native';
+import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert } from 'react-native';
+import { auth } from '../firebase/Config';
+import { saveUserTransactionAndUpdateBalance } from '../firebase/Shortcuts';
 
 const AddTransactionScreen = () => {
-  const [text, setText] = useState('');
-  const [amount, setAmount] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [isExpense, setIsExpense] = useState(false); //false = income, true = expense
+    const [text, setText] = useState('');
+    const [amount, setAmount] = useState('');
+    const [isExpense, setIsExpense] = useState(false); // false = income, true = expense
+    const [date, setDate] = useState(new Date()); // Jos haluat käyttäjän asettavan päivämäärän, tarvitaan päivämääränvalitsin
 
-  const handleAddTransaction = () => {
-    const data = {
-        amount,
-        date,
-        text: isExpense ? { category: text } : { description: text },
-    }
-    // Tässä kohdassa voit lisätä 'income'-datan esimerkiksi paikalliseen tilaan tai lähettää sen tietokantaan
-    console.log(isExpense ? 'expense added' : 'income added', data);
-    
-    // Tyhjennä kentät lisäyksen jälkeen
-    setText('');
-    setAmount('');
-    setDate(new Date());
-  };
+    const handleSaveTransaction = () => {
+      const user = auth.currentUser;
+      if (user) {
+        const amountValue = parseFloat(amount); // Muunna syöte numeeriseksi arvoksi
+        // Oletetaan, että funktio ottaa vastaan objektin transaktion tiedoille
+        saveUserTransactionAndUpdateBalance(user.uid, {
+          amount: amountValue,
+          date: date,
+          text: text,
+          isExpense: isExpense
+        }, () => {
+          Alert.alert("Success", "Transaction saved successfully.");
+          setText('');
+          setAmount('');
+          // Lisää tarvittaessa logiikka päivämäärän nollaamiseksi
+        }, (error) => {
+          Alert.alert("Error", error.message);
+        });
+      } else {
+        Alert.alert("Error", "You must be logged in to add a transaction.");
+      }
+    };
 
-  const toggleSwitch = () => setIsExpense(previousState => !previousState);
+    const toggleSwitch = () => setIsExpense(previousState => !previousState);
 
-  return (
-    <View style={styles.container}>
-    <Switch
-        trackColor={{ false: "#767577", true: "#81b0ff" }}
-        thumbColor={isExpense ? "#f5dd4b" : "#f4f3f4"}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleSwitch}
-        value={isExpense}
+    return (
+      <View style={styles.container}>
+        <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={isExpense ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isExpense}
+            />
+        <Text style={styles.addincomeText}>{isExpense ? 'Add Expense' : 'Add Income'}</Text>
+        <TextInput
+          style={styles.input}
+          placeholder={isExpense ? 'Category' : 'Description'}
+          value={text}
+          onChangeText={setText}
         />
-    <Text style={styles.addincomeText}>{isExpense ? 'Add Expense' : 'Add Income'}</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder={isExpense ? 'Category' : 'Description'}
-        value={text}
-        onChangeText={setText}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder={'Amount (€)'}
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-      />
-      <Text style={styles.dateText}>Date: {date.toDateString()}</Text>
-      <Pressable style={styles.addincomeButton} onPress={handleAddTransaction} >
-    <Text style={styles.buttonText}>{isExpense ? 'Add expense' : 'Add income'}</Text>
-  </Pressable>
-    </View>
-  );
+        <TextInput
+          style={styles.input}
+          placeholder="Amount (€)"
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+        />
+        <Text style={styles.dateText}>Date: {date.toDateString()}</Text>
+        <Pressable style={styles.addincomeButton} onPress={handleSaveTransaction} >
+          <Text style={styles.buttonText}>{isExpense ? 'Add Expense' : 'Add Income'}</Text>
+        </Pressable>
+      </View>
+    );
 };
 
 const styles = StyleSheet.create({
