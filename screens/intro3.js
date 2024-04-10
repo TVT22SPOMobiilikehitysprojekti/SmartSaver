@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Pressable, StyleSheet, View, Text, TextInput } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import BalanceComponent from '../components/Balance';
 
 
-const IntroScreen3 = ({ navigation }) => {
-  const [amount, setAmount] = useState('');
+const IntroScreen3 = () => {
+ 
 
   return (
     <View style={styles.container}>
@@ -11,16 +12,7 @@ const IntroScreen3 = ({ navigation }) => {
       <Text style={styles.subtitle}>
         Step 2: How much you currently have? (Can be changed later)
       </Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        placeholder="Enter amount"
-        value={amount}
-        onChangeText={text => setAmount(text)}
-      />
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Intro4')}>
-        <Text style={styles.buttonText}>Start with €{parseFloat(amount).toFixed(2)}</Text>
-      </Pressable>
+        <BalanceComponent/>
     </View>
   );
 };
