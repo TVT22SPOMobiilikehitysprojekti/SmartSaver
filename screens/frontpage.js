@@ -5,11 +5,21 @@ import { auth } from '../firebase/Config';
 import PieChartComponent from '../components/MyPieChart';
 import CalendarComponent from '../components/Calendar';
 import { useNavigation } from '@react-navigation/native';
+import CurrentbalanceComponent from '../components/Currentbalance';
+import { getCurrentUserId } from '../firebase/Shortcuts';
 
 const Frontpage = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [showChildPressables, setShowChildPressables] = useState(false);
+  const [userId, setUserId] = useState(getCurrentUserId());
+
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    });
+    return unsubscribe;
+  }, [])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -58,7 +68,7 @@ const Frontpage = () => {
         <CalendarComponent />
       </View>
       <View style={styles.balanceInfo}>
-        <Text style={styles.balanceText}>Balanceshowercomponent?</Text>
+        <CurrentbalanceComponent userId={getCurrentUserId()}/>
       </View>
       <Modal
         animationType="none"
