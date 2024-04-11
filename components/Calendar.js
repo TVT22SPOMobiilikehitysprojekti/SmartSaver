@@ -85,7 +85,7 @@ const CalendarComponent = () => {
       />
       {showModal && (
         <Modal
-          animationType="slide"
+          animationType="none"
           transparent={true}
           visible={showModal}
           onRequestClose={() => setShowModal(false)}
