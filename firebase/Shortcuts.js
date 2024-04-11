@@ -1,4 +1,4 @@
-import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, query, onSnapshot } from './Config';
+import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot } from './Config';
 
 
 // saveUserBalance funktio, jonka ainoa muutos on turhien määrittelyjen poistaminen
@@ -100,6 +100,41 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
      return unsubscribe; // Tämän pitäisi olla funktio.
 };
 
+const fetchSavingsGoalsForShow = async (userId, setSavingsPlans) => {
+  const q = query(collection(db, "Users", userId, "SavingsGoal"));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const plans = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      // Lisätään tiedot listaan
+      plans.push({ id: doc.id, plan: data.plan, amount: data.amount, date: data.date.toDate() });
+    });
+
+    // Päivitä tila suunnitelmille
+    setSavingsPlans(plans);
+  });
+
+  return unsubscribe;
+};
+
+const saveCategories = async (userId, categories) => {
+  const userRef = doc(db, "Users", userId);
+  await setDoc(userRef, { categories: categories }, { merge: true });
+};
+
+const loadCategories = async (userId) => {
+  const userRef = doc(db, "Users", userId);
+  const docSnap = await getDoc(userRef);
+  if (docSnap.exists()) {
+    return docSnap.data().categories;
+  } else {
+    // Dokumenttia ei löytynyt
+    console.log("No such document!");
+    return [];
+  }
+};
+
   
   export { 
     saveUserBalance,
@@ -107,7 +142,8 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
     saveUserTransactionAndUpdateBalance,
     getCurrentUserId,
     fetchSavingsGoals,
-
-
+    fetchSavingsGoalsForShow,
+    saveCategories,
+    loadCategories,
 
 };
