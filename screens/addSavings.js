@@ -62,9 +62,6 @@ const AddSavingScreen = () => {
         value={plan}
         onChangeText={(text) => {
           setPlan(text);
-          if (text !== '') {
-            setShowDatePicker(true); // Show the date picker if the plan is not empty
-          }
         }}
       />
       <TextInput
@@ -74,21 +71,23 @@ const AddSavingScreen = () => {
         onChangeText={setAmount}
         keyboardType="numeric"
       />
-      <Text style={styles.dateText}>
-        By what date:</Text>
-        {showDatePicker && (
-  <DateTimePicker
-    style={styles.dateText}
-    testID="dateTimePicker"
-    value={date}
-    mode={'date'}
-    is24Hour={true}
-    onChange={(event, selectedDate) => {
-      const currentDate = selectedDate || date;
-      setDate(currentDate);
-    }}
-  />
-)}
+        <Pressable style={styles.showDatePickerButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>Select Date</Text>
+      </Pressable>
+      {showDatePicker && (
+        <DateTimePicker
+          style={styles.datePicker}
+          testID="dateTimePicker"
+          value={date}
+          mode={'date'}
+          is24Hour={true}
+          onChange={(event, selectedDate) => {
+            const currentDate = selectedDate || date;
+            setShowDatePicker(false); // Hide the DateTimePicker after a date is selected
+            setDate(currentDate);
+          }}
+        />
+      )}
 
       <Pressable style={styles.setSavingsButton} onPress={handleSave} >
     <Text style={styles.buttonText}>Set savings goal</Text>
