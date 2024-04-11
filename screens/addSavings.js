@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
-//import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { set } from 'firebase/database';
 import { auth, Firestore, collection, addDoc, db, setDoc, doc } from '../firebase/Config';
 
