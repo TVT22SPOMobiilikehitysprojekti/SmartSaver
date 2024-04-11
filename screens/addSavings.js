@@ -3,40 +3,37 @@ import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback,
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { set } from 'firebase/database';
 import { auth, Firestore, collection, addDoc, db, setDoc, doc } from '../firebase/Config';
+import { saveUserSavingsGoal } from '../firebase/Shortcuts';
+import { Timestamp } from '@firebase/firestore';
 
 
-const AddSavingScreen = ({onSaved}) => {
-  const [text, setText] = useState('');
+const AddSavingScreen = () => {
+  const [plan, setplan] = useState('');
   const [amount, setAmount] = useState('');
-  const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
+  const [date, setDate] = useState(new Date()); // Jos haluat käyttäjän asettavan päivämäärän, tarvitaan päivämääränvalitsin
 
-  
-  const handleSave = async () => {
-    // Varmista, että käyttäjä on kirjautunut sisään
+  const handleSave = async() => {
+    // Varmistaa, että käyttäjä on kirjautunut sisään
     const user = auth.currentUser;
     if (user) {
-      try {
-        // Käytä doc funktiota luodaksesi viite dokumenttiin käyttäjän UID:n avulla
-        const userDocRef = doc(db, "SavingsGoal", user.uid);
-
-        // Tallenna tai päivitä dokumentti viitteen kautta
-        await setDoc(userDocRef, {
-            amount: amount,
-            date: date,
-            text: text , // Lisää palvelimen aikaleima
-        });
-
-        setText('');
+      const amount = parseFloat(amount); // Muunna syöte numeeriseksi arvoksi
+      // Oletetaan, että funktio ottaa vastaan objektin transaktion tiedoille
+      saveUserSavingsGoal(user.uid, {
+        amount: amount,
+        date: date,
+        plan: plan,
+      },() => {
+        Alert.alert("Success", "Transaction saved successfully.");
+        setplan('');
         setAmount('');
-        setDate(new Date()); // Tyhjennä kenttä onnistuneen tallennuksen jälkeen
-        onSaved && onSaved(); // Jos onSaved on määritelty, kutsu sitä
-        Alert.alert("Success", "Saving goal has been saved successfully.");
-      } catch (error) {
+        setDate(new Date());
+        // Lisää tarvittaessa logiikka päivämäärän nollaamiseksi
+      }, (error) => {
         Alert.alert("Error", error.message);
-      }
+      });
     } else {
-      Alert.alert("Error", "No user is logged in.");
+      Alert.alert("Error", "You must be logged in to add a saving goal.");
     }
   };
 
@@ -53,8 +50,8 @@ const AddSavingScreen = ({onSaved}) => {
       <TextInput
         style={styles.input}
         placeholder={'Plan name'}
-        value={text}
-        onChangeText={setText}
+        value={plan}
+        onChangeText={setplan}
       />
       <TextInput
         style={styles.input}
