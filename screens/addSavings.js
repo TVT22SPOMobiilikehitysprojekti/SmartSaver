@@ -11,6 +11,8 @@ const AddSavingScreen = () => {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
 
   const handleSave = async () => {
     const user = auth.currentUser;
@@ -39,7 +41,9 @@ const AddSavingScreen = () => {
     } else {
       Alert.alert("Error", "You must be logged in to add a savings goal.");
     }
+    
   };
+  
   
 
   const dismissKeyboard = () => {
@@ -56,7 +60,12 @@ const AddSavingScreen = () => {
         style={styles.input}
         placeholder={'Plan name'}
         value={plan}
-        onChangeText={setPlan}
+        onChangeText={(text) => {
+          setPlan(text);
+          if (text !== '') {
+            setShowDatePicker(true); // Show the date picker if the plan is not empty
+          }
+        }}
       />
       <TextInput
         style={styles.input}
@@ -67,17 +76,19 @@ const AddSavingScreen = () => {
       />
       <Text style={styles.dateText}>
         By what date:</Text>
-        <DateTimePicker
-            style={styles.dateText}
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          onChange={(event, selectedDate) => {
-            const currentDate = selectedDate || date;
-            setDate(currentDate);
-          }}
-        />
+        {showDatePicker && (
+  <DateTimePicker
+    style={styles.dateText}
+    testID="dateTimePicker"
+    value={date}
+    mode={'date'}
+    is24Hour={true}
+    onChange={(event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setDate(currentDate);
+    }}
+  />
+)}
 
       <Pressable style={styles.setSavingsButton} onPress={handleSave} >
     <Text style={styles.buttonText}>Set savings goal</Text>
