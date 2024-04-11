@@ -18,17 +18,20 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
     }
   };
 // saveUserSavingsGoal funktio, joka lisää uuden collectionin "SavingsGoal" käyttäjän tietokantaan
-const saveUserSavingsGoal = async (userId, savingsgoalData,onSuccess, onError) => {
-  const SavingsGoalDocRef = doc(db, "Users", userId, "SavingsGoal");
-
+const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) => {
   try {
-    await addDoc(SavingsGoalDocRef, {
-      ...savingsgoalData,
-    }, { merge: true }); // Merge true varmistaa, että olemassa olevat kentät päivitetään
+    // Luodaan viite 'SavingsGoal'-alikokoelmaan
+    const savingsGoalRef = collection(db, "Users", userId, "SavingsGoal");
 
-    onSuccess();
+    // Lisätään uusi dokumentti 'SavingsGoal'-alikokoelmaan
+    const docRef = await addDoc(savingsGoalRef, {
+      ...savingsgoalData,
+      Timestamp: serverTimestamp(),
+    });
+
+    onSuccess(docRef.id); // Palautetaan luodun dokumentin ID onnistumisen yhteydessä
   } catch (error) {
-    console.error("Error saving Goal: ", error);
+    console.error("Error saving savings goal: ", error);
     onError(error);
   }
 };
@@ -95,7 +98,7 @@ const saveUserSavingsGoal = async (userId, savingsgoalData,onSuccess, onError) =
     saveUserTransaction,
     saveUserTransactionAndUpdateBalance,
     getCurrentUserId,
-    saveUserSavingsGoal
+    saveUserSavingsGoal,
 
 
 };

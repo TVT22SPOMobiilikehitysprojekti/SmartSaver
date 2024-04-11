@@ -1,41 +1,46 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { set } from 'firebase/database';
-import { auth, Firestore, collection, addDoc, db, setDoc, doc } from '../firebase/Config';
+import { auth } from '../firebase/Config';
 import { saveUserSavingsGoal } from '../firebase/Shortcuts';
 import { Timestamp } from '@firebase/firestore';
 
 
 const AddSavingScreen = () => {
-  const [plan, setplan] = useState('');
+  const [plan, setPlan] = useState('');
   const [amount, setAmount] = useState('');
+  const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
-  const [date, setDate] = useState(new Date()); // Jos haluat käyttäjän asettavan päivämäärän, tarvitaan päivämääränvalitsin
 
-  const handleSave = async() => {
-    // Varmistaa, että käyttäjä on kirjautunut sisään
+  const handleSave = async () => {
     const user = auth.currentUser;
     if (user) {
-      const amount = parseFloat(amount); // Muunna syöte numeeriseksi arvoksi
-      // Oletetaan, että funktio ottaa vastaan objektin transaktion tiedoille
-      saveUserSavingsGoal(user.uid, {
-        amount: amount,
-        date: date,
+      const amountNumber = parseFloat(amount); // Muunna syöte numeeriseksi arvoksi korjattu muuttujan nimi
+      if (isNaN(amountNumber)) {
+        Alert.alert("Error", "Please enter a valid number for amount.");
+        return;
+      }
+      
+      // Luodaan objekti säästötavoitteen datalle
+      const savingsGoalData = {
         plan: plan,
-      },() => {
-        Alert.alert("Success", "Transaction saved successfully.");
-        setplan('');
+        amount: amountNumber, // Käytä korjattua muuttujan nimeä
+        date: Timestamp.fromDate(date), // Muunna JavaScriptin Date-objekti Firestore Timestamp-objektiksi
+      };
+  
+      saveUserSavingsGoal(user.uid, savingsGoalData, () => {
+        Alert.alert("Success", "Savings goal saved successfully.");
+        setPlan('');
         setAmount('');
         setDate(new Date());
-        // Lisää tarvittaessa logiikka päivämäärän nollaamiseksi
       }, (error) => {
         Alert.alert("Error", error.message);
       });
     } else {
-      Alert.alert("Error", "You must be logged in to add a saving goal.");
+      Alert.alert("Error", "You must be logged in to add a savings goal.");
     }
   };
+  
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -51,7 +56,7 @@ const AddSavingScreen = () => {
         style={styles.input}
         placeholder={'Plan name'}
         value={plan}
-        onChangeText={setplan}
+        onChangeText={setPlan}
       />
       <TextInput
         style={styles.input}
