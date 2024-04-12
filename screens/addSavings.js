@@ -1,44 +1,50 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
+import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert, SafeAreaView} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { set } from 'firebase/database';
-import { auth, Firestore, collection, addDoc, db, setDoc, doc } from '../firebase/Config';
+import { auth } from '../firebase/Config';
+import { saveUserSavingsGoal } from '../firebase/Shortcuts';
+import { Timestamp } from '@firebase/firestore';
 
 
-const AddSavingScreen = ({onSaved}) => {
-  const [text, setText] = useState('');
+const AddSavingScreen = () => {
+  const [plan, setPlan] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  
+
   const handleSave = async () => {
-    // Varmista, että käyttäjä on kirjautunut sisään
     const user = auth.currentUser;
     if (user) {
-      try {
-        // Käytä doc funktiota luodaksesi viite dokumenttiin käyttäjän UID:n avulla
-        const userDocRef = doc(db, "SavingsGoal", user.uid);
-
-        // Tallenna tai päivitä dokumentti viitteen kautta
-        await setDoc(userDocRef, {
-            amount: amount,
-            date: date,
-            text: text , // Lisää palvelimen aikaleima
-        });
-
-        setText('');
-        setAmount('');
-        setDate(new Date()); // Tyhjennä kenttä onnistuneen tallennuksen jälkeen
-        onSaved && onSaved(); // Jos onSaved on määritelty, kutsu sitä
-        Alert.alert("Success", "Saving goal has been saved successfully.");
-      } catch (error) {
-        Alert.alert("Error", error.message);
+      const amountNumber = parseFloat(amount); // Muunna syöte numeeriseksi arvoksi korjattu muuttujan nimi
+      if (isNaN(amountNumber)) {
+        Alert.alert("Error", "Please enter a valid number for amount.");
+        return;
       }
+      
+      // Luodaan objekti säästötavoitteen datalle
+      const savingsGoalData = {
+        plan: plan,
+        amount: amountNumber, // Käytä korjattua muuttujan nimeä
+        date: Timestamp.fromDate(date), // Muunna JavaScriptin Date-objekti Firestore Timestamp-objektiksi
+      };
+  
+      saveUserSavingsGoal(user.uid, savingsGoalData, () => {
+        Alert.alert("Success", "Savings goal saved successfully.");
+        setPlan('');
+        setAmount('');
+        setDate(new Date());
+      }, (error) => {
+        Alert.alert("Error", error.message);
+      });
     } else {
-      Alert.alert("Error", "No user is logged in.");
+      Alert.alert("Error", "You must be logged in to add a savings goal.");
     }
+    
   };
+  
+  
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -53,8 +59,10 @@ const AddSavingScreen = ({onSaved}) => {
       <TextInput
         style={styles.input}
         placeholder={'Plan name'}
-        value={text}
-        onChangeText={setText}
+        value={plan}
+        onChangeText={(text) => {
+          setPlan(text);
+        }}
       />
       <TextInput
         style={styles.input}
@@ -63,20 +71,27 @@ const AddSavingScreen = ({onSaved}) => {
         onChangeText={setAmount}
         keyboardType="numeric"
       />
-      <Text style={styles.dateText}>
-        By what date:</Text>
+      <SafeAreaView>
+        <Text>selected: {date.toLocaleString()}</Text>
+        <Pressable style={styles.showDatePickerButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>Select Date</Text>
+      </Pressable>
+      
+      {showDatePicker && (
         <DateTimePicker
-            style={styles.dateText}
+          style={styles.datePicker}
           testID="dateTimePicker"
           value={date}
-          mode={mode}
+          mode={'date'}
           is24Hour={true}
           onChange={(event, selectedDate) => {
             const currentDate = selectedDate || date;
+            setShowDatePicker(false); // Hide the DateTimePicker after a date is selected
             setDate(currentDate);
           }}
         />
-
+      )}  
+      </SafeAreaView>
       <Pressable style={styles.setSavingsButton} onPress={handleSave} >
     <Text style={styles.buttonText}>Set savings goal</Text>
   </Pressable>
@@ -108,6 +123,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     
 },
+showDatePickerButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: 200,
+    marginBottom: 20,
+  },
   dateText: {
     marginBottom: 20,
     color: 'white',

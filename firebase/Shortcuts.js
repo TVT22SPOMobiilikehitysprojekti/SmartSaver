@@ -17,6 +17,24 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
       onError(error);
     }
   };
+  // saveUserSavingsGoal funktio, joka lisää uuden collectionin "SavingsGoal" käyttäjän tietokantaan
+const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) => {
+  try {
+    // Luodaan viite 'SavingsGoal'-alikokoelmaan
+    const savingsGoalRef = collection(db, "Users", userId, "SavingsGoal");
+
+    // Lisätään uusi dokumentti 'SavingsGoal'-alikokoelmaan
+    const docRef = await addDoc(savingsGoalRef, {
+      ...savingsgoalData,
+      Timestamp: serverTimestamp(),
+    });
+
+    onSuccess(docRef.id); // Palautetaan luodun dokumentin ID onnistumisen yhteydessä
+  } catch (error) {
+    console.error("Error saving savings goal: ", error);
+    onError(error);
+  }
+};
 
   const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
     const currencyDocRef = doc(db, "Users", userId, "Currency", "symbol");
@@ -157,13 +175,10 @@ const loadCategories = async (userId) => {
     saveUserTransaction,
     saveUserTransactionAndUpdateBalance,
     getCurrentUserId,
- CurrencyPicker
-    saveCurrencySymbol
-
+    saveCurrencySymbol,
     fetchSavingsGoals,
     fetchSavingsGoalsForShow,
     saveCategories,
     loadCategories,
-main
-
+    saveUserSavingsGoal,
 };
