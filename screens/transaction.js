@@ -1,110 +1,270 @@
-import React, { useState } from 'react';
-import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { auth } from '../firebase/Config';
-import { saveUserTransactionAndUpdateBalance } from '../firebase/Shortcuts';
+import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories } from '../firebase/Shortcuts';
 
 const AddTransactionScreen = () => {
-    const [text, setText] = useState('');
-    const [amount, setAmount] = useState('');
-    const [isExpense, setIsExpense] = useState(false); // false = income, true = expense
-    const [date, setDate] = useState(new Date()); // Jos haluat käyttäjän asettavan päivämäärän, tarvitaan päivämääränvalitsin
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState('');
+  const [isExpense, setIsExpense] = useState(true);
+  const [category, setCategory] = useState('General');
+  const [customCategory, setCustomCategory] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [categories, setCategories] = useState(['General','Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Health']);
 
-    const handleSaveTransaction = () => {
-      const user = auth.currentUser;
-      if (user) {
-        const amountValue = parseFloat(amount); // Muunna syöte numeeriseksi arvoksi
-        // Oletetaan, että funktio ottaa vastaan objektin transaktion tiedoille
-        saveUserTransactionAndUpdateBalance(user.uid, {
-          amount: amountValue,
-          date: date,
-          text: text,
-          isExpense: isExpense
-        }, () => {
-          Alert.alert("Success", "Transaction saved successfully.");
-          setText('');
-          setAmount('');
-          // Lisää tarvittaessa logiikka päivämäärän nollaamiseksi
-        }, (error) => {
-          Alert.alert("Error", error.message);
-        });
-      } else {
-        Alert.alert("Error", "You must be logged in to add a transaction.");
+  // Käyttäjän ID
+  const userId = auth.currentUser?.uid;
+
+  useEffect(() => {
+    // Kategorioiden lataaminen käyttäjäkohtaisesti
+    const fetchUserCategories = async () => {
+      if (userId) {
+        const loadedCategories = await loadCategories(userId);
+        setCategories([...loadedCategories, 'Add Category']);
       }
     };
 
-    const toggleSwitch = () => setIsExpense(previousState => !previousState);
+    fetchUserCategories();
+  }, [userId]);
 
-    return (
-      <View style={styles.container}>
-        <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={isExpense ? "#f5dd4b" : "#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
-            value={isExpense}
+  const handleSaveTransaction = async () => {
+    if (userId) {
+      // Muunna syötetty summa numeroksi
+      const numericAmount = parseFloat(amount);
+      if (isNaN(numericAmount)) {
+        Alert.alert("Error", "Please enter a valid amount.");
+        return;
+      }
+
+      const transactionData = {
+        amount: numericAmount,
+        date: new Date(),
+        description: description,
+        isExpense: isExpense,
+        category: category === 'Add Category' ? customCategory : category,
+      };
+
+      await saveUserTransactionAndUpdateBalance(userId, transactionData, () => {
+        Alert.alert("Success", "Transaction saved successfully.");
+        setDescription('');
+        setAmount('');
+        setCategory('General');
+      }, (error) => {
+        Alert.alert("Error", error.message);
+      });
+    } else {
+      Alert.alert("Error", "You must be logged in to add a transaction.");
+    }
+  };
+
+  const handleSaveCategory = async () => {
+    if (userId && customCategory.trim() !== '' && !categories.includes(customCategory) && customCategory !== 'Add Category') {
+      const newCategories = [...categories.filter(c => c !== 'Add Category'), customCategory];
+      setCategories(newCategories);
+      setCategory(customCategory);
+      setShowModal(false);
+      setCustomCategory('');
+  
+      try {
+        // Tallenna uusi kategorialista Firestoreen
+        await saveCategories(userId, newCategories);
+      } catch (error) {
+        console.error("Error saving categories: ", error);
+      }
+    }
+  };
+  
+  const handleDeleteCategory = (categoryToDelete) => {
+    const predefinedCategories = ['General', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Health'];
+    if (!predefinedCategories.includes(categoryToDelete)) {
+      Alert.alert(
+        'Confirm Delete',
+        `Are you sure you want to delete the category "${categoryToDelete}"?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            onPress: async () => {
+              const newCategories = categories.filter(c => c !== categoryToDelete);
+              setCategories(newCategories);
+              try {
+                // Tallenna uusi kategorialista Firestoreen
+                await saveCategories(userId, newCategories);
+              } catch (error) {
+                console.error("Error saving categories: ", error);
+              }
+            },
+            style: 'destructive',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
+      <Switch
+        value={isExpense}
+        onValueChange={setIsExpense}
+        trackColor={{ false: "#81b0ff", true: "#ff5c5c" }}
+        thumbColor={isExpense ? "#f4f3f4" : "#f5dd4b"}
+      />
+      <Text>{isExpense ? 'Expense' : 'Income'}</Text>
+      
+      {/* Description-kenttä */}
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        value={description}
+        onChangeText={setDescription}
+      />
+      
+      {/* Amount-kenttä */}
+      <TextInput
+        style={styles.input}
+        placeholder="Amount"
+        value={amount}
+        keyboardType="numeric"
+        onChangeText={setAmount}
+      />
+
+      {/* Näytetään kategorialista vain menoissa */}
+      {isExpense && (
+        <View style={styles.categoryContainer}>
+         <Button style={styles.selectCategoryButton}
+          title={category !== 'Select Category' ? category : 'Select Category'}
+           onPress={() => setShowModal(true)}/>
+        </View>
+      )}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalHeader}>Categories</Text>
+            <ScrollView style={{ maxHeight: 300 }}>
+              {categories.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setCategory(item);
+                    setShowModal(false);
+                  }}
+                  onLongPress={() => handleDeleteCategory(item)}
+                >
+                  <Text style={styles.categoryText}>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Custom category name"
+              value={customCategory}
+              onChangeText={setCustomCategory}
             />
-        <Text style={styles.addincomeText}>{isExpense ? 'Add Expense' : 'Add Income'}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={isExpense ? 'Category' : 'Description'}
-          value={text}
-          onChangeText={setText}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Amount (€)"
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="numeric"
-        />
-        <Text style={styles.dateText}>Date: {date.toDateString()}</Text>
-        <Pressable style={styles.addincomeButton} onPress={handleSaveTransaction} >
-          <Text style={styles.buttonText}>{isExpense ? 'Add Expense' : 'Add Income'}</Text>
-        </Pressable>
-      </View>
-    );
+            <Button title="Save Category" onPress={handleSaveCategory} />
+          </View>
+        </View>
+      </Modal>
+      <Pressable style={styles.button} onPress={handleSaveTransaction}>
+        <Text style={styles.buttonText}>Add Transaction</Text>
+      </Pressable>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    padding: 20,
     justifyContent: 'center',
-    padding: 16,
     backgroundColor: '#34a4eb',
   },
-    addincomeText: {
-        color: 'white',
-        fontSize: 30,
-        marginBottom: 20,
-    },
   input: {
-    width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: 'white',
-    marginBottom: 20,
+    height: 40,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#cccccc',
     padding: 10,
-    backgroundColor: 'grey',
     borderRadius: 5,
-    
-},
-  dateText: {
-    marginBottom: 20,
-    color: 'white',
-    fontSize: 20,
+    backgroundColor: '#ffffff',
   },
-  addincomeButton: {
+  button: {
+    backgroundColor: '#4CAF50', 
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#ffffff', 
+    fontSize: 16,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalInput: {
+    width: '100%',
+    height: 40,
+    marginBottom: 20,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: 'gray',
+  },
+  categoryContainer: {
+    marginBottom: 10,
+    color: '#ffffff',
+  },
+  categoryText: {
+    fontSize: 24,
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
+  selectCategoryButton: {
     backgroundColor: '#4CAF50',
     padding: 10,
     borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxWidth: 200,
+    marginBottom: 10,
   },
-    buttonText: {
-        color: 'white',
-        fontSize: 20,
-    },  
+  selectCategoryText: {
+    color: '#ffffff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
 });
 
 export default AddTransactionScreen;

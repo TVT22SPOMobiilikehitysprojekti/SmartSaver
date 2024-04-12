@@ -1,4 +1,4 @@
-import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc } from './Config';
+import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot } from './Config';
 
 
 // saveUserBalance funktio, jonka ainoa muutos on turhien määrittelyjen poistaminen
@@ -88,6 +88,68 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
     return auth.currentUser ? auth.currentUser.uid : null;
     };
 
+  const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
+    const q = query(collection(db, "Users", userId, "SavingsGoal"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const goals = {};
+      const markedDates = {};
+  
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const dateStr = data.date.toDate().toISOString().split('T')[0];
+  
+        if (!markedDates[dateStr]) {
+          markedDates[dateStr] = { marked: true, dots: [] };
+          goals[dateStr] = []; // Alustetaan tyhjänä, jos ei ole vielä olemassa
+        }
+  
+        markedDates[dateStr].dots.push({ key: doc.id, color: 'red' });
+        // Lisää myös amount ja plan tiedot listaan
+        goals[dateStr].push({ plan: data.plan, amount: data.amount, date: data.date.toDate() });
+      });
+
+    
+      setMarkedDates(markedDates); // Päivitä tila merkityille päivämäärille
+      setSelectedGoals(goals); // Päivitä tila valittujen päivämäärien `SavingsGoal`-tiedoille
+    });
+    
+     return unsubscribe; // Tämän pitäisi olla funktio.
+};
+
+const fetchSavingsGoalsForShow = async (userId, setSavingsPlans) => {
+  const q = query(collection(db, "Users", userId, "SavingsGoal"));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const plans = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      // Lisätään tiedot listaan
+      plans.push({ id: doc.id, plan: data.plan, amount: data.amount, date: data.date.toDate() });
+    });
+
+    // Päivitä tila suunnitelmille
+    setSavingsPlans(plans);
+  });
+
+  return unsubscribe;
+};
+
+const saveCategories = async (userId, categories) => {
+  const userRef = doc(db, "Users", userId);
+  await setDoc(userRef, { categories: categories }, { merge: true });
+};
+
+const loadCategories = async (userId) => {
+  const userRef = doc(db, "Users", userId);
+  const docSnap = await getDoc(userRef);
+  if (docSnap.exists()) {
+    return docSnap.data().categories;
+  } else {
+    // Dokumenttia ei löytynyt
+    console.log("No such document!");
+    return [];
+  }
+};
 
   
   export { 
@@ -95,6 +157,13 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
     saveUserTransaction,
     saveUserTransactionAndUpdateBalance,
     getCurrentUserId,
+ CurrencyPicker
     saveCurrencySymbol
+
+    fetchSavingsGoals,
+    fetchSavingsGoalsForShow,
+    saveCategories,
+    loadCategories,
+main
 
 };
