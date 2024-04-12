@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
+import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert, SafeAreaView} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { auth } from '../firebase/Config';
 import { saveUserSavingsGoal } from '../firebase/Shortcuts';
@@ -71,9 +71,12 @@ const AddSavingScreen = () => {
         onChangeText={setAmount}
         keyboardType="numeric"
       />
+      <SafeAreaView>
+        <Text>selected: {date.toLocaleString()}</Text>
         <Pressable style={styles.showDatePickerButton} onPress={() => setShowDatePicker(true)}>
         <Text style={styles.buttonText}>Select Date</Text>
       </Pressable>
+      
       {showDatePicker && (
         <DateTimePicker
           style={styles.datePicker}
@@ -87,8 +90,8 @@ const AddSavingScreen = () => {
             setDate(currentDate);
           }}
         />
-      )}
-
+      )}  
+      </SafeAreaView>
       <Pressable style={styles.setSavingsButton} onPress={handleSave} >
     <Text style={styles.buttonText}>Set savings goal</Text>
   </Pressable>
