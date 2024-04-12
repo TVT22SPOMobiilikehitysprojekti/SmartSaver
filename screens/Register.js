@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , TouchableWithoutFeedback, Keyboard,} from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/Config';
 import { useNavigation } from '@react-navigation/native';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 const db = getFirestore();
+
+const dismissKeyboard = () => {
+  Keyboard.dismiss();
+}
 
 const Signup = () => {
   const navigation = useNavigation();
@@ -28,6 +32,7 @@ const Signup = () => {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.container}>
       <Image
         source={require('../assets/smartsaver_logo.png')}
@@ -59,6 +64,7 @@ const Signup = () => {
           </Text>
       </Text>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

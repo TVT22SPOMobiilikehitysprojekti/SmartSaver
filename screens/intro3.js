@@ -1,12 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard,} from 'react-native';
 import BalanceComponent from '../components/Balance';
 
 
 const IntroScreen3 = () => {
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  }
  
 
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.container}>
       <Text style={styles.header}>Money</Text>
       <Text style={styles.subtitle}>
@@ -14,6 +18,7 @@ const IntroScreen3 = () => {
       </Text>
         <BalanceComponent/>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
