@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Currency from 'C:\Users\ranta\Desktop\proju\SmartSaver\components\Currency.js';
+import Currency from '../components/Currency';
 
 const IntroScreen2 = () => {
   const currencies = [
