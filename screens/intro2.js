@@ -1,10 +1,9 @@
-import React from 'react';
-import { Pressable, StyleSheet, View, Text, FlatList } from 'react-native';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Currency from 'C:\Users\ranta\Desktop\proju\SmartSaver\components\Currency.js';
 
-
-const IntroScreen2 = ({navigation}) => {
+const IntroScreen2 = () => {
   const currencies = [
     { id: 1, name: 'USD - United States Dollar ($)' },
     { id: 2, name: 'EUR - Euro (€)' },
@@ -49,81 +48,25 @@ const IntroScreen2 = ({navigation}) => {
     { id: 42, name: 'ARS - Argentine Peso (ARS$)' },
     { id: 43, name: 'PHP - Philippine Peso (₱)' },
     { id: 44, name: 'VND - Vietnamese Dong (₫)' }
-];
+  ];
 
+  const [selectedCurrencyId, setSelectedCurrencyId] = useState(null);
+
+  const handleCurrencyPress = (currency) => {
+    setSelectedCurrencyId(currency.id);
+    console.log('Selected currency:', currency);
+    // Handle the selected currency here
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Let’s go step by step!</Text>
-      <Text style={styles.subtitle}>Step 1: What currency do you use? (Can be changed later in settings)</Text>
-      <FlatList style={styles.list}
-        data={currencies}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => 
-        <View style={styles.currencylines}>
-        <Text style={styles.currencylist}>{item.name}</Text>
-        </View>}
+    <NavigationContainer>
+      <Currency
+        currencies={currencies}
+        selectedCurrencyId={selectedCurrencyId}
+        onSelectCurrency={handleCurrencyPress}
       />
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Intro3')}>
-        <Text style={styles.buttonText}>Next</Text>
-      </Pressable>
-    </View>
+    </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#34a4eb',
-  },
-  list: {
-    borderRadius: 15,
-    width: '80%',
-    marginBottom: 20,
-    backgroundColor: 'white',
-    
-  },
-  currencylines: {
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
-  },
-  currencylist: {
-    marginTop: 5,
-    fontSize: 18,
-    color: 'gray',
-    textAlign: 'center',
-    marginHorizontal: 30,
-    marginBottom: 20,
-  },
-  header: {
-    fontSize: 35,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 10,
-    marginTop: 50,
-
-  },
-  subtitle: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    marginHorizontal: 30,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 5,
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: 'white',
-  },
-});
 
 export default IntroScreen2;
