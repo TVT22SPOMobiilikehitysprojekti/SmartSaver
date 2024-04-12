@@ -18,6 +18,22 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
     }
   };
 
+  const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
+    const currencyDocRef = doc(db, "Users", userId, "Currency", "symbol");
+  
+    try {
+      await setDoc(currencyDocRef, {
+        Symbol: String(symbol),
+        }, { merge: true }); // Merge true varmistaa, että olemassa olevat kentät päivitetään
+  
+      onSuccess();
+    } catch (error) {
+      console.error("Error saving symbol: ", error);
+      onError(error);
+    }
+  };
+
+
   const saveUserTransaction = async (userId, transactionData, onSuccess, onError) => {
     try {
       const transactionRef = collection(db, "Users", userId, "Transactions");
@@ -78,7 +94,7 @@ const saveUserBalance = async (userId, amount, onSuccess, onError) => {
     saveUserBalance,
     saveUserTransaction,
     saveUserTransactionAndUpdateBalance,
-    getCurrentUserId
-
+    getCurrentUserId,
+    saveCurrencySymbol
 
 };
