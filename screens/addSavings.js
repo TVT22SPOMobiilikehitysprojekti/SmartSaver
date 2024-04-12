@@ -120,6 +120,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     
 },
+showDatePickerButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: 200,
+    marginBottom: 20,
+  },
   dateText: {
     marginBottom: 20,
     color: 'white',
