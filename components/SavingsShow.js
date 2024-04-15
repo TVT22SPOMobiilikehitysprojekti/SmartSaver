@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity } from 'react-native';
-import { fetchSavingsGoalsForShow, getCurrentUserId } from '../firebase/Shortcuts'; 
+import { View, Text, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { fetchSavingsGoalsForShow, getCurrentUserId, handleSaveCustomAmount, fetchSavedAmountFromDB, deleteSavingsPlanDB } from '../firebase/Shortcuts';
 
 const SavingsShow = () => {
   const [savingsPlans, setSavingsPlans] = useState([]);
@@ -8,69 +8,125 @@ const SavingsShow = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [dailySavingsNeeded, setDailySavingsNeeded] = useState(0);
   const [monthlySavingsNeeded, setMonthlySavingsNeeded] = useState(0);
+  const [customSavingsAmount, setCustomSavingsAmount] = useState('');
+  const [savedAmount, setSavedAmount] = useState(0);
+  const [daysLeft, setDaysLeft] = useState(0);
+  const [isSavedAmountUpdated, setIsSavedAmountUpdated] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const userId = getCurrentUserId();
+      const userId = getCurrentUserId();
+      if (userId) {
         const unsubscribe = await fetchSavingsGoalsForShow(userId, setSavingsPlans);
-        console.log('Fetch savings goals unsubscribe function:', unsubscribe);
-  
-        return unsubscribe;
-      } catch (error) {
-        console.error("Error fetching savings goals: ", error);
+        return () => unsubscribe();
       }
     }
-    
     fetchData();
-  
-    return () => {
-      // Clean-up function
-    };
   }, []);
 
   useEffect(() => {
     if (selectedPlan) {
-      const parsedDate = new Date(selectedPlan.date);
       const currentDate = new Date();
-      const daysLeft = Math.ceil((parsedDate - currentDate) / (1000 * 60 * 60 * 24));
-      const amount = parseFloat(selectedPlan.amount);
-      const savedAmount = parseFloat(selectedPlan.savedAmount);
-      const totalAmountLeft = amount - savedAmount;
-  
-      console.log(`Days left: ${daysLeft}, Amount: ${amount}, Saved Amount: ${savedAmount}, Total Left: ${totalAmountLeft}`);
-  
-      if (daysLeft > 0 && !isNaN(totalAmountLeft) && totalAmountLeft > 0) {
-        const dailySavings = totalAmountLeft / daysLeft;
-        setDailySavingsNeeded(dailySavings);
-      } else {
-        setDailySavingsNeeded(0);
-      }
-  
-      const monthsLeft = Math.ceil(daysLeft / 30);
-      console.log(`Months left: ${monthsLeft}`);
-  
-      if (monthsLeft > 0 && !isNaN(totalAmountLeft) && totalAmountLeft > 0) {
-        const monthlySavings = totalAmountLeft / monthsLeft;
-        setMonthlySavingsNeeded(monthlySavings);
-      } else {
-        setMonthlySavingsNeeded(0);
-      }
+      const targetDate = new Date(selectedPlan.date);
+      const daysLeft = Math.ceil((targetDate - currentDate) / (1000 * 60 * 60 * 24));
+      console.log("Days left:", daysLeft);
+      const amountNeeded = parseFloat(selectedPlan.amount) - parseFloat(savedAmount);
+      const dailySavings = amountNeeded / daysLeft;
+      const monthlySavings = amountNeeded / Math.ceil(daysLeft / 30);
+      setDailySavingsNeeded(dailySavings);
+      setMonthlySavingsNeeded(monthlySavings);
+      setDaysLeft(daysLeft);
     }
-  }, [selectedPlan]);
+  }, [selectedPlan, savedAmount]);
 
-  const handlePress = (item) => {
-    setSelectedPlan(item);
-    setShowModal(true);
+  useEffect(() => {
+    if (showModal && selectedPlan?.id) {
+      async function fetchAndSetSavedAmount() {
+        try {
+          const userId = getCurrentUserId();
+          const fetchedSavedAmount = await fetchSavedAmountFromDB(userId, selectedPlan.id);
+          setSavedAmount(fetchedSavedAmount || 0);
+        } catch (error) {
+          console.error("Error fetching saved amount:", error);
+        }
+      }
+      fetchAndSetSavedAmount();
+    }
+  }, [showModal, selectedPlan]);
+
+  const handlePress = async (item) => {
+    try {
+      const savedAmount = await fetchSavedAmountFromDB(getCurrentUserId(), item.id);
+      console.log("Saved amount:", savedAmount);
+      setSelectedPlan(item);
+      setShowModal(true);
+    } catch (error) {
+      console.error("Error fetching saved amount:", error);
+      alert('Error fetching saved amount. Please try again.');
+    }
+  };
+
+  const handleLongPress = async (item) => {
+    Alert.alert(
+      "Delete Savings Plan",
+      `Do you want to delete "${item.plan}"?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "Delete", onPress: () => deleteSavingsPlan(item.id) }
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const deleteSavingsPlan = async (planId) => {
+    try {
+      await deleteSavingsPlanDB(planId);
+      setSavingsPlans(currentPlans => currentPlans.filter(plan => plan.id !== planId));
+      alert('Savings plan deleted successfully.');
+    } catch (error) {
+      alert('Error deleting savings plan. Please try again.');
+      console.error("Error deleting savings plan:", error);
+    }
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const handleSave = async () => {
+    if (!selectedPlan) {
+      alert('No plan selected.');
+      return;
+    }
   
+    if (!customSavingsAmount || isNaN(parseFloat(customSavingsAmount))) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+  
+    try {
+      await handleSaveCustomAmount(
+        selectedPlan,
+        customSavingsAmount,
+        setCustomSavingsAmount,
+        setMonthlySavingsNeeded,
+        monthlySavingsNeeded,
+        setSavedAmount,
+        setSelectedPlan,
+        setIsSavedAmountUpdated
+      );
+    } catch (error) {
+      console.error("Error saving custom amount:", error);
+      alert('Error saving custom amount. Please try again.');
+    }
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US'); // Muotoillaan päivämäärä (MM/PV/Vuosi)
+    return date.toLocaleDateString('en-US');
   };
 
   return (
@@ -79,7 +135,7 @@ const SavingsShow = () => {
         data={savingsPlans}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Pressable onPress={() => handlePress(item)}>
+          <Pressable onPress={() => handlePress(item)} onLongPress={() => handleLongPress(item)}>
             <View style={styles.planItem}>
               <Text style={styles.planText}>{item.plan}</Text>
               <Text>{formatDate(item.date)}</Text>
@@ -87,21 +143,30 @@ const SavingsShow = () => {
           </Pressable>
         )}
       />
-
-      {/* Modal */}
       <Modal
         visible={showModal}
-        animationType="none"
+        animationType="slide"
         transparent={true}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Plan Details</Text>
-            <Text style ={styles.planTextModalT}>Title: {selectedPlan && selectedPlan.plan}</Text>
-            <Text style ={styles.planTextModalA}>Amount: {selectedPlan && selectedPlan.amount}</Text>
-            <Text style ={styles.planTextModalD}>Date: {selectedPlan && formatDate(selectedPlan.date)}</Text>
+            <Text style={styles.planTextModalT}>Title: {selectedPlan && selectedPlan.plan}</Text>
+            <Text style={styles.planTextModalA}>Amount: {selectedPlan && selectedPlan.amount}</Text>
+            <Text style={styles.planTextModalSA}>Saved Amount: {savedAmount}</Text>
+            <Text style={styles.planTextModalD}>Date: {selectedPlan && formatDate(selectedPlan.date)}</Text>
             <Text>Daily Savings Needed: {dailySavingsNeeded.toFixed(2)}</Text>
             <Text>Monthly Savings Needed: {monthlySavingsNeeded.toFixed(2)}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter custom save amount"
+              keyboardType="numeric"
+              value={customSavingsAmount}
+              onChangeText={setCustomSavingsAmount}
+            />
+            <TouchableOpacity onPress={handleSave}>
+              <Text style={styles.buttonText}>Save Custom Amount</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={handleCloseModal}>
               <Text style={styles.closeButton}>Close</Text>
             </TouchableOpacity>
@@ -144,6 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
     color: 'blue',
   },
   planTextModalT: {
@@ -160,6 +226,29 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: 'bold',
     color: 'red',
+  },
+  planTextModalSA: {
+    fontSize: 16,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  input: {
+    height: 40,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#ffffff',
+  },
+  buttonText: {
+    backgroundColor: 'blue',
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+    padding: 10,
+    borderRadius: 5,
   },
   closeButton: {
     color: 'blue',
