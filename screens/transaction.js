@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView,  } from 'react-native';
+import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { auth } from '../firebase/Config';
 import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories } from '../firebase/Shortcuts';
 
@@ -11,6 +11,10 @@ const AddTransactionScreen = () => {
   const [customCategory, setCustomCategory] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [categories, setCategories] = useState(['General','Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Health']);
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  }
 
   // Käyttäjän ID
   const userId = auth.currentUser?.uid;
@@ -106,6 +110,7 @@ const AddTransactionScreen = () => {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.container}>
       {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
       <Switch
@@ -178,6 +183,7 @@ const AddTransactionScreen = () => {
         <Text style={styles.buttonText}>Add Transaction</Text>
       </Pressable>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

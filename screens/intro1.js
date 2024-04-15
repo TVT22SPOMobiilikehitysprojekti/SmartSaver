@@ -1,11 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const IntroScreen = () => {
   const navigation = useNavigation();
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  }
+  
+
   return (
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.screen}>
 
       <Text style={styles.intro}>Welcome to the SmartSaver</Text>
@@ -16,6 +22,7 @@ const IntroScreen = () => {
         <Text style={styles.buttonText}>Get Started!</Text>
       </Pressable>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

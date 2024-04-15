@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/Config';
 import { useNavigation } from '@react-navigation/native';
@@ -8,6 +8,10 @@ const Login = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState('testi9@foo.com');
     const [password, setPassword] = useState('123456');
+
+    const dismissKeyboard = () => {
+      Keyboard.dismiss();
+    }
 
     const onLogin = async () => {
         try {
@@ -19,6 +23,7 @@ const Login = () => {
     };
 
     return (
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
             <Image
         source={require('../assets/smartsaver_logo.png')}
@@ -46,6 +51,7 @@ const Login = () => {
                 No account yet? Sign up
             </Text>
         </View>
+        </TouchableWithoutFeedback>
     );
 };
 
