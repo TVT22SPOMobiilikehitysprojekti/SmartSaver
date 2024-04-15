@@ -200,7 +200,6 @@ const handleSaveCustomAmount = async (
   isSavedAmountUpdated,
   setIsSavedAmountUpdated
 ) => {
-  console.log("handleSaveCustomAmount called with selectedPlan:", selectedPlan);
 
   // Tarkista, että selectedPlan on määritelty ja loggaa se tarvittaessa
   if (!selectedPlan || !selectedPlan.userId) {
@@ -208,9 +207,6 @@ const handleSaveCustomAmount = async (
     alert("No plan selected or user ID is missing.");
     return;
   }
-
-  console.log("Selected plan amount:", selectedPlan.amount);
-  console.log("Selected Plan in handleSaveCustomAmount:", selectedPlan);
 
   try {
     // Lasketaan uusi tallennettu summa lisäämällä vanha summa ja uusi custom summa
@@ -224,7 +220,6 @@ const handleSaveCustomAmount = async (
 
     // Päivitetään valittu suunnitelma uudella tallennetulla summalla
     const updatedSelectedPlan = { ...selectedPlan, savedAmount: newSavedAmount };
-    console.log("Updated Selected Plan:", updatedSelectedPlan);
     setSelectedPlan(updatedSelectedPlan);
 
     // Aseta tila osoittamaan, että tallennettu summa on päivitetty
@@ -242,7 +237,6 @@ const handleSaveCustomAmount = async (
     console.error("Error in handleSaveCustomAmount:", error);
     alert("An unexpected error occurred.");
   } finally {
-    console.log("handleSaveCustomAmount completed.");
   }
 };
 
@@ -278,11 +272,8 @@ const setSavedAmountState = (newSavedAmount) => {
 
 const fetchSavedAmountFromDB = async (userId, savingsGoalId) => {
   try {
-    console.log("Fetching saved amount from database for userId:", userId, "and savingsGoalId:", savingsGoalId);
     const docRef = doc(db, "Users", userId, "SavingsGoal", savingsGoalId);
-    console.log("DocRef:", docRef);
     const docSnapshot = await getDoc(docRef);
-    console.log("DocSnapshot:", docSnapshot);
     if (docSnapshot.exists()) {
       const data = docSnapshot.data();
       console.log("Data retrieved from document:", data);
