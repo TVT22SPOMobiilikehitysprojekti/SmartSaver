@@ -72,8 +72,9 @@ const AddSavingScreen = () => {
         keyboardType="numeric"
       />
       <SafeAreaView>
-        <Text>selected: {date.toLocaleString()}</Text>
-        <Pressable style={styles.showDatePickerButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.pvm}>selected: {date.toLocaleString()}</Text>
+        <Pressable style={styles.showDatePickerButton} onPress={() => {
+  setShowDatePicker(true);}}>
         <Text style={styles.buttonText}>Select Date</Text>
       </Pressable>
       
@@ -149,6 +150,11 @@ showDatePickerButton: {
         color: 'white',
         fontSize: 20,
     },  
+    pvm: {
+        color: 'white',
+        fontSize: 15,
+        marginBottom: 20,
+    },
 });
 
 export default AddSavingScreen;
