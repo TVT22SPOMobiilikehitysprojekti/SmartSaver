@@ -1,4 +1,4 @@
-import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot } from './Config';
+import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot, deleteDoc } from './Config';
 
 
 // saveUserBalance funktio, jonka ainoa muutos on turhien määrittelyjen poistaminen
@@ -169,6 +169,25 @@ const loadCategories = async (userId) => {
   }
 };
 
+const deleteTransaction = async (userId, transactionId) => {
+  try {
+    await deleteDoc(doc(db, "Users", userId, "Transactions", transactionId));
+    console.log("Transaction deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting transaction:", error);
+  }
+};
+
+const updateTransaction = async (userId, transactionId, newData) => {
+  try {
+    const transactionRef = doc(db, "Users", userId, "Transactions", transactionId);
+    await updateDoc(transactionRef, newData);
+    console.log("Transaction updated successfully.");
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+  }
+};
+
   
   export { 
     saveUserBalance,
@@ -181,4 +200,7 @@ const loadCategories = async (userId) => {
     saveCategories,
     loadCategories,
     saveUserSavingsGoal,
+    deleteTransaction,
+    updateTransaction,
+  
 };
