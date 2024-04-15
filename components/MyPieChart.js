@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { firestore, collection, onSnapshot, query, where } from '../firebase/Config';
 import { getCurrentUserId } from '../firebase/Shortcuts';
@@ -15,6 +15,8 @@ const chartConfig = {
   strokeWidth: 2,
   barPercentage: 1,
   useShadowColorFromDataset: false,
+
+
 };
 
 const PieChartComponent = () => {
@@ -41,9 +43,11 @@ const PieChartComponent = () => {
         if (tempTransactions[categoryName]) {
           tempTransactions[categoryName].value += data.amount;
         } else {
+          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
           tempTransactions[categoryName] = {
             name: categoryName,
             value: data.amount,
+            color: randomColor,
           };
         }
       });
@@ -58,13 +62,13 @@ const PieChartComponent = () => {
 
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* Pie Chart */}
       <TouchableOpacity onPress={() => navigation.navigate('ViewTransactionDetails')}>
         <PieChart
           data={transactions}
           width={Dimensions.get("window").width}
-          height={220}
+          height={230}
           chartConfig={chartConfig}
           accessor="value"
           backgroundColor="transparent"
@@ -78,5 +82,11 @@ const PieChartComponent = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingLeft: 25 ,
+  },
+});
 
 export default PieChartComponent;
