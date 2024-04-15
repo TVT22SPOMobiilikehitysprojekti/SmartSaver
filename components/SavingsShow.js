@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { fetchSavingsGoalsForShow, getCurrentUserId, handleSaveCustomAmount, fetchSavedAmountFromDB, deleteSavingsPlanDB } from '../firebase/Shortcuts';
+import {
+  fetchSavingsGoalsForShow,
+  getCurrentUserId,
+  handleSaveCustomAmount,
+  fetchSavedAmountFromDB,
+  deleteSavingsPlanDB,
+  saveUserTransactionAndUpdateBalance // Varmista että tämä funktio on tuotu
+} from '../firebase/Shortcuts';
 
 const SavingsShow = () => {
   const [savingsPlans, setSavingsPlans] = useState([]);
@@ -106,8 +113,23 @@ const SavingsShow = () => {
       alert('Please enter a valid amount.');
       return;
     }
-  
+
     try {
+      const transactionData = {
+        amount: parseFloat(customSavingsAmount),
+        isExpense: true, // Määritellään tämä olevan kulutransaktio
+        category: "Savings", // Luokka, jossa tämä transaktio näkyy
+        date: new Date(), // Transaktion päivämäärä
+        description: `Custom savings amount for plan ${selectedPlan.plan}`
+      };
+
+      await saveUserTransactionAndUpdateBalance(selectedPlan.userId, transactionData, () => {
+        console.log("Transaction and balance updated successfully.");
+      }, (error) => {
+        console.error("Failed to update transaction and balance: ", error);
+        alert("Failed to update transaction and balance.");
+      });
+
       await handleSaveCustomAmount(
         selectedPlan,
         customSavingsAmount,
