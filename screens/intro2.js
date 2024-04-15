@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Currency from '../components/Currency';
+import { View, Pressable, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { saveCurrencySymbol } from '../firebase/Shortcuts';
 
 const IntroScreen2 = () => {
+  const navigation = useNavigation();
   const currencies = [
     { id: 1, name: 'USD - United States Dollar ($)' },
     { id: 2, name: 'EUR - Euro (€)' },
@@ -55,18 +57,44 @@ const IntroScreen2 = () => {
   const handleCurrencyPress = (currency) => {
     setSelectedCurrencyId(currency.id);
     console.log('Selected currency:', currency);
-    // Handle the selected currency here
+    
   };
 
   return (
-    <NavigationContainer>
+   <View>
       <Currency
         currencies={currencies}
         selectedCurrencyId={selectedCurrencyId}
         onSelectCurrency={handleCurrencyPress}
       />
-    </NavigationContainer>
+
+<Pressable style={styles.button} onPress={() => navigation.navigate('Intro3')}>
+        <Text style={styles.buttonText}>Next</Text>
+      </Pressable>
+
+      </View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    display: 'flex',
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 50,
+    left: '50%',
+    transform: [{ translateX: -80 }],
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: 200,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: 'white',
+  },
+});
 
 export default IntroScreen2;

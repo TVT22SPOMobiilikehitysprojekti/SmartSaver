@@ -15,6 +15,7 @@ const Currency = ({ currencies, selectedCurrencyId, onSelectCurrency }) => {
         <Pressable onPress={() => handleCurrencyPress(item)} style={({ pressed }) => [styles.currencylines, { opacity: pressed ? 0.5 : 1 }]}>
           <Text style={[styles.currencylist, selectedCurrencyId === item.id && styles.selectedCurrency]}>{item.name}</Text>
         </Pressable>
+
       )}
     />
   );
