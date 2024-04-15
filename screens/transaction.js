@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { auth } from '../firebase/Config';
 import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories } from '../firebase/Shortcuts';
+import { Camera, CameraType } from 'expo-camera';
 
 const AddTransactionScreen = () => {
   const [description, setDescription] = useState('');
@@ -11,9 +12,15 @@ const AddTransactionScreen = () => {
   const [customCategory, setCustomCategory] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [categories, setCategories] = useState(['General','Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Health']);
+  const [type, setType] = useState(CameraType.back);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
+  }
+
+  function toggleCameraType() {
+    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
 
   // Käyttäjän ID
@@ -112,6 +119,16 @@ const AddTransactionScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.container}>
+    <View style={styles.cameracontainer}>
+      <Camera style={styles.camera} type={type}>
+        <View style={styles.camerabuttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+            <Text style={styles.text}>Flip Camera</Text>
+          </TouchableOpacity>
+        </View>
+      </Camera>
+    </View>
+  
       {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
       <Switch
         value={isExpense}
@@ -188,6 +205,32 @@ const AddTransactionScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  //cameran tyylit
+  cameracontainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    margin: 64,
+  },
+  button: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+
+// muu sivu
   container: {
     flex: 1,
     padding: 20,
