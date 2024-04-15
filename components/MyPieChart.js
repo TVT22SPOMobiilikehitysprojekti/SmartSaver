@@ -34,22 +34,27 @@ const PieChartComponent = () => {
     );
   
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const tempTransactions = [];
+      const tempTransactions = {};
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        tempTransactions.push({
-          name: data.category,
-          value: data.amount,
-          id: doc.id, // Add transaction ID
-        });   
+        const categoryName = data.category;
+        if (tempTransactions[categoryName]) {
+          tempTransactions[categoryName].value += data.amount;
+        } else {
+          tempTransactions[categoryName] = {
+            name: categoryName,
+            value: data.amount,
+          };
+        }
       });
-      setTransactions(tempTransactions);
+      // Convert object to array before setting state
+      setTransactions(Object.values(tempTransactions));
     });
   
     return unsubscribe;
   }, []);
 
-  // Function to handle pie slice press
+
 
 
   return (
@@ -67,8 +72,8 @@ const PieChartComponent = () => {
         />
       </TouchableOpacity>
       {/* Selected slice details */}
-      <Text style={{ textAlign: 'center' }}>
-        {selectedSlice.label ? `${selectedSlice.label}: $${selectedSlice.value}` : 'Click on piechart to view details'}
+      <Text style={{ textAlign: 'center' }} >
+       Press PieChart To View Details
       </Text>
     </View>
   );
