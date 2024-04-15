@@ -37,7 +37,7 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
 };
 
   const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
-    const currencyDocRef = doc(db, "Users", userId, "Currency", "symbol");
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
   
     try {
       await setDoc(currencyDocRef, {
