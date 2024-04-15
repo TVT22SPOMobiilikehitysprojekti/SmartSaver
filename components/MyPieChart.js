@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
-import { firestore, collection, TRANSACTIONS, onSnapshot, query, auth, where} from '../firebase/Config'; // Import Firebase firestore
+import { firestore, collection, onSnapshot, query, where } from '../firebase/Config';
+import { getCurrentUserId } from '../firebase/Shortcuts';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
-
-
+// Define chart configuration
 const chartConfig = {
   backgroundGradientFrom: "#1E2923",
   backgroundGradientFromOpacity: 0,
@@ -17,54 +18,57 @@ const chartConfig = {
 };
 
 const PieChartComponent = () => {
+  // State variables
   const [transactions, setTransactions] = useState([]);
   const [selectedSlice, setSelectedSlice] = useState({ label: '', value: '' });
 
-  useEffect(() => {
-    const currentUserID = 'jF1r0K3rcsfU9L9bRXgcgYURpnX2';
+  // Navigation hook
+  const navigation = useNavigation();
 
-    const q = query(collection(firestore, TRANSACTIONS), where('userID', '==', currentUserID));
+  useEffect(() => {
+    // Fetch transactions from Firestore
+    const currentUserID = getCurrentUserId();
+    const q = query(
+      collection(firestore, 'Users', currentUserID, 'Transactions'),
+      where('isExpense', '==', true)
+    );
   
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const tempTransactions = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         tempTransactions.push({
-          name: data.Category,
-          value: data.Amount,
-          color: data.Color,
-        });
+          name: data.category,
+          value: data.amount,
+          id: doc.id, // Add transaction ID
+        });   
       });
-      
       setTransactions(tempTransactions);
     });
   
     return unsubscribe;
   }, []);
 
-  const handlePiePress = (data, index) => {
-    setSelectedSlice({
-      label: data[index].name,
-      value: data[index].amount,
-    });
-  };
+  // Function to handle pie slice press
+
 
   return (
     <View>
-<PieChart
-  data={transactions}
-  width={300}
-  height={220}
-  chartConfig={chartConfig}
-  accessor="value"
-  backgroundColor="transparent"
-  paddingLeft="15"
-  absolute
-  style={{ marginVertical: 8 }}
-  onDataPointClick={({ data, dataIndex }) => handlePiePress(data, dataIndex)}
-/>
+      {/* Pie Chart */}
+      <TouchableOpacity onPress={() => navigation.navigate('ViewTransactionDetails')}>
+        <PieChart
+          data={transactions}
+          width={Dimensions.get("window").width}
+          height={220}
+          chartConfig={chartConfig}
+          accessor="value"
+          backgroundColor="transparent"
+          paddingLeft="0"
+        />
+      </TouchableOpacity>
+      {/* Selected slice details */}
       <Text style={{ textAlign: 'center' }}>
-        {selectedSlice.label ? `${selectedSlice.label}: $${selectedSlice.value}` : 'Click on a slice to view details'}
+        {selectedSlice.label ? `${selectedSlice.label}: $${selectedSlice.value}` : 'Click on piechart to view details'}
       </Text>
     </View>
   );
