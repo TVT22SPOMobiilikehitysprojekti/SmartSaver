@@ -29,7 +29,7 @@ const Details = ({ navigation }) => {
             category: data.category,
             amount: data.amount,
             description: data.description,
-            date: convertFirebaseTimeStampToJS(data.date), 
+            date: convertFirebaseTimeStampToJS(doc.data().date), 
           });
         });
         setTransactions(tempTransactions);
@@ -99,7 +99,7 @@ const Details = ({ navigation }) => {
             <Text style={styles.detail}>Category: {transaction.category}</Text>
             <Text style={styles.detail}>Amount: ${transaction.amount}</Text>
             <Text style={styles.detail}>Description: {transaction.description}</Text>
-            <Text style={styles.detail}>Date: {new Date(transaction.date).toLocaleString()}</Text>
+            <Text style={styles.detail}>Date: {transaction.date}</Text>
           </View>
           <TouchableOpacity onPress={() => handleDelete(transaction.id)} style={styles.deleteButton}>
             <Text>Delete</Text>
