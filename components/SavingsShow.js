@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Modal, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import {
   fetchSavingsGoalsForShow,
   getCurrentUserId,
@@ -165,10 +165,13 @@ const SavingsShow = () => {
       />
       <Modal
         visible={showModal}
-        animationType="slide"
+        animationType="none"
         transparent={true}
       >
-        <View style={styles.modalContainer}>
+        <KeyboardAvoidingView 
+          style={styles.modalContainer}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Plan Details</Text>
             <Text style={styles.planTextModalT}>Title: {selectedPlan && selectedPlan.plan}</Text>
@@ -191,7 +194,7 @@ const SavingsShow = () => {
               <Text style={styles.closeButton}>Close</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
