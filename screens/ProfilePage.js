@@ -8,7 +8,7 @@ const ProfilePage = () => {
     const [userName, setUserName] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [profileImage, setProfileImage] = useState(null); // State for profile image
+    const [profileImage, setProfileImage] = useState(null); 
 
     useEffect(() => {
         const currentUserID = getCurrentUserId();
