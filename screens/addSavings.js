@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert, SafeAreaView } from 'react-native';
 import Modal from 'react-native-modal-datetime-picker'; // Lisätään Modal datetime picker
 import { auth } from '../firebase/Config';
-import { saveUserSavingsGoal } from '../firebase/Shortcuts';
+import { saveUserSavingsGoal, fetchCurrencySymbol, getCurrentUserId } from '../firebase/Shortcuts';
 import { Timestamp } from '@firebase/firestore';
 
 
@@ -11,10 +11,28 @@ const AddSavingScreen = () => {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [currencySymbol, setCurrencySymbol] = useState(null);
+
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
+
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   }
+  
 
   const handleSave = async () => {
     const user = auth.currentUser;
@@ -44,6 +62,9 @@ const AddSavingScreen = () => {
     }
     
   };
+  
+
+
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -60,7 +81,7 @@ const AddSavingScreen = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder={'Amount (€)'}
+        placeholder={`Amount (${currencySymbol})`}
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"

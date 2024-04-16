@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , TouchableWithoutFeedback, Keyboard,} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , TouchableWithoutFeedback, Keyboard,KeyboardAvoidingView, Platform} from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/Config';
 import { useNavigation } from '@react-navigation/native';
@@ -28,12 +28,16 @@ const Signup = () => {
           navigation.navigate('Intro1');
       } catch (error) {
           console.log(error.code, error.message);
+          Alert.alert("Registration Failed", error.message);
       }
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+    style={styles.container}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
       <Image
         source={require('../assets/smartsaver_logo.png')}
         style={styles.logo}
@@ -63,7 +67,7 @@ const Signup = () => {
               Sign in
           </Text>
       </Text>
-    </View>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
