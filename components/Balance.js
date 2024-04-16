@@ -2,12 +2,28 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase/Config'; // Oletetaan, että auth on jo tuotu
-import { saveUserBalance } from '../firebase/Shortcuts';
+import { saveUserBalance, getCurrentUserId, fetchCurrencySymbol } from '../firebase/Shortcuts';
 
 const BalanceComponent = ({ onSaved }) => {
   const [amount, setAmount] = useState('');
   const navigation = useNavigation();
+  const [currencySymbol, setCurrencySymbol] = useState(null);
 
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
+  
   const handleSave = () => {
     const user = auth.currentUser;
     if (user) {
@@ -31,7 +47,7 @@ const BalanceComponent = ({ onSaved }) => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Enter Amount"
+        placeholder={`Enter your balance (${currencySymbol})`}
         value={amount}
         keyboardType="numeric"
         onChangeText={setAmount}
