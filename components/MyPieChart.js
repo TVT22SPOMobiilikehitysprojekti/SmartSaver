@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { firestore, collection, onSnapshot, query, where } from '../firebase/Config';
 import { getCurrentUserId } from '../firebase/Shortcuts';
@@ -15,6 +15,8 @@ const chartConfig = {
   strokeWidth: 2,
   barPercentage: 1,
   useShadowColorFromDataset: false,
+
+
 };
 
 const PieChartComponent = () => {
@@ -34,32 +36,39 @@ const PieChartComponent = () => {
     );
   
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const tempTransactions = [];
+      const tempTransactions = {};
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        tempTransactions.push({
-          name: data.category,
-          value: data.amount,
-          id: doc.id, // Add transaction ID
-        });   
+        const categoryName = data.category;
+        if (tempTransactions[categoryName]) {
+          tempTransactions[categoryName].value += data.amount;
+        } else {
+          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+          tempTransactions[categoryName] = {
+            name: categoryName,
+            value: data.amount,
+            color: randomColor,
+          };
+        }
       });
-      setTransactions(tempTransactions);
+      // Convert object to array before setting state
+      setTransactions(Object.values(tempTransactions));
     });
   
     return unsubscribe;
   }, []);
 
-  // Function to handle pie slice press
+
 
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* Pie Chart */}
       <TouchableOpacity onPress={() => navigation.navigate('ViewTransactionDetails')}>
         <PieChart
           data={transactions}
           width={Dimensions.get("window").width}
-          height={220}
+          height={230}
           chartConfig={chartConfig}
           accessor="value"
           backgroundColor="transparent"
@@ -67,11 +76,17 @@ const PieChartComponent = () => {
         />
       </TouchableOpacity>
       {/* Selected slice details */}
-      <Text style={{ textAlign: 'center' }}>
-        {selectedSlice.label ? `${selectedSlice.label}: $${selectedSlice.value}` : 'Click on piechart to view details'}
+      <Text style={{ textAlign: 'center' }} >
+       Press PieChart To View Details
       </Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingLeft: 25 ,
+  },
+});
 
 export default PieChartComponent;

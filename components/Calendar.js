@@ -61,7 +61,6 @@ const CalendarComponent = () => {
       let unsubscribe;
       async function fetchData() {
         unsubscribe = await fetchSavingsGoals(userId, setMarkedDates, setSelectedGoals);
-        console.log(typeof unsubscribe);
       }
   
       fetchData();
