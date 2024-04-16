@@ -3,13 +3,27 @@ import { View, Text, StyleSheet } from 'react-native';
 import { db } from '../firebase/Config';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { set } from 'firebase/database';
+import {fetchCurrencySymbol, getCurrentUserId} from '../firebase/Shortcuts'
 
 
 const CurrentbalanceComponent = ({userId}) => {
     const [balance, setBalance] = useState('Loading...');
+    const [currencySymbol, setCurrencySymbol] = useState(null);
+
 
     useEffect(() => {
+        const userId = getCurrentUserId();
         if (!userId) return;
+
+                // Haetaan käyttäjän valuuttasymboli
+                fetchCurrencySymbol(userId,
+                    (symbol) => {
+                        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+                    },
+                    (error) => {
+                        console.error("Error fetching currency symbol: ", error);
+                    }
+                );
 
         //luodaan viite 'current' saldo-dokumenttiin käyttäjän 'balances' alikokoelmassa
         const balanceDocRef = doc(db, "Users", userId, "Balances", "current");
@@ -34,7 +48,14 @@ const CurrentbalanceComponent = ({userId}) => {
 
     return (
         <View style={styles.container}>
-        <Text style={styles.text}>Current Balance: €{balance}</Text>
+                    {/* Renderöi saldo valuuttasymbolilla, jos se on saatavilla */}
+                    {currencySymbol && (
+                <Text style={styles.text}>Current Balance: {currencySymbol} {balance}</Text>
+            )}
+            {/* Jos valuuttasymbolia ei ole vielä saatavilla, näytä vain saldo */}
+            {!currencySymbol && (
+                <Text style={styles.text}>Current Balance: {balance}</Text>
+            )}
         </View>
     );
 }

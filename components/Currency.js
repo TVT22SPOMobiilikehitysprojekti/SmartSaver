@@ -71,48 +71,56 @@ const Currency = () => {
 return (
   <View style={styles.container}>
     <Text style={styles.header}>Choose Your Currency</Text>
-      <FlatList
-          data={currencies}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-              <Pressable 
-                  onPress={() => handleCurrencySelect(item)}
-                  style={[
-                      styles.currencyItem, 
-                      item.id === selectedCurrencyId ? styles.selected : {}
-                  ]}
-              >
-                  <Text style={styles.text}>{item.name}</Text>
-              </Pressable>
-          )}
-      />
+    <FlatList
+      style={styles.list}
+      data={currencies}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <Pressable
+          onPress={() => handleCurrencySelect(item)}
+          style={[
+            styles.currencyItem,
+            item.id === selectedCurrencyId ? styles.selected : {}
+          ]}
+        >
+          <Text style={styles.text}>{item.name}</Text>
+        </Pressable>
+      )}
+    />
   </View>
 );
 };
 
 const styles = StyleSheet.create({
-
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: 'white',
-    textAlign: 'center', // Center align the header text
-  },
-  list: {
-    paddingHorizontal: 20, // Adds horizontal padding to the list
-  },
-  currencyItem: {
-    paddingVertical: 10, // Adds vertical padding to each currency item
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  selected: {
-    backgroundColor: '#DDDDDD',
-  },
-  text: {
-    fontSize: 18,
-  }
+container: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#34a4eb',
+  paddingTop: 22,
+},
+header: {
+  fontSize: 24,
+  fontWeight: 'bold',
+  marginBottom: 20,
+  color: 'white',
+  textAlign: 'center',
+},
+list: {
+  paddingHorizontal: 20,
+  width: '100%', // Leveys täyttää koko näytön
+},
+currencyItem: {
+  paddingVertical: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: '#ccc',
+},
+selected: {
+  backgroundColor: '#DDDDDD',
+},
+text: {
+  fontSize: 18,
+}
 });
 
 export default Currency;
