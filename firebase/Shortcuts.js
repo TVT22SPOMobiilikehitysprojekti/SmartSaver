@@ -330,7 +330,6 @@ const getUserData = async (userId) => {
     
     if (docSnapshot.exists()) {
       const userData = docSnapshot.data();
-      console.log("User data:",userData)
       return userData; // Return the entire data object if needed
     } else {
       console.log("No such document!");
