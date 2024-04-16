@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { getUserData, getCurrentUserId } from '../firebase/Shortcuts'; 
+import { View, Text, ActivityIndicator, Image, TouchableOpacity, StyleSheet, Modal, Pressable } from 'react-native';
+import { getUserData, getCurrentUserId, saveImageUriToDatabase } from '../firebase/Shortcuts'; 
 import Icon from 'react-native-vector-icons/FontAwesome'; 
+import * as ImagePicker from 'expo-image-picker';
 
 const ProfilePage = () => {
     const [userEmail, setUserEmail] = useState(null);
     const [userName, setUserName] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [profileImage, setProfileImage] = useState(null); 
+    const [profileImageURL, setProfileImageURL] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
-        const currentUserID = getCurrentUserId();
         const fetchUserData = async () => {
             try {
+                const currentUserID = getCurrentUserId();
                 const userData = await getUserData(currentUserID);
-              
                 const email = userData && userData.email ? userData.email : null;
                 const name = userData && userData.name ? userData.name : null;
-                const profilePic = userData && userData.profilePic ? userData.profilePic : null; // Assuming profilePic is the key for profile image
+                const profilePicURL = userData && userData.imageUrl ? userData.imageUrl : null;
                 setUserEmail(email);
                 setUserName(name);
-                setProfileImage(profilePic);
+                setProfileImageURL(profilePicURL);
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -29,14 +30,53 @@ const ProfilePage = () => {
             }
         };
         fetchUserData();
-    
-        // Cleanup function
-        return () => {
-            // Cleanup tasks if needed
-        };
     }, []);
-     
-  
+
+    const handleUpdateProfilePic = async (source) => {
+        setProfileImageURL(source.uri);
+        await saveImageUriToDatabase(getCurrentUserId(), source.uri);
+    };
+
+    const handleTakePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert("Permission required", "Camera permission is required to take photos");
+            return;
+        }
+      
+        const cropResult = await ImagePicker.launchCameraAsync({
+            mediaType: 'photo',
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+            
+        if (!cropResult.cancelled && cropResult.assets.length > 0) {
+            handleUpdateProfilePic(cropResult.assets[0]);
+            setModalVisible(false); // Close the modal after selecting an image
+        }
+    };
+
+    const handleChooseFromLibrary = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            Alert.alert("Permission required", "Storage permission is required to access the library");
+            return;
+        }
+      
+        const cropResult = await ImagePicker.launchImageLibraryAsync({
+            mediaType: 'photo',
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+                
+        if (!cropResult.cancelled && cropResult.assets.length > 0) {
+            handleUpdateProfilePic(cropResult.assets[0]);
+            setModalVisible(false); // Close the modal after selecting an image
+        }
+    };
+
     if (loading) {
         return (
             <View style={styles.container}>
@@ -44,7 +84,7 @@ const ProfilePage = () => {
             </View>
         );
     }
-  
+
     if (error) {
         return (
             <View style={styles.container}>
@@ -52,14 +92,39 @@ const ProfilePage = () => {
             </View>
         );
     }
-  
+
     return (
         <View style={styles.container}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                            <Icon name="times" size={24} color="black" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={handleTakePhoto}>
+                            <Icon name="camera" size={24} color="white" />
+                            <Text style={styles.modalButtonText}>Take a Photo</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={handleChooseFromLibrary}>
+                            <Icon name="image" size={24} color="white" />
+                            <Text style={styles.modalButtonText}>Choose from Library</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
             <View style={styles.profileIconContainer}>
-                <TouchableOpacity onPress={() => {/* Add function to change profile image */}}>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <Image 
-                        source={profileImage ? { uri: profileImage } : require('../assets/smartsaver_logo.png')} // Provide a default image
+                        source={profileImageURL ? { uri: profileImageURL } : require('../assets/smartsaver_logo.png')} 
                         style={styles.profileIcon} 
+                        onError={() => setProfileImageURL(null)} 
                     />
                     <Icon name="pencil" size={20} style={styles.editIcon} />
                 </TouchableOpacity>
@@ -83,8 +148,41 @@ const ProfilePage = () => {
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        alignItems: 'left',
+        alignItems: 'center',
         paddingTop: 20,  
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        width: '80%',
+        alignItems: 'center',
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+    },
+    modalButton: {
+        backgroundColor: 'blue',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginVertical: 10,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        marginLeft: 10,
     },
     profileIconContainer: {
         alignItems: 'center',
