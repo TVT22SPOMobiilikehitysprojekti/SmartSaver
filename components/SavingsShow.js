@@ -36,7 +36,6 @@ const SavingsShow = () => {
       const currentDate = new Date();
       const targetDate = new Date(selectedPlan.date);
       const daysLeft = Math.ceil((targetDate - currentDate) / (1000 * 60 * 60 * 24));
-      console.log("Days left:", daysLeft);
       const amountNeeded = parseFloat(selectedPlan.amount) - parseFloat(savedAmount);
       const dailySavings = amountNeeded / daysLeft;
       const monthlySavings = amountNeeded / Math.ceil(daysLeft / 30);

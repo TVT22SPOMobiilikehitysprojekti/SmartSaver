@@ -276,7 +276,6 @@ const fetchSavedAmountFromDB = async (userId, savingsGoalId) => {
     const docSnapshot = await getDoc(docRef);
     if (docSnapshot.exists()) {
       const data = docSnapshot.data();
-      console.log("Data retrieved from document:", data);
       return data.savedAmount || 0;
     } else {
       console.log("No such document!");
