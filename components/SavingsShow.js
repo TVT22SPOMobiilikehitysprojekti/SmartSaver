@@ -63,7 +63,6 @@ const SavingsShow = () => {
   const handlePress = async (item) => {
     try {
       const savedAmount = await fetchSavedAmountFromDB(getCurrentUserId(), item.id);
-      console.log("Saved amount:", savedAmount);
       setSelectedPlan(item);
       setShowModal(true);
     } catch (error) {
