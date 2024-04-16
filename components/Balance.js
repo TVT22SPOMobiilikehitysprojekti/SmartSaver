@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase/Config'; // Oletetaan, että auth on jo tuotu
-import { saveUserBalance } from '../firebase/Shortcuts';
+import { saveUserBalance, getCurrentUserId, fetchCurrencySymbol } from '../firebase/Shortcuts';
 
 const BalanceComponent = ({ onSaved }) => {
   const [amount, setAmount] = useState('');
   const navigation = useNavigation();
+  const [currencySymbol, setCurrencySymbol] = useState(null);
 
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
+  
   const handleSave = () => {
     const user = auth.currentUser;
     if (user) {
@@ -31,12 +47,14 @@ const BalanceComponent = ({ onSaved }) => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Enter Amount"
+        placeholder={`Enter your balance (${currencySymbol})`}
         value={amount}
         keyboardType="numeric"
         onChangeText={setAmount}
       />
-      <Button title="Save" onPress={handleSave} />
+      <TouchableOpacity style={styles.button} onPress={handleSave}>
+      <Text style={styles.buttonText}>Save</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -50,7 +68,23 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     borderWidth: 1,
     padding: 10,
-    borderRadius: 4
-  }
+    borderRadius: 4,
+    backgroundColor: 'gray',
+    borderColor: 'white',
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: 300,
+},
+  buttonText: {
+    fontSize: 20,
+    color: 'white',
+},
+  
 });
 export default BalanceComponent;

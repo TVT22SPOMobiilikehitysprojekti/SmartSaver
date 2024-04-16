@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar } from 'react-native-calendars';
-import { fetchSavingsGoals } from '../firebase/Shortcuts';
+import { fetchSavingsGoals, fetchCurrencySymbol, getCurrentUserId } from '../firebase/Shortcuts';
 import { auth } from '../firebase/Config';
 import { View, Modal, Text, Pressable, StyleSheet } from 'react-native';
 
@@ -53,6 +53,21 @@ const CalendarComponent = () => {
   const [selectedGoals, setSelectedGoals] = useState({});
   const [selectedDate, setSelectedDate] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [currencySymbol, setCurrencySymbol] = useState('');
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     const userId = auth.currentUser ? auth.currentUser.uid : null;
@@ -95,7 +110,7 @@ const CalendarComponent = () => {
               {selectedGoals[selectedDate] && selectedGoals[selectedDate].map((goal, index) => (
                 <View key={index} style={styles.goalItem}>
                   <Text style={styles.goalText}>Plan: {goal.plan}</Text>
-                  <Text style={styles.goalText}>Amount: {goal.amount}</Text>
+                  <Text style={styles.goalText}>Amount: {goal.amount}{currencySymbol}</Text>
                 </View>
               ))}
               <Pressable style={styles.closeButton} onPress={() => setShowModal(false)}>

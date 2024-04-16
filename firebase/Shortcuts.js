@@ -222,6 +222,130 @@ const updateTransaction = async (userId, transactionId, newData) => {
   }
 };
 
+const handleSaveCustomAmount = async (
+  selectedPlan,
+  customSavingsAmount,
+  setCustomSavingsAmount,
+  setMonthlySavingsNeeded,
+  monthlySavingsNeeded,
+  setSavedAmount,
+  setSelectedPlan,
+  isSavedAmountUpdated,
+  setIsSavedAmountUpdated
+) => {
+
+  // Tarkista, että selectedPlan on määritelty ja loggaa se tarvittaessa
+  if (!selectedPlan || !selectedPlan.userId) {
+    console.log("No selectedPlan or missing userId.");
+    alert("No plan selected or user ID is missing.");
+    return;
+  }
+
+  try {
+    // Lasketaan uusi tallennettu summa lisäämällä vanha summa ja uusi custom summa
+    const newSavedAmount = parseFloat(customSavingsAmount);
+
+    // Päivitetään tietokantaan tallennettu summa
+    await updateSavedAmount(selectedPlan.userId, selectedPlan.id, newSavedAmount);
+
+    // Päivitetään tilaa uudella tallennetulla summalla
+    setSavedAmount(newSavedAmount);
+
+    // Päivitetään valittu suunnitelma uudella tallennetulla summalla
+    const updatedSelectedPlan = { ...selectedPlan, savedAmount: newSavedAmount };
+    setSelectedPlan(updatedSelectedPlan);
+
+    // Aseta tila osoittamaan, että tallennettu summa on päivitetty
+    if (setIsSavedAmountUpdated) {
+      setIsSavedAmountUpdated(true);
+    }
+    
+    // Alert käyttäjälle onnistuneesta tallennuksesta
+    alert("Custom savings added successfully.");
+
+    // Tyhjennetään mukautetun säästösumman syöte
+    setCustomSavingsAmount('');
+  } catch (error) {
+    // Käsitellään virhe
+    console.error("Error in handleSaveCustomAmount:", error);
+    alert("An unexpected error occurred.");
+  } finally {
+  }
+};
+
+
+const updateSavedAmount = async (userId, savingsGoalId, newSavedAmount) => {
+  const userRef = doc(db, "Users", userId, "SavingsGoal", savingsGoalId);
+
+  try {
+      const docSnapshot = await getDoc(userRef);
+      if (docSnapshot.exists()) {
+          const currentSavedAmount = docSnapshot.data().savedAmount || 0;
+          const updatedSavedAmount = currentSavedAmount + newSavedAmount;
+
+          await updateDoc(userRef, {
+              savedAmount: updatedSavedAmount
+          });
+          console.log("Saved amount updated successfully.");
+      } else {
+          console.log("No such document!");
+      }
+  } catch (error) {
+      console.error("Error updating saved amount: ", error);
+  }
+};
+
+const setSavedAmountState = (newSavedAmount) => {
+  setSelectedPlan((prevPlan) => ({
+    ...prevPlan,
+    savedAmount: newSavedAmount,
+  }));
+};
+
+
+const fetchSavedAmountFromDB = async (userId, savingsGoalId) => {
+  try {
+    const docRef = doc(db, "Users", userId, "SavingsGoal", savingsGoalId);
+    const docSnapshot = await getDoc(docRef);
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data();
+      return data.savedAmount || 0;
+    } else {
+      console.log("No such document!");
+      return 0;
+    }
+  } catch (error) {
+    console.error("Error fetching saved amount from database: ", error);
+    return 0;
+  }
+};
+
+const deleteSavingsPlanDB = async (savingsPlanId) => {
+  const userId = getCurrentUserId();
+  if (!userId) {
+    console.log("User ID is missing");
+    return;
+  }
+  try {
+    await deleteDoc(doc(db, "Users", userId, "SavingsGoal", savingsPlanId));
+    console.log("Savings plan deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting savings plan:", error);
+    throw error;  // Heitä virhe eteenpäin käsiteltäväksi
+  }
+};
+
+const updateUserName = async (userId, name) => {
+  const userDocRef = doc(db, "Users", userId);
+  return updateDoc(userDocRef, { name: name });
+};
+
+
+
+
+
+
+
   
   export { 
     saveUserBalance,
@@ -237,6 +361,10 @@ const updateTransaction = async (userId, transactionId, newData) => {
     deleteTransaction,
     updateTransaction,
     fetchCurrencySymbol,
-    updateCurrencySymbol,
-  
+    handleSaveCustomAmount,
+    updateSavedAmount,
+    setSavedAmountState,
+    fetchSavedAmountFromDB,
+    deleteSavingsPlanDB,
+    updateUserName,
 };

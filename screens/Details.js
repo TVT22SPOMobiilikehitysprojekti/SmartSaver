@@ -1,7 +1,7 @@
 import React, { useState, useEffect,  } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity , ScrollView, Alert } from 'react-native';
 import { firestore, collection, onSnapshot, query, where, deleteDoc, doc } from '../firebase/Config'; // Import Firebase
-import { getCurrentUserId, deleteTransaction, updateTransaction } from '../firebase/Shortcuts';
+import { getCurrentUserId, deleteTransaction, updateTransaction, fetchCurrencySymbol } from '../firebase/Shortcuts';
 import { convertFirebaseTimeStampToJS } from '../helpers/TimeConvert'
 import EditModal from '../components/EditModal';
 
@@ -11,7 +11,22 @@ const Details = ({ navigation }) => {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedTransactionId, setSelectedTransactionId] = useState('');
     const [initialEditValues, setInitialEditValues] = useState({});
+    const [currencySymbol, setCurrencySymbol] = useState(null);
   
+    useEffect(() => {
+      const userId = getCurrentUserId();
+      if (!userId) return;
+      // Haetaan käyttäjän valuuttasymboli
+      fetchCurrencySymbol(userId,
+        (symbol) => {
+          setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+        },
+        (error) => {
+          console.error("Error fetching currency symbol: ", error);
+        }
+      );
+    }, []);
+
     useEffect(() => {
 
       const currentUserID = getCurrentUserId();
@@ -97,7 +112,7 @@ const Details = ({ navigation }) => {
           </TouchableOpacity>
           <View style={styles.transactionDetails}>
             <Text style={styles.detail}>Category: {transaction.category}</Text>
-            <Text style={styles.detail}>Amount: ${transaction.amount}</Text>
+            <Text style={styles.detail}>Amount: {transaction.amount}{currencySymbol}</Text>
             <Text style={styles.detail}>Description: {transaction.description}</Text>
             <Text style={styles.detail}>Date: {transaction.date}</Text>
           </View>
