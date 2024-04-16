@@ -19,6 +19,8 @@ const chartConfig = {
 
 };
 
+
+
 const PieChartComponent = () => {
   // State variables
   const [transactions, setTransactions] = useState([]);
@@ -35,19 +37,44 @@ const PieChartComponent = () => {
       where('isExpense', '==', true)
     );
   
+    const availableColors = [
+      '#FF5733', // Red
+      '#FFC300', // Yellow
+      '#C70039', // Maroon
+      '#900C3F', // Dark Magenta
+      '#581845', // Dark Red
+      '#00CED1', // Dark Turquoise
+      '#4682B4', // Steel Blue
+      '#8A2BE2', // Blue Violet
+      '#228B22', // Forest Green
+      '#FF8C00', // Dark Orange
+      '#9932CC', // Dark Orchid
+      '#6A5ACD', // Slate Blue
+      '#4169E1', // Royal Blue
+      '#4B0082', // Indigo
+      '#20B2AA', // Light Sea Green
+      '#DC143C', // Crimson
+      '#2E8B57', // Sea Green
+      '#FF1493', // Deep Pink
+      '#8B4513', // Saddle Brown
+      '#8B0000'  // Dark Red
+    ]; 
+  
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const tempTransactions = {};
+      let colorIndex = 0;
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         const categoryName = data.category;
         if (tempTransactions[categoryName]) {
           tempTransactions[categoryName].value += data.amount;
         } else {
-          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+          let color = availableColors[colorIndex];
+          colorIndex = (colorIndex + 1) % availableColors.length; // Cycle through colors
           tempTransactions[categoryName] = {
             name: categoryName,
             value: data.amount,
-            color: randomColor,
+            color: color,
           };
         }
       });

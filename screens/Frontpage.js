@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase/Config'; 
 import PieChartComponent from '../components/MyPieChart';
@@ -44,6 +44,7 @@ const Frontpage = () => {
 
   const toggleChildPressables = () => {
     setShowChildPressables(!showChildPressables);
+    
   };
 
   const handlebuttonpress = () => {
@@ -53,7 +54,7 @@ const Frontpage = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>SmartSaver</Text>
         <View style={styles.iconImageDotsContainer}>
@@ -80,6 +81,9 @@ const Frontpage = () => {
           style={styles.modalBackground}
           onPress={() => setModalVisible(false)}>
           <View style={styles.modalView}>
+          <TouchableOpacity onPress={() => navigation.navigate('ProfilePage')}>
+              <Text style={styles.modalButton}>Profile</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
               <Text style={styles.modalButton}>Settings</Text>
             </TouchableOpacity>
@@ -111,7 +115,7 @@ const Frontpage = () => {
             style={styles.iconImage}
           />
         </Pressable>
-        {showChildPressables && (
+        {showChildPressables   &&  (
           <View style={styles.childPressablesContainer}>
             <Pressable
               style={[styles.iconButton, styles.childButton]}
@@ -133,7 +137,7 @@ const Frontpage = () => {
           </View>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -225,23 +229,25 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    borderRadius: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    elevation: 5,
     padding: 1,
     alignItems: 'flex-start',
     position: 'absolute',
-    top: -5,
-    left: '60%',
+    top: 70,
+    left: '50%',
+    marginRight: 10,
     right: 0,
     width: 'fit-content',
   
  
   },
   modalButton: {
-    backgroundColor: 'grey',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
+    borderRadius: 5,
+    padding: 15,
+    paddingBottom: 30,
+    width: "fit-content",
     
   },
   modalBackground: {
