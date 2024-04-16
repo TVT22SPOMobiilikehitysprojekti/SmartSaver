@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, Image, TouchableOpacity, StyleSheet, Modal, Pressable } from 'react-native';
 import { getUserData, getCurrentUserId, saveImageUriToDatabase } from '../firebase/Shortcuts'; 
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,7 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [profileImageURL, setProfileImageURL] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -52,6 +53,7 @@ const ProfilePage = () => {
             
         if (!cropResult.cancelled && cropResult.assets.length > 0) {
             handleUpdateProfilePic(cropResult.assets[0]);
+            setModalVisible(false); // Close the modal after selecting an image
         }
     };
 
@@ -71,6 +73,7 @@ const ProfilePage = () => {
                 
         if (!cropResult.cancelled && cropResult.assets.length > 0) {
             handleUpdateProfilePic(cropResult.assets[0]);
+            setModalVisible(false); // Close the modal after selecting an image
         }
     };
 
@@ -92,17 +95,38 @@ const ProfilePage = () => {
 
     return (
         <View style={styles.container}>
-                <Image 
-                    source={profileImageURL ? { uri: profileImageURL } : require('../assets/smartsaver_logo.png')} 
-                    style={styles.profileIcon} 
-                    onError={() => setProfileImageURL(null)} 
-                />
-        <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleTakePhoto}>
-                    <Text style={styles.buttonText}>Take a Photo</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={handleChooseFromLibrary}>
-                    <Text style={styles.buttonText}>Choose from Library</Text>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                            <Icon name="times" size={24} color="black" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={handleTakePhoto}>
+                            <Icon name="camera" size={24} color="white" />
+                            <Text style={styles.modalButtonText}>Take a Photo</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={handleChooseFromLibrary}>
+                            <Icon name="image" size={24} color="white" />
+                            <Text style={styles.modalButtonText}>Choose from Library</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            <View style={styles.profileIconContainer}>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                    <Image 
+                        source={profileImageURL ? { uri: profileImageURL } : require('../assets/smartsaver_logo.png')} 
+                        style={styles.profileIcon} 
+                        onError={() => setProfileImageURL(null)} 
+                    />
+                    <Icon name="pencil" size={20} style={styles.editIcon} />
                 </TouchableOpacity>
             </View>
             <View style={styles.userInfoContainer}>
@@ -117,16 +141,52 @@ const ProfilePage = () => {
                     <Text style={styles.value}>{userEmail}</Text>
                 </View>
             </View>
-            
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 20,  
+    },
+    modalContainer: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        width: '80%',
+        alignItems: 'center',
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+    },
+    modalButton: {
+        backgroundColor: 'blue',
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginVertical: 10,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        marginLeft: 10,
+    },
+    profileIconContainer: {
+        alignItems: 'center',
+        justifyContent: 'flex-start',
     },
     profileIcon: {
         width: 150,
@@ -137,40 +197,25 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        backgroundColor: 'transparent',
+        backgroundColor: 'transparent', // Adjust icon's background color as needed
     },
     userInfoContainer: {
-        marginTop: 20,
-        alignItems: 'center',
+        flexDirection: 'column',
+        marginVertical: 25,
     },
     userInfoColumn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
+        flexDirection: 'column',
+        marginVertical: 15,
+        marginLeft: 50,
     },
     icon: {
         marginRight: 10,
     },
     label: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 20,
     },
     value: {
-        fontSize: 16,
-    },
-    buttonsContainer: {
-        flexDirection: 'row',
-        marginTop: 20,
-    },
-    button: {
-        backgroundColor: 'blue',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginHorizontal: 10,
-    },
-    buttonText: {
-        color: 'white',
+        fontSize: 24,
         fontWeight: 'bold',
     },
 });
