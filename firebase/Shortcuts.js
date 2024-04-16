@@ -51,6 +51,21 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
     }
   };
 
+  const updateCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+  
+    try {
+      await updateDoc(currencyDocRef, {
+        Symbol: String(symbol)  // Only updates the Symbol field
+      });
+  
+      onSuccess("Symbol updated successfully"); // Call the success callback with a message
+    } catch (error) {
+      console.error("Error updating currency symbol: ", error);
+      onError(error);  // Call the error callback
+    }
+  };
+
   const fetchCurrencySymbol = async (userId, onSuccess, onError) => {
     const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
   
@@ -221,6 +236,7 @@ const updateTransaction = async (userId, transactionId, newData) => {
     saveUserSavingsGoal,
     deleteTransaction,
     updateTransaction,
-    fetchCurrencySymbol
+    fetchCurrencySymbol,
+    updateCurrencySymbol,
   
 };

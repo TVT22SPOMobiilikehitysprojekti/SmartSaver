@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     padding: 1,
     alignItems: 'flex-start',
     position: 'absolute',
-    top: -5,
+    top: 25,
     left: '60%',
     right: 0,
     width: 'fit-content',
