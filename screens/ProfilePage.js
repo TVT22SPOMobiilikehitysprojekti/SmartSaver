@@ -84,13 +84,11 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'left',
-        paddingTop: 20,
-        
+        paddingTop: 20,  
     },
     profileIconContainer: {
         alignItems: 'center',
         justifyContent: 'flex-start',
-
     },
     profileIcon: {
         width: 150,
@@ -106,16 +104,13 @@ const styles = StyleSheet.create({
     userInfoContainer: {
         flexDirection: 'column',
         marginVertical: 25,
-
     },
     userInfoColumn: {
         flexDirection: 'column',
         marginVertical: 15,
         marginLeft: 50,
-
     },
     icon: {
-
         marginRight: 10,
     },
     label: {
