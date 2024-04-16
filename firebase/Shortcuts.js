@@ -36,8 +36,9 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
   }
 };
 
-const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
-    const currencyDocRef = doc(db, "Users", userId, "Currency", "symbol");
+  const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+
   
     try {
       await setDoc(currencyDocRef, {
@@ -51,7 +52,27 @@ const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
     }
   };
 
-const saveUserTransaction = async (userId, transactionData, onSuccess, onError) => {
+  const fetchCurrencySymbol = async (userId, onSuccess, onError) => {
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+  
+    try {
+      const currencyDocSnap = await getDoc(currencyDocRef); // Haetaan asiakirjan tiedot
+      if (currencyDocSnap.exists()) {
+        const currencyData = currencyDocSnap.data(); // Haetaan dokumentin data
+        const symbol = currencyData.Symbol; // Haetaan valuuttasymboli
+        onSuccess(symbol); // Lähetetään valuuttasymboli onnistumistapauksessa
+      } else {
+        // Dokumenttia ei löydetty
+        onError("Currency document not found");
+      }
+    } catch (error) {
+      console.error("Error fetching symbol: ", error);
+      onError(error);
+    }
+  };
+
+
+  const saveUserTransaction = async (userId, transactionData, onSuccess, onError) => {
     try {
       const transactionRef = collection(db, "Users", userId, "Transactions");
       await addDoc(transactionRef, {
@@ -322,12 +343,10 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
     saveUserSavingsGoal,
     deleteTransaction,
     updateTransaction,
+    fetchCurrencySymbol,
     handleSaveCustomAmount,
     updateSavedAmount,
     setSavedAmountState,
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
-    
-
-
 };

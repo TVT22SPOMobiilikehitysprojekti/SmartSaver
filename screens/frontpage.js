@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import CurrentbalanceComponent from '../components/Currentbalance';
 import { getCurrentUserId } from '../firebase/Shortcuts';
 
+
 const Frontpage = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
