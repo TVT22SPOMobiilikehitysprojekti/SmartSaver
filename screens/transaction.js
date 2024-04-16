@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { auth } from '../firebase/Config';
-import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories } from '../firebase/Shortcuts';
+import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories, getCurrentUserId, fetchCurrencySymbol } from '../firebase/Shortcuts';
 
 const AddTransactionScreen = () => {
   const [description, setDescription] = useState('');
@@ -11,6 +11,23 @@ const AddTransactionScreen = () => {
   const [customCategory, setCustomCategory] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [categories, setCategories] = useState(['General','Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Health']);
+  const [currencySymbol, setCurrencySymbol] = useState(null);
+
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
+
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -111,7 +128,10 @@ const AddTransactionScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+    style={styles.container}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
       {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
       <Switch
         value={isExpense}
@@ -132,7 +152,7 @@ const AddTransactionScreen = () => {
       {/* Amount-kenttä */}
       <TextInput
         style={styles.input}
-        placeholder="Amount"
+        placeholder={`Amount (${currencySymbol})`}
         value={amount}
         keyboardType="numeric"
         onChangeText={setAmount}
@@ -152,6 +172,11 @@ const AddTransactionScreen = () => {
         visible={showModal}
         onRequestClose={() => setShowModal(false)}
       >
+        <KeyboardAvoidingView 
+    style={styles.centeredView}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalHeader}>Categories</Text>
@@ -178,11 +203,13 @@ const AddTransactionScreen = () => {
             <Button title="Save Category" onPress={handleSaveCategory} />
           </View>
         </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
       </Modal>
       <Pressable style={styles.button} onPress={handleSaveTransaction}>
         <Text style={styles.buttonText}>Add Transaction</Text>
       </Pressable>
-    </View>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };

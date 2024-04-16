@@ -323,6 +323,7 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
   }
 };
 
+
 const getUserData = async (userId) => {
   try {
     const docRef = doc(db, "Users", userId);
@@ -340,6 +341,12 @@ const getUserData = async (userId) => {
     throw error;
   }
 };
+
+const updateUserName = async (userId, name) => {
+  const userDocRef = doc(db, "Users", userId);
+  return updateDoc(userDocRef, { name: name });
+};
+
   
   export { 
     saveUserBalance,
@@ -361,4 +368,5 @@ const getUserData = async (userId) => {
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
     getUserData,
+    updateUserName,
 };
