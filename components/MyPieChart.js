@@ -91,7 +91,7 @@ const PieChartComponent = () => {
       {isLoading ? ( 
         <Text>Loading...</Text>
       ) : transactions.length === 0 ? ( 
-        <Text>No transactions available. Make transactions to see data.</Text>
+        <Text style={{paddingTop: 75, justifyContent: 'center', alignContent: 'center'}}>No transactions available.</Text>
       ) : (
         <>
           {/* Pie Chart */}
