@@ -89,8 +89,10 @@ const AddTransactionScreen = () => {
       try {
         // Tallenna uusi kategorialista Firestoreen
         await saveCategories(userId, newCategories);
+        console.log("Categories saved successfully");
       } catch (error) {
         console.error("Error saving categories: ", error);
+        Alert.alert("Error", "Failed to save categories.");
       }
     }
   };

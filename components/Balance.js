@@ -29,7 +29,6 @@ const BalanceComponent = ({ onSaved }) => {
     if (user) {
       saveUserBalance(user.uid, amount, 
         () => {
-          Alert.alert("Success", "Balance has been saved successfully.");
           setAmount(''); // Tyhjennä kenttä onnistuneen tallennuksen jälkeen
           onSaved && onSaved();
           navigation.navigate('Intro4'); // Navigoi toiselle näytölle

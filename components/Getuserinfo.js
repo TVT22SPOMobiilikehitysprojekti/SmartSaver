@@ -13,7 +13,6 @@ const Getuserinfo = () => {
         const user = auth.currentUser;
         if (user) {
             updateUserName(user.uid, name).then(() => {
-                Alert.alert("Success", "Name has been updated successfully.");
                 setName('');
                 navigation.navigate('Intro2');
             }).catch((error) => {

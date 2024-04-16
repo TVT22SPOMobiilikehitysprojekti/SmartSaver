@@ -53,7 +53,6 @@ const Currency = () => {
     if (userId) {
         saveCurrencySymbol(userId, currency.symbol,
             () => {
-                Alert.alert("Success", "Currency symbol has been saved successfully.");
                 setSelectedCurrencyId(currency.id); // Päivitä valittu valuutta-ID
                 navigation.navigate('Intro3'); 
             },

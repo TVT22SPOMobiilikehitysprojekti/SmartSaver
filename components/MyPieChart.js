@@ -99,7 +99,7 @@ const PieChartComponent = () => {
             <PieChart
               data={transactions}
               width={Dimensions.get("window").width}
-              height={240}
+              height={Dimensions.get("window").height / 3.4}
               chartConfig={chartConfig}
               accessor="value"
               backgroundColor="transparent"
