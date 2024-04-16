@@ -323,20 +323,24 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
   }
 };
 
-const getUserEmail = async (userId) =>{
-  if(!userId){
-    console.log("User ID is missing");
-    return;
-  }
-  try{
-    await getDoc(doc(db, "Users", userId));
-    console.log("User Info Successfully get")
+const getUserData = async (userId) => {
+  try {
+    const docRef = doc(db, "Users", userId);
+    const docSnapshot = await getDoc(docRef);
+    
+    if (docSnapshot.exists()) {
+      const userData = docSnapshot.data();
+      console.log("User data:",userData)
+      return userData; // Return the entire data object if needed
+    } else {
+      console.log("No such document!");
+      return null;
+    }
   } catch (error) {
-    console.error("Error Fetching user info", error);
-    throw error; 
+    console.error("Error fetching user info: ", error);
+    throw error;
   }
 };
-
   
   export { 
     saveUserBalance,
@@ -357,5 +361,5 @@ const getUserEmail = async (userId) =>{
     setSavedAmountState,
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
-    getUserEmail,
+    getUserData,
 };

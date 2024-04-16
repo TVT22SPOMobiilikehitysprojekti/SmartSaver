@@ -13,6 +13,7 @@ import Savings from './screens/savings';
 import SettingsScreen from './screens/settings';
 import TransactionScreen from './screens/transaction';
 import addSavingScreen from './screens/addSavings';
+import ViewTransactionDetailsScreen from './screens/Details';
 import ProfilePage from './screens/ProfilePage';
 
 const Stack = createNativeStackNavigator();
