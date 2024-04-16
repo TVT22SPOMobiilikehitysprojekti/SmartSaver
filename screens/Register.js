@@ -28,6 +28,7 @@ const Signup = () => {
           navigation.navigate('Intro1');
       } catch (error) {
           console.log(error.code, error.message);
+          Alert.alert("Registration Failed", error.message);
       }
   };
 

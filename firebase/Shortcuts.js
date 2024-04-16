@@ -323,6 +323,11 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
   }
 };
 
+const updateUserName = async (userId, name) => {
+  const userDocRef = doc(db, "Users", userId);
+  return updateDoc(userDocRef, { name: name });
+};
+
 
 
 
@@ -349,4 +354,5 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
     setSavedAmountState,
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
+    updateUserName,
 };
