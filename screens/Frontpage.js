@@ -54,7 +54,7 @@ const Frontpage = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>SmartSaver</Text>
         <View style={styles.iconImageDotsContainer}>
@@ -66,37 +66,17 @@ const Frontpage = () => {
           </Pressable>
         </View>
       </View>
-      <View style={styles.calendarContainer}>
-        <CalendarComponent />
-      </View>
-      <View style={styles.balanceInfo}>
-        <CurrentbalanceComponent userId={getCurrentUserId()}/>
-      </View>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <Pressable
-          style={styles.modalBackground}
-          onPress={() => setModalVisible(false)}>
-          <View style={styles.modalView}>
-          <TouchableOpacity onPress={() => {navigation.navigate('ProfilePage');setModalVisible(false);}}>
-              <Text style={styles.modalButton}>Profile</Text>
-              
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {navigation.navigate('Settings');setModalVisible(false);}}>
-              <Text style={styles.modalButton}>Settings</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout}>
-              <Text style={styles.modalButton}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Modal>
-      <View>
-        <PieChartComponent />
-      </View>
+      <ScrollView style={styles.content}>
+        <View style={styles.calendarContainer}>
+          <CalendarComponent />
+        </View>
+        <View style={styles.balanceInfo}>
+          <CurrentbalanceComponent userId={getCurrentUserId()}/>
+        </View>
+        <View>
+          <PieChartComponent />
+        </View>
+      </ScrollView>
       <View style={styles.footer}>
         <Pressable
           style={[styles.iconButton, styles.piggyButton]}
@@ -108,15 +88,13 @@ const Frontpage = () => {
         </Pressable>
         <Pressable
           style={[styles.iconButton, styles.addButton]}
-          onPress={() => {
-            toggleChildPressables();
-          }}>
+          onPress={() => toggleChildPressables()}>
           <Image
             source={require('../assets/plus-icon.png')}
             style={styles.iconImage}
           />
         </Pressable>
-        {showChildPressables   &&  (
+        {showChildPressables && (
           <View style={styles.childPressablesContainer}>
             <Pressable
               style={[styles.iconButton, styles.childButton]}
@@ -134,11 +112,31 @@ const Frontpage = () => {
                 style={styles.iconImageChild}
               />
             </Pressable>
-            
           </View>
         )}
       </View>
-    </ScrollView>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <Pressable
+          style={styles.modalBackground}
+          onPress={() => setModalVisible(false)}>
+          <View style={styles.modalView}>
+            <TouchableOpacity onPress={() => {navigation.navigate('ProfilePage'); setModalVisible(false);}}>
+              <Text style={styles.modalButton}>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {navigation.navigate('Settings'); setModalVisible(false);}}>
+              <Text style={styles.modalButton}>Settings</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={styles.modalButton}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+    </View>
   );
 };
 
@@ -154,6 +152,11 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#EFEFEF',
     height: 100,
+    position: 'fixed', // Fixed header
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1, // Ensure header is above content
   },
   headerText: {
     marginTop: 10,
@@ -256,6 +259,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   childPressablesContainer: {
+    
     position: 'absolute',
     bottom: 80,
     flexDirection: 'column',

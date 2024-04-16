@@ -48,9 +48,9 @@ export default function App() {
             <Stack.Screen name="Savings" component={Savings} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Transaction" component={TransactionScreen} />
-            <Stack.Screen name="AddSavings" component={addSavingScreen} /> 
-            <Stack.Screen name="ProfilePage" component={ProfilePage} /> 
-            <Stack.Screen name="ViewTransactionDetails" component={ViewTransactionDetailsScreen} /> 
+            <Stack.Screen name="AddSavings" component={addSavingScreen} options={{ headerTitle: 'Add Saving' }} /> 
+            <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerTitle: 'Profile' }}/> 
+            <Stack.Screen name="ViewTransactionDetails" component={ViewTransactionDetailsScreen} options={{ headerTitle: 'Details' }} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

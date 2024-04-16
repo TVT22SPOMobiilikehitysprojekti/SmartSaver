@@ -3,9 +3,9 @@ import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-nati
 import { PieChart } from 'react-native-chart-kit';
 import { firestore, collection, onSnapshot, query, where } from '../firebase/Config';
 import { getCurrentUserId } from '../firebase/Shortcuts';
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import { useNavigation } from '@react-navigation/native'; 
 
-// Define chart configuration
+
 const chartConfig = {
   backgroundGradientFrom: "#1E2923",
   backgroundGradientFromOpacity: 0,
@@ -15,28 +15,25 @@ const chartConfig = {
   strokeWidth: 2,
   barPercentage: 1,
   useShadowColorFromDataset: false,
-
-
+  tooltipLabel: ({ index, item }) => `${item.name}: $${item.value.toFixed(2)}`,
 };
 
-
-
 const PieChartComponent = () => {
-  // State variables
+
   const [transactions, setTransactions] = useState([]);
   const [selectedSlice, setSelectedSlice] = useState({ label: '', value: '' });
+  const [isLoading, setIsLoading] = useState(true); 
 
-  // Navigation hook
+ 
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Fetch transactions from Firestore
+
     const currentUserID = getCurrentUserId();
     const q = query(
       collection(firestore, 'Users', currentUserID, 'Transactions'),
       where('isExpense', '==', true)
     );
-  
     const availableColors = [
       '#FF5733', // Red
       '#FFC300', // Yellow
@@ -70,7 +67,7 @@ const PieChartComponent = () => {
           tempTransactions[categoryName].value += data.amount;
         } else {
           let color = availableColors[colorIndex];
-          colorIndex = (colorIndex + 1) % availableColors.length; // Cycle through colors
+          colorIndex = (colorIndex + 1) % availableColors.length; 
           tempTransactions[categoryName] = {
             name: categoryName,
             value: data.amount,
@@ -78,8 +75,9 @@ const PieChartComponent = () => {
           };
         }
       });
-      // Convert object to array before setting state
+
       setTransactions(Object.values(tempTransactions));
+      setIsLoading(false); 
     });
   
     return unsubscribe;
@@ -90,22 +88,29 @@ const PieChartComponent = () => {
 
   return (
     <View style={styles.container}>
-      {/* Pie Chart */}
-      <TouchableOpacity onPress={() => navigation.navigate('ViewTransactionDetails')}>
-        <PieChart
-          data={transactions}
-          width={Dimensions.get("window").width}
-          height={230}
-          chartConfig={chartConfig}
-          accessor="value"
-          backgroundColor="transparent"
-          paddingLeft="0"
-        />
-      </TouchableOpacity>
-      {/* Selected slice details */}
-      <Text style={{ textAlign: 'center' }} >
-       Press PieChart To View Details
-      </Text>
+      {isLoading ? ( 
+        <Text>Loading...</Text>
+      ) : transactions.length === 0 ? ( 
+        <Text>No transactions available. Make transactions to see data.</Text>
+      ) : (
+        <>
+          {/* Pie Chart */}
+          <TouchableOpacity onPress={() => navigation.navigate('ViewTransactionDetails')}>
+            <PieChart
+              data={transactions}
+              width={Dimensions.get("window").width}
+              height={240}
+              chartConfig={chartConfig}
+              accessor="value"
+              backgroundColor="transparent"
+              paddingLeft="0"
+            />
+          </TouchableOpacity>
+          <Text style={{ textAlign: 'center' }} >
+            Press PieChart To View Details
+          </Text>
+        </>
+      )}
     </View>
   );
 };
@@ -113,6 +118,8 @@ const PieChartComponent = () => {
 const styles = StyleSheet.create({
   container: {
     paddingLeft: 25 ,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
