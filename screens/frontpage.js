@@ -73,7 +73,7 @@ const Frontpage = () => {
         <CurrentbalanceComponent userId={getCurrentUserId()}/>
       </View>
       <Modal
-        animationType="none"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
