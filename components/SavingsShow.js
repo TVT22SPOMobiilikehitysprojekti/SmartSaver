@@ -6,7 +6,8 @@ import {
   handleSaveCustomAmount,
   fetchSavedAmountFromDB,
   deleteSavingsPlanDB,
-  saveUserTransactionAndUpdateBalance // Varmista että tämä funktio on tuotu
+  saveUserTransactionAndUpdateBalance,
+  fetchCurrencySymbol
 } from '../firebase/Shortcuts';
 
 const SavingsShow = () => {
@@ -19,6 +20,21 @@ const SavingsShow = () => {
   const [savedAmount, setSavedAmount] = useState(0);
   const [daysLeft, setDaysLeft] = useState(0);
   const [isSavedAmountUpdated, setIsSavedAmountUpdated] = useState(false);
+  const [currencySymbol, setCurrencySymbol] = useState(null);
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -175,14 +191,14 @@ const SavingsShow = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Plan Details</Text>
             <Text style={styles.planTextModalT}>Title: {selectedPlan && selectedPlan.plan}</Text>
-            <Text style={styles.planTextModalA}>Amount: {selectedPlan && selectedPlan.amount}</Text>
-            <Text style={styles.planTextModalSA}>Saved Amount: {savedAmount}</Text>
+            <Text style={styles.planTextModalA}>Amount: {selectedPlan && selectedPlan.amount}{currencySymbol}</Text>
+            <Text style={styles.planTextModalSA}>Saved Amount: {savedAmount}{currencySymbol}</Text>
             <Text style={styles.planTextModalD}>Date: {selectedPlan && formatDate(selectedPlan.date)}</Text>
-            <Text>Daily Savings Needed: {dailySavingsNeeded.toFixed(2)}</Text>
-            <Text>Monthly Savings Needed: {monthlySavingsNeeded.toFixed(2)}</Text>
+            <Text>Daily Savings Needed: {dailySavingsNeeded.toFixed(2)}{currencySymbol}</Text>
+            <Text>Monthly Savings Needed: {monthlySavingsNeeded.toFixed(2)}{currencySymbol}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter custom save amount"
+              placeholder={`Enter custom amount (${currencySymbol})`}
               keyboardType="numeric"
               value={customSavingsAmount}
               onChangeText={setCustomSavingsAmount}
