@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard,} from 'react-native';
+import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard,KeyboardAvoidingView, Platform} from 'react-native';
 import BalanceComponent from '../components/Balance';
 
 
