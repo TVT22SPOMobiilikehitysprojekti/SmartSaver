@@ -11,13 +11,16 @@ const IntroScreen3 = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+    style={styles.container}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
       <Text style={styles.header}>Money</Text>
       <Text style={styles.subtitle}>
         Step 2: How much you currently have? (Can be changed later)
       </Text>
         <BalanceComponent/>
-    </View>
+        </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };

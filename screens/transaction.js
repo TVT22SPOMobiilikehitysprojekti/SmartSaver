@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { auth } from '../firebase/Config';
 import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories } from '../firebase/Shortcuts';
 
@@ -111,7 +111,10 @@ const AddTransactionScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+    style={styles.container}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
       {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
       <Switch
         value={isExpense}
@@ -152,6 +155,11 @@ const AddTransactionScreen = () => {
         visible={showModal}
         onRequestClose={() => setShowModal(false)}
       >
+        <KeyboardAvoidingView 
+    style={styles.centeredView}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalHeader}>Categories</Text>
@@ -178,11 +186,13 @@ const AddTransactionScreen = () => {
             <Button title="Save Category" onPress={handleSaveCategory} />
           </View>
         </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
       </Modal>
       <Pressable style={styles.button} onPress={handleSaveTransaction}>
         <Text style={styles.buttonText}>Add Transaction</Text>
       </Pressable>
-    </View>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
