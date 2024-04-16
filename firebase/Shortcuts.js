@@ -303,8 +303,19 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
 };
 
 
-
-
+const getUserEmail = async (userId) =>{
+  if(!userId){
+    console.log("User ID is missing");
+    return;
+  }
+  try{
+    await getDoc(doc(db, "Users", userId));
+    console.log("User Info Successfully get")
+  } catch (error) {
+    console.error("Error Fetching user info", error);
+    throw error; 
+  }
+};
 
 
 
@@ -327,7 +338,7 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
     setSavedAmountState,
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
-    
+    getUserEmail,    
 
 
 };

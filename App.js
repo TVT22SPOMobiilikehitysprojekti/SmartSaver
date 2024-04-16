@@ -13,7 +13,7 @@ import Savings from './screens/savings';
 import SettingsScreen from './screens/settings';
 import TransactionScreen from './screens/transaction';
 import addSavingScreen from './screens/addSavings';
-import ViewTransactionDetailsScreen from './screens/Details';
+import ProfilePage from './screens/ProfilePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +48,7 @@ export default function App() {
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Transaction" component={TransactionScreen} />
             <Stack.Screen name="AddSavings" component={addSavingScreen} /> 
+            <Stack.Screen name="ProfilePage" component={ProfilePage} /> 
             <Stack.Screen name="ViewTransactionDetails" component={ViewTransactionDetailsScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>

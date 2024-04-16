@@ -79,6 +79,9 @@ const Frontpage = () => {
           style={styles.modalBackground}
           onPress={() => setModalVisible(false)}>
           <View style={styles.modalView}>
+          <TouchableOpacity onPress={() => navigation.navigate('ProfilePage')}>
+              <Text style={styles.modalButton}>Profile</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
               <Text style={styles.modalButton}>Settings</Text>
             </TouchableOpacity>
