@@ -73,25 +73,26 @@ const Frontpage = () => {
         <CurrentbalanceComponent userId={getCurrentUserId()}/>
       </View>
       <Modal
-        animationType="none"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity
+        <Pressable
           style={styles.modalBackground}
           onPress={() => setModalVisible(false)}>
           <View style={styles.modalView}>
-          <TouchableOpacity onPress={() => navigation.navigate('ProfilePage')}>
+          <TouchableOpacity onPress={() => {navigation.navigate('ProfilePage');setModalVisible(false);}}>
               <Text style={styles.modalButton}>Profile</Text>
+              
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+            <TouchableOpacity onPress={() => {navigation.navigate('Settings');setModalVisible(false);}}>
               <Text style={styles.modalButton}>Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.modalButton}>Logout</Text>
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </Modal>
       <View>
         <PieChartComponent />
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     position: 'absolute',
     top: 70,
-    left: '50%',
+    left: '55%',
     marginRight: 10,
     right: 0,
     width: 'fit-content',
@@ -244,15 +245,13 @@ const styles = StyleSheet.create({
  
   },
   modalButton: {
-    borderRadius: 5,
     padding: 15,
     paddingBottom: 30,
-    width: "fit-content",
+    width: 180,
     
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)',
     justifyContent: 'center',
     alignItems: 'center',
   },
