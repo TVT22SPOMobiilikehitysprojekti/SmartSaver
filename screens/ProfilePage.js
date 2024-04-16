@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { getUserData, getCurrentUserId } from '../firebase/Shortcuts'; 
+import { View, Text, ActivityIndicator, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { getUserData, getCurrentUserId, saveImageUriToDatabase } from '../firebase/Shortcuts'; 
 import Icon from 'react-native-vector-icons/FontAwesome'; 
+import * as ImagePicker from 'expo-image-picker';
 
 const ProfilePage = () => {
     const [userEmail, setUserEmail] = useState(null);
     const [userName, setUserName] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [profileImage, setProfileImage] = useState(null); 
+    const [profileImageURL, setProfileImageURL] = useState(null);
 
     useEffect(() => {
-        const currentUserID = getCurrentUserId();
         const fetchUserData = async () => {
             try {
+                const currentUserID = getCurrentUserId();
                 const userData = await getUserData(currentUserID);
-              
                 const email = userData && userData.email ? userData.email : null;
                 const name = userData && userData.name ? userData.name : null;
-                const profilePic = userData && userData.profilePic ? userData.profilePic : null; // Assuming profilePic is the key for profile image
+                const profilePicURL = userData && userData.imageUrl ? userData.imageUrl : null;
                 setUserEmail(email);
                 setUserName(name);
-                setProfileImage(profilePic);
+                setProfileImageURL(profilePicURL);
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -29,14 +29,51 @@ const ProfilePage = () => {
             }
         };
         fetchUserData();
-    
-        // Cleanup function
-        return () => {
-            // Cleanup tasks if needed
-        };
     }, []);
-     
-  
+
+    const handleUpdateProfilePic = async (source) => {
+        setProfileImageURL(source.uri);
+        await saveImageUriToDatabase(getCurrentUserId(), source.uri);
+    };
+
+    const handleTakePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert("Permission required", "Camera permission is required to take photos");
+            return;
+        }
+      
+        const cropResult = await ImagePicker.launchCameraAsync({
+            mediaType: 'photo',
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+            
+        if (!cropResult.cancelled && cropResult.assets.length > 0) {
+            handleUpdateProfilePic(cropResult.assets[0]);
+        }
+    };
+
+    const handleChooseFromLibrary = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            Alert.alert("Permission required", "Storage permission is required to access the library");
+            return;
+        }
+      
+        const cropResult = await ImagePicker.launchImageLibraryAsync({
+            mediaType: 'photo',
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+                
+        if (!cropResult.cancelled && cropResult.assets.length > 0) {
+            handleUpdateProfilePic(cropResult.assets[0]);
+        }
+    };
+
     if (loading) {
         return (
             <View style={styles.container}>
@@ -44,7 +81,7 @@ const ProfilePage = () => {
             </View>
         );
     }
-  
+
     if (error) {
         return (
             <View style={styles.container}>
@@ -52,16 +89,20 @@ const ProfilePage = () => {
             </View>
         );
     }
-  
+
     return (
         <View style={styles.container}>
-            <View style={styles.profileIconContainer}>
-                <TouchableOpacity onPress={() => {/* Add function to change profile image */}}>
-                    <Image 
-                        source={profileImage ? { uri: profileImage } : require('../assets/smartsaver_logo.png')} // Provide a default image
-                        style={styles.profileIcon} 
-                    />
-                    <Icon name="pencil" size={20} style={styles.editIcon} />
+                <Image 
+                    source={profileImageURL ? { uri: profileImageURL } : require('../assets/smartsaver_logo.png')} 
+                    style={styles.profileIcon} 
+                    onError={() => setProfileImageURL(null)} 
+                />
+        <View style={styles.buttonsContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleTakePhoto}>
+                    <Text style={styles.buttonText}>Take a Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleChooseFromLibrary}>
+                    <Text style={styles.buttonText}>Choose from Library</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.userInfoContainer}>
@@ -76,19 +117,16 @@ const ProfilePage = () => {
                     <Text style={styles.value}>{userEmail}</Text>
                 </View>
             </View>
+            
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
-        alignItems: 'left',
-        paddingTop: 20,  
-    },
-    profileIconContainer: {
+        flex: 1,
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
     },
     profileIcon: {
         width: 150,
@@ -99,25 +137,40 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        backgroundColor: 'transparent', // Adjust icon's background color as needed
+        backgroundColor: 'transparent',
     },
     userInfoContainer: {
-        flexDirection: 'column',
-        marginVertical: 25,
+        marginTop: 20,
+        alignItems: 'center',
     },
     userInfoColumn: {
-        flexDirection: 'column',
-        marginVertical: 15,
-        marginLeft: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
     },
     icon: {
         marginRight: 10,
     },
     label: {
-        fontSize: 20,
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     value: {
-        fontSize: 24,
+        fontSize: 16,
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
+    },
+    button: {
+        backgroundColor: 'blue',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginHorizontal: 10,
+    },
+    buttonText: {
+        color: 'white',
         fontWeight: 'bold',
     },
 });
