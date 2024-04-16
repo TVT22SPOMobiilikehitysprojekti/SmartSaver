@@ -323,16 +323,29 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
   }
 };
 
+
+const getUserData = async (userId) => {
+  try {
+    const docRef = doc(db, "Users", userId);
+    const docSnapshot = await getDoc(docRef);
+    
+    if (docSnapshot.exists()) {
+      const userData = docSnapshot.data();
+      return userData; // Return the entire data object if needed
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user info: ", error);
+    throw error;
+  }
+};
+
 const updateUserName = async (userId, name) => {
   const userDocRef = doc(db, "Users", userId);
   return updateDoc(userDocRef, { name: name });
 };
-
-
-
-
-
-
 
   
   export { 
@@ -354,5 +367,6 @@ const updateUserName = async (userId, name) => {
     setSavedAmountState,
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
+    getUserData,
     updateUserName,
 };
