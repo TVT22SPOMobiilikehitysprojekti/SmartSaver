@@ -39,7 +39,6 @@ const BottomBar = ({ activeTab, onPressHome, onPressPlus, onPressPen }) => {
       },
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
-       elevation: 5,
     },
     iconContainer: {
       flex: 1,

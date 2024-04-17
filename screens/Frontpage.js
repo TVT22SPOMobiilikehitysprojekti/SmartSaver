@@ -80,44 +80,6 @@ const Frontpage = () => {
           <PieChartComponent />
         </View>
       </ScrollView>
-      <View style={styles.footer}>
-        <Pressable
-          style={[styles.iconButton, styles.piggyButton]}
-          onPress={() => navigation.navigate('Savings')}>
-          <Image
-            source={require('../assets/piggy-icon.png')}
-            style={styles.iconImage}
-          />
-        </Pressable>
-        <Pressable
-          style={[styles.iconButton, styles.addButton]}
-          onPress={() => toggleChildPressables()}>
-          <Image
-            source={require('../assets/plus-icon.png')}
-            style={styles.iconImage}
-          />
-        </Pressable>
-        {showChildPressables && (
-          <View style={styles.childPressablesContainer}>
-            <Pressable
-              style={[styles.iconButton, styles.childButton]}
-              onPress={() => navigation.navigate('AddSavings')}>
-              <Image
-                source={require('../assets/LippuIcon.png')}
-                style={styles.iconImageChild}
-              />
-            </Pressable>
-            <Pressable
-              style={[styles.iconButton, styles.childButton]}
-              onPress={() => navigation.navigate('Transaction')}>
-              <Image
-                source={require('../assets/PlusLogoBlue.png')}
-                style={styles.iconImageChild}
-              />
-            </Pressable>
-          </View>
-        )}
-      </View>
       <Modal
         animationType="fade"
         transparent={true}

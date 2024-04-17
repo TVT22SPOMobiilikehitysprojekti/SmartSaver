@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View } from 'react-native';
 import Login from './screens/Login';
 import Signup from './screens/Register';
 import LoadingScreen from './screens/loading';
@@ -18,7 +19,8 @@ import ProfilePage from './screens/ProfilePage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomBar from './components/BottomBar';
 import { useNavigation } from '@react-navigation/native';
-import Animated from 'react-native-reanimated';
+import AddTransactionModal from './components/AddTransactionModal';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -72,47 +74,33 @@ function IntroStack() {
 
 
 function TabStack(){
-  const [translateX] = React.useState(new Animated.Value(0));
+  const navigation = useNavigation();
+  const [activeTab, setActiveTab] = useState('home');
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const handleIndexChange = index => {
-    Animated.spring(translateX, {
-      toValue: index,
-      stiffness: 100,
-      damping: 20,
-      mass: 1,
-      useNativeDriver: true,
-    }).start();
+  const handleHomePress = () => {
+    setActiveTab('home');
+    navigation.navigate('Frontpage');
   };
 
+  const handlePlusPress = () => {
+    setModalVisible((prevVisible) => !prevVisible); 
+  };
+
+  const handlePenPress = () => {
+    setActiveTab('savings');
+    navigation.navigate('Savings');
+  };
+  
   return(
-    <Tab.Navigator
-      tabBarOptions={{
-        style: { backgroundColor: 'white', elevation: 10 },
-        tabStyle: { backgroundColor: 'white' },
-        showLabel: false,
-      }}
-      tabBar={(props) => <BottomBar {...props} activeTab={activeTab} onPressHome={handleHomePress} onPressPlus={handlePlusPress} onPressPen={handlePenPress} />}
-    >
-      <Tab.Screen 
-        name="Frontpage" 
-        component={Frontpage} 
-        options={{ headerShown: false }} 
-        listeners={({ navigation, route }) => ({
-          tabPress: e => {
-            handleIndexChange(0);
-          },
-        })}
-      />
-      <Tab.Screen 
-        name="Savings" 
-        component={Savings} 
-        options={{ headerShown: false }} 
-        listeners={({ navigation, route }) => ({
-          tabPress: e => {
-            handleIndexChange(1);
-          },
-        })}
-      />
-    </Tab.Navigator>
+    <View style={{ flex: 1 }}>
+      <Tab.Navigator
+        tabBar={(props) => <BottomBar {...props} activeTab={activeTab} onPressHome={handleHomePress} onPressPlus={handlePlusPress} onPressPen={handlePenPress} />}
+      >
+        <Tab.Screen name="Frontpage" component={Frontpage} options={{ headerShown: false }} />
+        <Tab.Screen name="Savings" component={Savings} />
+      </Tab.Navigator>
+      <AddTransactionModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+    </View>
   )
 }
