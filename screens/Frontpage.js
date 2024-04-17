@@ -9,6 +9,7 @@ import CurrentbalanceComponent from '../components/Currentbalance';
 import { getCurrentUserId } from '../firebase/Shortcuts';
 
 
+
 const Frontpage = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
@@ -55,6 +56,7 @@ const Frontpage = () => {
 
   return (
     <View style={styles.container}>
+      
       <View style={styles.header}>
         <Text style={styles.headerText}>SmartSaver</Text>
         <View style={styles.iconImageDotsContainer}>
@@ -136,6 +138,7 @@ const Frontpage = () => {
           </View>
         </Pressable>
       </Modal>
+      
     </View>
   );
 };

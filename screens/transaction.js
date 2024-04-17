@@ -136,6 +136,7 @@ const AddTransactionScreen = () => {
     behavior={Platform.OS === "ios" ? "padding" : "height"}
   >
     <WeeklyTransactionList />
+    
       {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
       <Switch
         value={isExpense}
