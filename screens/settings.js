@@ -90,8 +90,8 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>General</Text>
           <View style={styles.settingItem}>
-            <Text style={styles.settingTitle}>Change currency ({currencySymbol})</Text>
             <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+              <Text style={styles.settingTitle}>Change currency ({currencySymbol})</Text>
               <Text>Select Currency</Text>
             </TouchableOpacity>
             <Modal
@@ -190,6 +190,33 @@ const styles = StyleSheet.create({
   settingDescription: {
     fontSize: 14,
     color: 'gray',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  item: {
+    padding: 10,
+  },
+  itemText: {
+    fontSize: 16,
   },
 });
 
