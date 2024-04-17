@@ -9,12 +9,15 @@ import CurrentbalanceComponent from '../components/Currentbalance';
 import { getCurrentUserId } from '../firebase/Shortcuts';
 
 
+
 const Frontpage = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [showChildPressables, setShowChildPressables] = useState(false);
   const [userId, setUserId] = useState(getCurrentUserId());
 
+
+  
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -162,6 +165,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 24,
     fontWeight: 'bold',
+    color: 'blue',
   },
   iconImageDotsContainer: {
     position: 'absolute',
@@ -239,13 +243,18 @@ const styles = StyleSheet.create({
     padding: 1,
     alignItems: 'flex-start',
     position: 'absolute',
-    top: 70,
-    left: '55%',
+    top: '10%',
+    left: '50%', 
     marginRight: 10,
     right: 0,
     width: 'fit-content',
-  
- 
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   modalButton: {
     padding: 15,

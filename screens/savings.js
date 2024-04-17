@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, StyleSheet } from 'react-native';
 import SavingsShow from '../components/SavingsShow';
 
+
 const Savings = () => {
+
   return (
     <View style={styles.container}>
       <SavingsShow />
