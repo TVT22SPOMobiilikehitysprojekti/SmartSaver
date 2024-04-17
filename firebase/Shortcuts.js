@@ -367,4 +367,5 @@ const updateUserName = async (userId, name) => {
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
     updateUserName,
+    updateCurrencySymbol,
 };

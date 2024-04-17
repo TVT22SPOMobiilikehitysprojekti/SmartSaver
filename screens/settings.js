@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { updateCurrencySymbol } from '../firebase/Shortcuts';
-import { getCurrentUserId} from '../firebase/Shortcuts';
+import { getCurrentUserId, fetchCurrencySymbol} from '../firebase/Shortcuts';
 
 const currencies = [
   { id: 1, name: 'USD - United States Dollar ($)', symbol: '$' },
@@ -45,9 +45,25 @@ const currencies = [
 
 const SettingsScreen = ({ navigation }) => {
 
+  const [currencySymbol, setCurrencySymbol] = useState(null);
   const [currency, setCurrency] = useState(currencies[1]);
   const userId = getCurrentUserId();
   const [modalVisible, setModalVisible] = useState(false);
+  
+
+  useEffect(() => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+    // Haetaan käyttäjän valuuttasymboli
+    fetchCurrencySymbol(userId,
+      (symbol) => {
+        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
+      },
+      (error) => {
+        console.error("Error fetching currency symbol: ", error);
+      }
+    );
+  }, []);
 
   const handleSelectCurrency = (selectedCurrency) => {
     setCurrency(selectedCurrency);
@@ -74,7 +90,7 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>General</Text>
           <View style={styles.settingItem}>
-            <Text style={styles.settingTitle}>Change currency ({currency.symbol})</Text>
+            <Text style={styles.settingTitle}>Change currency ({currencySymbol})</Text>
             <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
               <Text>Select Currency</Text>
             </TouchableOpacity>
