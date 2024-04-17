@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { db } from '../firebase/Config';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { set } from 'firebase/database';
-import {fetchCurrencySymbol, getCurrentUserId} from '../firebase/Shortcuts'
+import {fetchCurrencySymbol, getCurrentUserId} from '../firebase/Shortcuts';
 
 
 const CurrentbalanceComponent = ({userId}) => {

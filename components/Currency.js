@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, FlatList, View, Alert } from 'react-native';
+import { Pressable, StyleSheet, Text, FlatList, View, Alert, SafeAreaView  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {saveCurrencySymbol, getCurrentUserId} from '../firebase/Shortcuts';
 
@@ -54,7 +54,9 @@ const Currency = () => {
         saveCurrencySymbol(userId, currency.symbol,
             () => {
                 setSelectedCurrencyId(currency.id); // Päivitä valittu valuutta-ID
+                setTimeout(() => {
                 navigation.navigate('Intro3'); 
+              }, 1000);
             },
             (error) => {
                 Alert.alert("Error", error.message);
@@ -67,9 +69,15 @@ const Currency = () => {
 
 
 
+
 return (
-  <View style={styles.container}>
-    <Text style={styles.header}>Choose Your Currency</Text>
+  <SafeAreaView style={styles.safeArea}>
+    <View style={styles.headerContainer}>
+    <Text style={styles.title}>Let's go step by step!</Text>
+    <Text style={styles.step}>Step 1: What currency do you use?</Text>
+    <Text style={styles.subtext}>(Can be changed later in settings)</Text>
+    </View>
+    <View style={styles.listContainer}>
     <FlatList
       style={styles.list}
       data={currencies}
@@ -85,41 +93,82 @@ return (
           <Text style={styles.text}>{item.name}</Text>
         </Pressable>
       )}
+      
     />
   </View>
+  </SafeAreaView>
 );
 };
 
 const styles = StyleSheet.create({
-container: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: '#34a4eb',
-  paddingTop: 22,
-},
-header: {
-  fontSize: 24,
-  fontWeight: 'bold',
-  marginBottom: 20,
-  color: 'white',
-  textAlign: 'center',
-},
-list: {
-  paddingHorizontal: 20,
-  width: '100%', // Leveys täyttää koko näytön
-},
-currencyItem: {
-  paddingVertical: 10,
-  borderBottomWidth: 1,
-  borderBottomColor: '#ccc',
-},
-selected: {
-  backgroundColor: '#DDDDDD',
-},
-text: {
-  fontSize: 18,
-}
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#34a4eb', // Or whatever color the mockup has for the area behind the list
+  },
+  headerContainer: {
+    backgroundColor: '#34a4eb', // Or another color, matching the mockup
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  step: {
+    fontSize: 20,
+    color: '#FFFFFF',
+    marginBottom: 5,
+    marginLeft:10,
+  },
+  subtext: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 40,
+  },
+  listContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius:25,
+    paddingTop: 10,
+    // For iOS shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    // For Android shadow
+    elevation: 5,
+    padding:30,
+  },
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E8E8E8',
+    
+  },
+  currencyItem: {
+    borderBottomWidth: 2,
+    borderBottomColor: 'black', // Black color for the line under each currency text
+  },
+
+  text: {
+    color: '#333333',
+    fontSize: 22,
+    textAlign: 'center',
+    padding: 13,
+  },
+  selected: {
+    backgroundColor: '#00A4CC',
+  },
 });
 
 export default Currency;

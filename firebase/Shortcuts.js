@@ -39,7 +39,6 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
 
   const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
     const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
-
   
     try {
       await setDoc(currencyDocRef, {
@@ -50,6 +49,21 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
     } catch (error) {
       console.error("Error saving symbol: ", error);
       onError(error);
+    }
+  };
+
+  const updateCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+  
+    try {
+      await updateDoc(currencyDocRef, {
+        Symbol: String(symbol)  // Only updates the Symbol field
+      });
+  
+      onSuccess("Symbol updated successfully"); // Call the success callback with a message
+    } catch (error) {
+      console.error("Error updating currency symbol: ", error);
+      onError(error);  // Call the error callback
     }
   };
 
@@ -86,7 +100,7 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
     }
   };
 
-const saveUserTransactionAndUpdateBalance = async (userId, transactionData, onSuccess, onError) => {
+  const saveUserTransactionAndUpdateBalance = async (userId, transactionData, onSuccess, onError) => {
     const userBalanceRef = doc(db, "Users", userId, "Balances", "current"); // Oletetaan, että "current" on pysyvä saldo-dokumentti
     const userTransactionsRef = collection(db, "Users", userId, "Transactions");
   
@@ -123,11 +137,11 @@ const saveUserTransactionAndUpdateBalance = async (userId, transactionData, onSu
     }
   };
 
-const getCurrentUserId = () => {
+  const getCurrentUserId = () => {
     return auth.currentUser ? auth.currentUser.uid : null;
     };
 
-const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
+  const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
     const q = query(collection(db, "Users", userId, "SavingsGoal"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const goals = {};
@@ -156,24 +170,22 @@ const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
 };
 
 const fetchSavingsGoalsForShow = async (userId, setSavingsPlans) => {
-  try {
-    const q = query(collection(db, "Users", userId, "SavingsGoal"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const plans = [];
-      querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          plans.push({ id: doc.id, plan: data.plan, amount: data.amount, date: data.date.toDate(), userId: userId });
-      });
-      setSavingsPlans(plans);
-    });
-    return unsubscribe;
-  } catch (error) {
-    console.error("Error fetching savings goals:", error);
-    // Käsittele virhe esimerkiksi palauttamalla tyhjä funktio
-    return () => {};
-  }
-};
+  const q = query(collection(db, "Users", userId, "SavingsGoal"));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const plans = [];
 
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      // Lisätään tiedot listaan
+      plans.push({ id: doc.id, plan: data.plan, amount: data.amount, date: data.date.toDate() });
+    });
+
+    // Päivitä tila suunnitelmille
+    setSavingsPlans(plans);
+  });
+
+  return unsubscribe;
+};
 
 const saveCategories = async (userId, categories) => {
   const userRef = doc(db, "Users", userId);
@@ -399,6 +411,7 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
     getUserData,
     updateUserName,
     saveImageUriToDatabase,
+    updateCurrencySymbol
 
 
 };
