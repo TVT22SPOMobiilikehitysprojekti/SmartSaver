@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Modal, StyleSheet, Pressable, Text , TouchableOpacity} from 'react-native';
+import { View, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/AntDesign'; 
-import Icon1 from 'react-native-vector-icons/FontAwesome'; 
+import Icon1 from 'react-native-vector-icons/FontAwesome';
 
 const AddTransactionModal = ({ visible, onClose }) => {
   const navigation = useNavigation();
@@ -17,6 +16,10 @@ const AddTransactionModal = ({ visible, onClose }) => {
     onClose(); // Close the modal after navigating
   };
 
+  const handleModalClose = () => {
+    onClose(); // Close the modal when pressed outside
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -24,45 +27,39 @@ const AddTransactionModal = ({ visible, onClose }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalTitle}>Add Transaction</Text>
-          <View style={styles.modalView2}>
-          <TouchableOpacity style={{justifyContent: 'center'}}>
-          <Icon1 name='flag' size={40} color="white" style={styles.modalButton} onPress={handleAddSavings} /> 
-          </TouchableOpacity>
-          <TouchableOpacity style={{justifyContent: 'center'}}>
-            <Icon1 name='money' color="white" size={40}  style={styles.modalButton} onPress={handleAddExpense} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-          </View>
+      <TouchableWithoutFeedback onPress={handleModalClose}>
+        <View style={styles.centeredView}>
+            <Text style={styles.modalTitle}>Add Transaction</Text>
+            <View style={styles.modalView}>
+              <TouchableOpacity onPress={handleAddSavings}>
+                <Icon1 name='flag' size={40} color="white" style={styles.modalButton} /> 
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleAddExpense}>
+                <Icon1 name='money' color="white" size={40} style={styles.modalButton} />
+              </TouchableOpacity>
+            </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   centeredView: {
+    backgroundColor: 'white',
     flex: 1,
-    justifyContent: 'flex-end',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     marginBottom: '15%',
   },
   modalView: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    width: '80%',
-    
-  },
-  modalView2: {
+    justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+
   },
 
   modalTitle: {
@@ -75,18 +72,27 @@ const styles = StyleSheet.create({
     width: 80,
     margin: 15,
     padding: 5,
-    marginBottom: 10,
-    borderRadius: 15,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor:'blue',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+     elevation: 5,
+   
   },
-  cancelButton: {
-    backgroundColor: 'red',
-  },
+
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+
   },
 });
 
