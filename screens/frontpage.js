@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase/Config'; 
 import PieChartComponent from '../components/MyPieChart';
@@ -44,6 +44,7 @@ const Frontpage = () => {
 
   const toggleChildPressables = () => {
     setShowChildPressables(!showChildPressables);
+    
   };
 
   const handlebuttonpress = () => {
@@ -65,33 +66,17 @@ const Frontpage = () => {
           </Pressable>
         </View>
       </View>
-      <View style={styles.calendarContainer}>
-        <CalendarComponent />
-      </View>
-      <View style={styles.balanceInfo}>
-        <CurrentbalanceComponent userId={getCurrentUserId()}/>
-      </View>
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity
-          style={styles.modalBackground}
-          onPress={() => setModalVisible(false)}>
-          <View style={styles.modalView}>
-            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-              <Text style={styles.modalButton}>Settings</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout}>
-              <Text style={styles.modalButton}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-      <View>
-        <PieChartComponent />
-      </View>
+      <ScrollView style={styles.content}>
+        <View style={styles.calendarContainer}>
+          <CalendarComponent />
+        </View>
+        <View style={styles.balanceInfo}>
+          <CurrentbalanceComponent userId={getCurrentUserId()}/>
+        </View>
+        <View>
+          <PieChartComponent />
+        </View>
+      </ScrollView>
       <View style={styles.footer}>
         <Pressable
           style={[styles.iconButton, styles.piggyButton]}
@@ -103,9 +88,7 @@ const Frontpage = () => {
         </Pressable>
         <Pressable
           style={[styles.iconButton, styles.addButton]}
-          onPress={() => {
-            toggleChildPressables();
-          }}>
+          onPress={() => toggleChildPressables()}>
           <Image
             source={require('../assets/plus-icon.png')}
             style={styles.iconImage}
@@ -129,10 +112,30 @@ const Frontpage = () => {
                 style={styles.iconImageChild}
               />
             </Pressable>
-            
           </View>
         )}
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <Pressable
+          style={styles.modalBackground}
+          onPress={() => setModalVisible(false)}>
+          <View style={styles.modalView}>
+            <TouchableOpacity onPress={() => {navigation.navigate('ProfilePage'); setModalVisible(false);}}>
+              <Text style={styles.modalButton}>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {navigation.navigate('Settings'); setModalVisible(false);}}>
+              <Text style={styles.modalButton}>Settings</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={styles.modalButton}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
@@ -149,6 +152,11 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#EFEFEF',
     height: 100,
+    position: 'fixed', // Fixed header
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1, // Ensure header is above content
   },
   headerText: {
     marginTop: 10,
@@ -225,32 +233,33 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    borderRadius: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    elevation: 5,
     padding: 1,
     alignItems: 'flex-start',
     position: 'absolute',
-    top: 25,
-    left: '60%',
+    top: 70,
+    left: '55%',
+    marginRight: 10,
     right: 0,
     width: 'fit-content',
   
  
   },
   modalButton: {
-    backgroundColor: 'grey',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
+    padding: 15,
+    paddingBottom: 30,
+    width: 180,
     
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   childPressablesContainer: {
+    
     position: 'absolute',
     bottom: 80,
     flexDirection: 'column',

@@ -1,4 +1,5 @@
-import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot, deleteDoc } from './Config';
+import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot, deleteDoc, firestore } from './Config';
+
 
 
 // saveUserBalance funktio, jonka ainoa muutos on turhien määrittelyjen poistaminen
@@ -335,14 +336,55 @@ const deleteSavingsPlanDB = async (savingsPlanId) => {
   }
 };
 
+
+const getUserData = async (userId) => {
+  try {
+    const docRef = doc(db, "Users", userId);
+    const docSnapshot = await getDoc(docRef);
+    
+    if (docSnapshot.exists()) {
+      const userData = docSnapshot.data();
+      return userData; // Return the entire data object if needed
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user info: ", error);
+    throw error;
+  }
+};
+
 const updateUserName = async (userId, name) => {
   const userDocRef = doc(db, "Users", userId);
   return updateDoc(userDocRef, { name: name });
 };
 
 
+const saveImageUriToDatabase = async (userId, imageUrl) => {
+  try {
 
+    const userDocRef = doc(db, "Users", userId);
+    const userDocSnapshot = await getDoc(userDocRef);
+    
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
 
+      if (!userData.hasOwnProperty("imageUrl")) {
+        await updateDoc(userDocRef, { imageUrl: imageUrl });
+      } else {
+        await updateDoc(userDocRef, { imageUrl: imageUrl });
+      }
+
+      console.log("Image URL saved to database successfully");
+    } else {
+      throw new Error("User data not found");
+    }
+  } catch (error) {
+    console.error("Error saving image URL to database:", error);
+    throw error;
+  }
+};
 
 
 
@@ -366,6 +408,10 @@ const updateUserName = async (userId, name) => {
     setSavedAmountState,
     fetchSavedAmountFromDB,
     deleteSavingsPlanDB,
+    getUserData,
     updateUserName,
-    updateCurrencySymbol,
+    saveImageUriToDatabase,
+    updateCurrencySymbol
+
+
 };

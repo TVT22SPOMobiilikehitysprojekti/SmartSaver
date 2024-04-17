@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable,  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Imagepicker from '../components/Imagepicker';
 
 const IntroScreen4 = () => {
   const navigation = useNavigation();
@@ -15,10 +16,7 @@ const IntroScreen4 = () => {
       </Text>
 
       
-      <Image
-        source={require('../assets/smartsaver_logo.png')}
-        style={styles.logo}
-      />
+      <Imagepicker />
 
 <Pressable style={styles.button} onPress={() => navigation.navigate('Frontpage')}>
     <Text style={styles.buttonText}>Let's go!</Text>
