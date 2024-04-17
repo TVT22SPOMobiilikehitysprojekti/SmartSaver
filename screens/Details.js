@@ -1,7 +1,7 @@
 import React, { useState, useEffect,  } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity , ScrollView, Alert } from 'react-native';
 import { firestore, collection, onSnapshot, query, where, deleteDoc, doc } from '../firebase/Config'; // Import Firebase
-import { getCurrentUserId, deleteTransaction, updateTransaction, fetchCurrencySymbol } from '../firebase/Shortcuts';
+import { getCurrentUserId, deleteTransaction, updateTransaction, fetchCurrencySymbol, handleCurrencySymbolChange  } from '../firebase/Shortcuts';
 import { convertFirebaseTimeStampToJS } from '../helpers/TimeConvert'
 import EditModal from '../components/EditModal';
 
@@ -12,20 +12,29 @@ const Details = ({ navigation }) => {
     const [selectedTransactionId, setSelectedTransactionId] = useState('');
     const [initialEditValues, setInitialEditValues] = useState({});
     const [currencySymbol, setCurrencySymbol] = useState(null);
+    let unsubscribeCurrencySymbol;
   
     useEffect(() => {
       const userId = getCurrentUserId();
       if (!userId) return;
       // Haetaan käyttäjän valuuttasymboli
-      fetchCurrencySymbol(userId,
-        (symbol) => {
-          setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-        },
-        (error) => {
-          console.error("Error fetching currency symbol: ", error);
-        }
-      );
-    }, []);
+      fetchCurrencySymbol(userId)
+      .then(symbol => {
+        setCurrencySymbol(symbol);
+      })
+      .catch(error => {
+        console.error("Error fetching initial currency symbol: ", error);
+      });
+  
+    // Listen for currency symbol changes
+    unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+      setCurrencySymbol(symbol);
+    });
+  
+    return () => {
+      unsubscribeCurrencySymbol();
+    };
+  }, []);
 
     useEffect(() => {
 

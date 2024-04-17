@@ -68,22 +68,34 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
   };
 
   const fetchCurrencySymbol = async (userId, onSuccess, onError) => {
-    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
-  
     try {
+      const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
       const currencyDocSnap = await getDoc(currencyDocRef); // Haetaan asiakirjan tiedot
       if (currencyDocSnap.exists()) {
         const currencyData = currencyDocSnap.data(); // Haetaan dokumentin data
         const symbol = currencyData.Symbol; // Haetaan valuuttasymboli
-        onSuccess(symbol); // Lähetetään valuuttasymboli onnistumistapauksessa
+        return symbol;
       } else {
-        // Dokumenttia ei löydetty
-        onError("Currency document not found");
+        throw new Error("Currency document not found");
       }
     } catch (error) {
       console.error("Error fetching symbol: ", error);
-      onError(error);
+      throw error;
     }
+  };
+
+  const handleCurrencySymbolChange = (userId, onUpdate) => {
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+    const unsubscribe = onSnapshot(currencyDocRef, (doc) => {
+      if (doc.exists()) {
+        const currencyData = doc.data();
+        const symbol = currencyData.Symbol;
+        onUpdate(symbol);
+      } else {
+        console.error("Currency document not found");
+      }
+    });
+    return unsubscribe;
   };
 
 
@@ -411,7 +423,8 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
     getUserData,
     updateUserName,
     saveImageUriToDatabase,
-    updateCurrencySymbol
+    updateCurrencySymbol,
+    handleCurrencySymbolChange,
 
 
 };

@@ -7,7 +7,8 @@ import {
   fetchSavedAmountFromDB,
   deleteSavingsPlanDB,
   saveUserTransactionAndUpdateBalance,
-  fetchCurrencySymbol
+  fetchCurrencySymbol,
+  handleCurrencySymbolChange
 } from '../firebase/Shortcuts';
 
 const SavingsShow = () => {
@@ -21,20 +22,29 @@ const SavingsShow = () => {
   const [daysLeft, setDaysLeft] = useState(0);
   const [isSavedAmountUpdated, setIsSavedAmountUpdated] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState(null);
+  let unsubscribeCurrencySymbol;
 
   useEffect(() => {
     const userId = getCurrentUserId();
     if (!userId) return;
     // Haetaan käyttäjän valuuttasymboli
-    fetchCurrencySymbol(userId,
-      (symbol) => {
-        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-      },
-      (error) => {
-        console.error("Error fetching currency symbol: ", error);
-      }
-    );
-  }, []);
+    fetchCurrencySymbol(userId)
+    .then(symbol => {
+      setCurrencySymbol(symbol);
+    })
+    .catch(error => {
+      console.error("Error fetching initial currency symbol: ", error);
+    });
+
+  // Listen for currency symbol changes
+  unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+    setCurrencySymbol(symbol);
+  });
+
+  return () => {
+    unsubscribeCurrencySymbol();
+  };
+}, []);
 
   useEffect(() => {
     async function fetchData() {
