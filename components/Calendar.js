@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar } from 'react-native-calendars';
-import { fetchSavingsGoals, fetchCurrencySymbol, getCurrentUserId } from '../firebase/Shortcuts';
+import { fetchSavingsGoals, fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange } from '../firebase/Shortcuts';
 import { auth } from '../firebase/Config';
 import { View, Modal, Text, Pressable, StyleSheet } from 'react-native';
 
@@ -54,20 +54,29 @@ const CalendarComponent = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState('');
+  let unsubscribeCurrencySymbol;
 
   useEffect(() => {
     const userId = getCurrentUserId();
     if (!userId) return;
     // Haetaan käyttäjän valuuttasymboli
-    fetchCurrencySymbol(userId,
-      (symbol) => {
-        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-      },
-      (error) => {
-        console.error("Error fetching currency symbol: ", error);
-      }
-    );
-  }, []);
+    fetchCurrencySymbol(userId)
+    .then(symbol => {
+      setCurrencySymbol(symbol);
+    })
+    .catch(error => {
+      console.error("Error fetching initial currency symbol: ", error);
+    });
+
+  // Listen for currency symbol changes
+  unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+    setCurrencySymbol(symbol);
+  });
+
+  return () => {
+    unsubscribeCurrencySymbol();
+  };
+}, []);
 
   useEffect(() => {
     const userId = auth.currentUser ? auth.currentUser.uid : null;

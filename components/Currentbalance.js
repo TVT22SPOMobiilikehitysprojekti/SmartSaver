@@ -3,34 +3,43 @@ import { View, Text, StyleSheet } from 'react-native';
 import { db } from '../firebase/Config';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { set } from 'firebase/database';
-import {fetchCurrencySymbol, getCurrentUserId} from '../firebase/Shortcuts';
+import {fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange} from '../firebase/Shortcuts';
 
 
 const CurrentbalanceComponent = ({userId}) => {
     const [balance, setBalance] = useState('Loading...');
     const [currencySymbol, setCurrencySymbol] = useState(null);
+    let unsubscribeCurrencySymbol;
+    let unsubscribeBalance;
 
 
     useEffect(() => {
         const userId = getCurrentUserId();
-        if (!userId) return;
+        if (!userId) {
+            setCurrencySymbol(null); // Reset currency symbol if no user is logged in
+            return;
+        }
 
-                // Haetaan käyttäjän valuuttasymboli
-                fetchCurrencySymbol(userId,
-                    (symbol) => {
-                        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-                    },
-                    (error) => {
-                        console.error("Error fetching currency symbol: ", error);
-                    }
-                );
+    // Fetch initial currency symbol
+    fetchCurrencySymbol(userId)
+      .then(symbol => {
+        setCurrencySymbol(symbol);
+      })
+      .catch(error => {
+        console.error("Error fetching initial currency symbol: ", error);
+      });
+
+    // Listen for currency symbol changes
+    const unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+        setCurrencySymbol(symbol);
+      });
+
+                
 
         //luodaan viite 'current' saldo-dokumenttiin käyttäjän 'balances' alikokoelmassa
         const balanceDocRef = doc(db, "Users", userId, "Balances", "current");
-
         //kuunnellaan saldo-dokumenttia reaaliaikaisesti
-
-        const unsubscribe = onSnapshot(balanceDocRef, (doc) => {
+        unsubscribeBalance = onSnapshot(balanceDocRef, (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
                 setBalance(data.Amount.toFixed(2)); //numeerinen arvo kahdella desimaalilla
@@ -43,7 +52,11 @@ const CurrentbalanceComponent = ({userId}) => {
 
         });
 
-        return unsubscribe;
+            // Cleanup functions
+    return () => {
+        unsubscribeCurrencySymbol();
+        unsubscribeBalance();
+      };
     }, [userId]);
 
     return (

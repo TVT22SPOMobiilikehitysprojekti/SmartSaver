@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { updateCurrencySymbol } from '../firebase/Shortcuts';
-import { getCurrentUserId, fetchCurrencySymbol} from '../firebase/Shortcuts';
+import { getCurrentUserId, fetchCurrencySymbol, handleCurrencySymbolChange} from '../firebase/Shortcuts';
 
 const currencies = [
   { id: 1, name: 'USD - United States Dollar ($)', symbol: '$' },
@@ -49,21 +49,30 @@ const SettingsScreen = ({ navigation }) => {
   const [currency, setCurrency] = useState(currencies[1]);
   const userId = getCurrentUserId();
   const [modalVisible, setModalVisible] = useState(false);
+  let unsubscribeCurrencySymbol;
   
 
   useEffect(() => {
     const userId = getCurrentUserId();
     if (!userId) return;
     // Haetaan käyttäjän valuuttasymboli
-    fetchCurrencySymbol(userId,
-      (symbol) => {
-        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-      },
-      (error) => {
-        console.error("Error fetching currency symbol: ", error);
-      }
-    );
-  }, []);
+    fetchCurrencySymbol(userId)
+    .then(symbol => {
+      setCurrencySymbol(symbol);
+    })
+    .catch(error => {
+      console.error("Error fetching initial currency symbol: ", error);
+    });
+
+  // Listen for currency symbol changes
+  unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+    setCurrencySymbol(symbol);
+  });
+
+  return () => {
+    unsubscribeCurrencySymbol();
+  };
+}, [userId]);
 
   const handleSelectCurrency = (selectedCurrency) => {
     setCurrency(selectedCurrency);
@@ -71,8 +80,7 @@ const SettingsScreen = ({ navigation }) => {
     updateCurrencySymbol(userId, selectedCurrency.symbol, handleSuccess, handleError);
   };
 
-  const handleSuccess = (message) => {
-    alert(message);
+  const handleSuccess = () => {
   };
 
   const handleError = (error) => {
