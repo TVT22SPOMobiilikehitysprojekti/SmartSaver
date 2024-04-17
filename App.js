@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View } from 'react-native';
 import Login from './screens/Login';
 import Signup from './screens/Register';
 import LoadingScreen from './screens/loading';
@@ -15,10 +16,18 @@ import TransactionScreen from './screens/transaction';
 import addSavingScreen from './screens/addSavings';
 import ViewTransactionDetailsScreen from './screens/Details';
 import ProfilePage from './screens/ProfilePage';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import BottomBar from './components/BottomBar';
+import { useNavigation } from '@react-navigation/native';
+import AddTransactionModal from './components/AddTransactionModal';
+
+
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
+
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -38,14 +47,10 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login'>
             <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="Intro1" component={IntroScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Intro2" component={IntroScreen2} options={{ headerShown: false }} />
-            <Stack.Screen name="Intro3" component={IntroScreen3} options={{ headerShown: false }} />
-            <Stack.Screen name="Intro4" component={IntroScreen4} options={{ headerShown: false }} />
             <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+            <Stack.Screen name="Home" component={TabStack} options={{ headerShown: false }} />
             <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Frontpage" component={Frontpage} options={{ headerShown: false }} />
-            <Stack.Screen name="Savings" component={Savings} />
+            <Stack.Screen name="Intro1" component={IntroStack} options={{ headerShown: false }} /> 
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Transaction" component={TransactionScreen} />
             <Stack.Screen name="AddSavings" component={addSavingScreen} options={{ headerTitle: 'Add Saving' }} /> 
@@ -56,3 +61,46 @@ export default function App() {
   );
 }
 
+function IntroStack() {
+  return (
+    <Stack.Navigator initialRouteName='Intro1'>
+      <Stack.Screen name="Intro1" component={IntroScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Intro2" component={IntroScreen2} options={{ headerShown: false }} />
+      <Stack.Screen name="Intro3" component={IntroScreen3} options={{ headerShown: false }} />
+      <Stack.Screen name="Intro4" component={IntroScreen4} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+}
+
+
+function TabStack(){
+  const navigation = useNavigation();
+  const [activeTab, setActiveTab] = useState('home');
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleHomePress = () => {
+    setActiveTab('home');
+    navigation.navigate('Frontpage');
+  };
+
+  const handlePlusPress = () => {
+    setModalVisible((prevVisible) => !prevVisible); 
+  };
+
+  const handlePenPress = () => {
+    setActiveTab('savings');
+    navigation.navigate('Savings');
+  };
+  
+  return(
+    <View style={{ flex: 1 }}>
+      <Tab.Navigator
+        tabBar={(props) => <BottomBar {...props} activeTab={activeTab} onPressHome={handleHomePress} onPressPlus={handlePlusPress} onPressPen={handlePenPress} />}
+      >
+        <Tab.Screen name="Frontpage" component={Frontpage} options={{ headerShown: false }} />
+        <Tab.Screen name="Savings" component={Savings} />
+      </Tab.Navigator>
+      <AddTransactionModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+    </View>
+  )
+}

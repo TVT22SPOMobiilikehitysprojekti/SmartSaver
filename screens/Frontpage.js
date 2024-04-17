@@ -9,12 +9,15 @@ import CurrentbalanceComponent from '../components/Currentbalance';
 import { getCurrentUserId } from '../firebase/Shortcuts';
 
 
+
 const Frontpage = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [showChildPressables, setShowChildPressables] = useState(false);
   const [userId, setUserId] = useState(getCurrentUserId());
 
+
+  
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -77,44 +80,6 @@ const Frontpage = () => {
           <PieChartComponent />
         </View>
       </ScrollView>
-      <View style={styles.footer}>
-        <Pressable
-          style={[styles.iconButton, styles.piggyButton]}
-          onPress={() => navigation.navigate('Savings')}>
-          <Image
-            source={require('../assets/piggy-icon.png')}
-            style={styles.iconImage}
-          />
-        </Pressable>
-        <Pressable
-          style={[styles.iconButton, styles.addButton]}
-          onPress={() => toggleChildPressables()}>
-          <Image
-            source={require('../assets/plus-icon.png')}
-            style={styles.iconImage}
-          />
-        </Pressable>
-        {showChildPressables && (
-          <View style={styles.childPressablesContainer}>
-            <Pressable
-              style={[styles.iconButton, styles.childButton]}
-              onPress={() => navigation.navigate('AddSavings')}>
-              <Image
-                source={require('../assets/LippuIcon.png')}
-                style={styles.iconImageChild}
-              />
-            </Pressable>
-            <Pressable
-              style={[styles.iconButton, styles.childButton]}
-              onPress={() => navigation.navigate('Transaction')}>
-              <Image
-                source={require('../assets/PlusLogoBlue.png')}
-                style={styles.iconImageChild}
-              />
-            </Pressable>
-          </View>
-        )}
-      </View>
       <Modal
         animationType="fade"
         transparent={true}
@@ -162,6 +127,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 24,
     fontWeight: 'bold',
+    color: 'blue',
   },
   iconImageDotsContainer: {
     position: 'absolute',
@@ -239,13 +205,18 @@ const styles = StyleSheet.create({
     padding: 1,
     alignItems: 'flex-start',
     position: 'absolute',
-    top: 70,
-    left: '55%',
+    top: '10%',
+    left: '50%', 
     marginRight: 10,
     right: 0,
     width: 'fit-content',
-  
- 
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   modalButton: {
     padding: 15,

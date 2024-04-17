@@ -16,7 +16,7 @@ const Login = () => {
     const onLogin = async () => {
         try {
           await signInWithEmailAndPassword(auth, email, password);
-          navigation.replace('Frontpage');
+          navigation.replace('Home');
         } catch (error) {
           console.log(error);
         }
