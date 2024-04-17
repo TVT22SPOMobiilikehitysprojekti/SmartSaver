@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { Calendar } from 'react-native-calendars';
 import { fetchSavingsGoals, fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange } from '../firebase/Shortcuts';
 import { auth } from '../firebase/Config';
-import { View, Modal, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Modal, Text, Pressable, TouchableOpacity, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -45,16 +45,28 @@ const styles = StyleSheet.create({
     color: '#007bff', // Sininen päivämääräteksti
     marginBottom: 20,
     textAlign: 'center', // Keskitä päivämääräteksti
-  }
+  },
+  calendarContainer:{
+    overflow: 'hidden',
+  },
+  monthTouchable: {
+    position: 'absolute',
+    top: 5,
+    left: 10,
+    zIndex: 1,
+  },
 });
 
-const CalendarComponent = () => {
+const CalendarComponent = forwardRef((props, ref) => {
   const [markedDates, setMarkedDates] = useState({});
   const [selectedGoals, setSelectedGoals] = useState({});
   const [selectedDate, setSelectedDate] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState('');
   let unsubscribeCurrencySymbol;
+  const [calendarHeight, setCalendarHeight] = useState(80); // Lisätty kalenterin korkeus
+  const calendarRef = useRef(null);
+
 
   useEffect(() => {
     const userId = getCurrentUserId();
@@ -97,14 +109,38 @@ const CalendarComponent = () => {
     }
   }, []);
 
+  const toggleCalendarSize = () => {
+    setCalendarHeight(prevHeight => prevHeight === 55 ? 320 : 55);
+  };
+
+  const renderMonthTouchable = () => {
+    const arrowIcon = calendarHeight === 55 ? '▼' : '▲'; 
+  
+    return (
+<TouchableOpacity
+  style={[styles.monthTouchable, { left: 90, marginTop: 8, }]}
+  onPress={toggleCalendarSize}
+  activeOpacity={0.8}
+>
+  <View style={{ justifyContent: 'center', paddingHorizontal: 15 }}>
+    <Text style={{ fontSize: 20, color: 'red' }}>{arrowIcon}</Text>
+  </View>
+</TouchableOpacity>
+
+    );
+  };
+
   return (
-    <View>
+    <View style={styles.calendarContainer}>
       <Calendar
+        ref={ref}
         onDayPress={day => {
           setSelectedDate(day.dateString);
           setShowModal(true);
         }}
         markedDates={markedDates}
+        style={{ height: calendarHeight }} // Lisätty ehto kalenterin koon määrittämiseksi
+        headerRender={({ month }) => renderMonthTouchable(month)} // Lisätty kuukauden nimen painettava alue
       />
       {showModal && (
         <Modal
@@ -129,8 +165,9 @@ const CalendarComponent = () => {
           </View>
         </Modal>
       )}
+      {renderMonthTouchable("April")}
     </View>
   );
-};
+});
 
 export default CalendarComponent;
