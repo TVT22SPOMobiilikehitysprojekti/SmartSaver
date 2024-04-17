@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Switch, StyleSheet, Text, Pressable, Alert, Modal, Button, TouchableOpacity, ScrollView, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { auth } from '../firebase/Config';
-import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories, getCurrentUserId, fetchCurrencySymbol } from '../firebase/Shortcuts';
+import { saveUserTransactionAndUpdateBalance, loadCategories, saveCategories, getCurrentUserId, fetchCurrencySymbol, fetchUserTransactions } from '../firebase/Shortcuts';
+import WeeklyTransactionList from '../components/WeeklyDetail';
 
 const AddTransactionScreen = () => {
   const [description, setDescription] = useState('');
@@ -134,6 +135,7 @@ const AddTransactionScreen = () => {
     style={styles.container}
     behavior={Platform.OS === "ios" ? "padding" : "height"}
   >
+    <WeeklyTransactionList />
       {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
       <Switch
         value={isExpense}

@@ -1,4 +1,4 @@
-import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot, deleteDoc, firestore } from './Config';
+import { auth, addDoc, collection, db, serverTimestamp,getDocs, runTransaction, doc, setDoc, updateDoc, getDoc, query, onSnapshot, deleteDoc, firestore } from './Config';
 
 
 
@@ -373,6 +373,24 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
     throw error;
   }
 };
+const fetchUserTransactions = async (userId) => {
+  const userTransactionsRef = collection(db, "Users", userId, "Transactions");
+
+  try {
+    const querySnapshot = await getDocs(userTransactionsRef);
+    
+    const transactions = [];
+    querySnapshot.forEach((doc) => {
+      transactions.push({ id: doc.id, ...doc.data() });
+    });
+
+    return transactions;
+  } catch (error) {
+    console.error("Error fetching user transactions:", error);
+    throw error;
+  }
+};
+
 
 
 
@@ -399,6 +417,7 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
     getUserData,
     updateUserName,
     saveImageUriToDatabase,
+    fetchUserTransactions,
 
 
 };

@@ -239,12 +239,18 @@ const styles = StyleSheet.create({
     padding: 1,
     alignItems: 'flex-start',
     position: 'absolute',
-    top: 70,
+    top: 80,
     left: '55%',
     marginRight: 10,
     right: 0,
     width: 'fit-content',
-  
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
  
   },
   modalButton: {
