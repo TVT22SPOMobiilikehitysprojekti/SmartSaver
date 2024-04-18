@@ -373,6 +373,7 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
     throw error;
   }
 };
+
 const fetchUserTransactions = async (userId) => {
   const userTransactionsRef = collection(db, "Users", userId, "Transactions");
 
