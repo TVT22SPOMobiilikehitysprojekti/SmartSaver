@@ -182,21 +182,23 @@ const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
 };
 
 const fetchSavingsGoalsForShow = async (userId, setSavingsPlans) => {
-  const q = query(collection(db, "Users", userId, "SavingsGoal"));
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const plans = [];
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      // Lisätään tiedot listaan
-      plans.push({ id: doc.id, plan: data.plan, amount: data.amount, date: data.date.toDate() });
-    });
-
-    // Päivitä tila suunnitelmille
-    setSavingsPlans(plans);
+  try {
+    const q = query(collection(db, "Users", userId, "SavingsGoal"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const plans = [];
+      querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          plans.push({ id: doc.id, plan: data.plan, amount: data.amount, date: data.date.toDate(), userId: userId });
+      });
+      setSavingsPlans(plans);
   });
 
   return unsubscribe;
+  } catch (error) {
+    console.error("Error fetching savings goals:", error);
+    // Käsittele virhe esimerkiksi palauttamalla tyhjä funktio
+    return () => {};
+  }
 };
 
 const saveCategories = async (userId, categories) => {

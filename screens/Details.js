@@ -142,7 +142,7 @@ const Details = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'teal',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     padding: 10,
   },
   text: {

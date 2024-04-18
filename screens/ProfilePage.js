@@ -119,6 +119,7 @@ const ProfilePage = () => {
                     </View>
                 </View>
             </Modal>
+            <View style={styles.profile}>
             <View style={styles.profileIconContainer}>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <Image 
@@ -142,6 +143,7 @@ const ProfilePage = () => {
                 </View>
             </View>
         </View>
+    </View>
     );
 };
 
@@ -149,13 +151,21 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,  
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        height: '100%',
     },
+    profile: {
+        backgroundColor: 'white',
+        borderRadius: 30,
+        padding: 20,
+        elevation: 5,
+    },
+
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     modalContent: {
         backgroundColor: 'white',
@@ -187,6 +197,7 @@ const styles = StyleSheet.create({
     profileIconContainer: {
         alignItems: 'center',
         justifyContent: 'flex-start',
+        marginVertical: 20,
     },
     profileIcon: {
         width: 150,
@@ -202,14 +213,12 @@ const styles = StyleSheet.create({
     userInfoContainer: {
         flexDirection: 'column',
         marginVertical: 25,
+        
     },
     userInfoColumn: {
         flexDirection: 'column',
         marginVertical: 15,
-        marginLeft: 50,
-    },
-    icon: {
-        marginRight: 10,
+        marginLeft: 5,
     },
     label: {
         fontSize: 20,
