@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from '../firebase/Config'; 
+import { auth } from '../firebase/Config';
 import PieChartComponent from '../components/MyPieChart';
 import CalendarComponent from '../components/Calendar';
 import { useNavigation } from '@react-navigation/native';
@@ -17,8 +17,8 @@ const Frontpage = () => {
   const [userId, setUserId] = useState(getCurrentUserId());
 
 
-  
-  
+
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
     });
@@ -47,7 +47,7 @@ const Frontpage = () => {
 
   const toggleChildPressables = () => {
     setShowChildPressables(!showChildPressables);
-    
+
   };
 
   const handlebuttonpress = () => {
@@ -74,7 +74,7 @@ const Frontpage = () => {
           <CalendarComponent />
         </View>
         <View style={styles.balanceInfo}>
-          <CurrentbalanceComponent userId={getCurrentUserId()}/>
+          <CurrentbalanceComponent userId={getCurrentUserId()} />
         </View>
         <View>
           <PieChartComponent />
@@ -89,10 +89,10 @@ const Frontpage = () => {
           style={styles.modalBackground}
           onPress={() => setModalVisible(false)}>
           <View style={styles.modalView}>
-            <TouchableOpacity onPress={() => {navigation.navigate('ProfilePage'); setModalVisible(false);}}>
+            <TouchableOpacity onPress={() => { navigation.navigate('ProfilePage'); setModalVisible(false); }}>
               <Text style={styles.modalButton}>Profile</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {navigation.navigate('Settings'); setModalVisible(false);}}>
+            <TouchableOpacity onPress={() => { navigation.navigate('Settings'); setModalVisible(false); }}>
               <Text style={styles.modalButton}>Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout}>
@@ -108,7 +108,7 @@ const Frontpage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'teal',
   },
   header: {
     flexDirection: 'row',
@@ -139,14 +139,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginTop: 10,
   },
-  calendarContainer: {},
-  balanceInfo: {
-    padding: 20,
-    backgroundColor: '#EFEFEF',
-  },
-  balanceText: {
-    fontSize: 18,
-  },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -206,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     position: 'absolute',
     top: '10%',
-    left: '50%', 
+    left: '50%',
     marginRight: 10,
     right: 0,
     width: 'fit-content',
@@ -222,7 +215,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingBottom: 30,
     width: 180,
-    
+
   },
   modalBackground: {
     flex: 1,
@@ -230,7 +223,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   childPressablesContainer: {
-    
+
     position: 'absolute',
     bottom: 80,
     flexDirection: 'column',

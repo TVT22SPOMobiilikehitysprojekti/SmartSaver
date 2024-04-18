@@ -3,10 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import { db } from '../firebase/Config';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { set } from 'firebase/database';
-import {fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange} from '../firebase/Shortcuts';
+import { fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange } from '../firebase/Shortcuts';
 
 
-const CurrentbalanceComponent = ({userId}) => {
+const CurrentbalanceComponent = ({ userId }) => {
     const [balance, setBalance] = useState('Loading...');
     const [currencySymbol, setCurrencySymbol] = useState(null);
     let unsubscribeCurrencySymbol;
@@ -20,21 +20,21 @@ const CurrentbalanceComponent = ({userId}) => {
             return;
         }
 
-    // Fetch initial currency symbol
-    fetchCurrencySymbol(userId)
-      .then(symbol => {
-        setCurrencySymbol(symbol);
-      })
-      .catch(error => {
-        console.error("Error fetching initial currency symbol: ", error);
-      });
+        // Fetch initial currency symbol
+        fetchCurrencySymbol(userId)
+            .then(symbol => {
+                setCurrencySymbol(symbol);
+            })
+            .catch(error => {
+                console.error("Error fetching initial currency symbol: ", error);
+            });
 
-    // Listen for currency symbol changes
-    const unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
-        setCurrencySymbol(symbol);
-      });
+        // Listen for currency symbol changes
+        const unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+            setCurrencySymbol(symbol);
+        });
 
-                
+
 
         //luodaan viite 'current' saldo-dokumenttiin käyttäjän 'balances' alikokoelmassa
         const balanceDocRef = doc(db, "Users", userId, "Balances", "current");
@@ -52,35 +52,56 @@ const CurrentbalanceComponent = ({userId}) => {
 
         });
 
-            // Cleanup functions
-    return () => {
-        unsubscribeCurrencySymbol();
-        unsubscribeBalance();
-      };
+        // Cleanup functions
+        return () => {
+            unsubscribeCurrencySymbol();
+            unsubscribeBalance();
+        };
     }, [userId]);
 
     return (
         <View style={styles.container}>
-                    {/* Renderöi saldo valuuttasymbolilla, jos se on saatavilla */}
-                    {currencySymbol && (
-                <Text style={styles.text}>Current Balance: {currencySymbol} {balance}</Text>
-            )}
-            {/* Jos valuuttasymbolia ei ole vielä saatavilla, näytä vain saldo */}
-            {!currencySymbol && (
-                <Text style={styles.text}>Current Balance: {balance}</Text>
-            )}
+        <View style={styles.balance}>
+            <Text style={styles.balanceLabel}>Balance:</Text>
+            <Text style={styles.balanceValue}>
+                {currencySymbol && (
+                    <Text style={styles.currencySymbol}>{currencySymbol}</Text>
+                )}
+                <Text style={styles.balanceAmount}>{balance}</Text>
+            </Text>
         </View>
+    </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 10,
-        alignItems: 'center'
+        padding: 30,
+        alignItems: 'center',
+        width: '90%',
+        backgroundColor: 'white',
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignSelf: 'center',
+        textAlign: 'center',
+        elevation: 5,
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
     },
-    text: {
-        fontSize: 20
-    }
+    balanceLabel: {
+        fontSize: 25,
+        color: 'blue',
+    },
+    currencySymbol: {
+        fontSize: 35,
+        color: 'red',
+    },
+    balanceAmount: {
+        fontSize: 35,
+        color: 'black',
+    },
 });
 
 export default CurrentbalanceComponent;

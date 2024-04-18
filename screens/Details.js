@@ -117,7 +117,6 @@ const Details = ({ navigation }) => {
       {transactions.map((transaction) => (
         <View key={transaction.id} style={styles.transactionContainer}>
           <TouchableOpacity onPress={() => handleEdit(transaction.id)} style={styles.editButton}>
-            <Text>Edit</Text>
           </TouchableOpacity>
           <View style={styles.transactionDetails}>
             <Text style={styles.detail}>Category: {transaction.category}</Text>
@@ -143,22 +142,24 @@ const Details = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'teal',
     padding: 10,
   },
   text: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: 'white',
   },
   transactionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 30,
     padding: 10,
     marginBottom: 10,
+    backgroundColor: 'white',
   },
   transactionDetails: {
     flex: 1,

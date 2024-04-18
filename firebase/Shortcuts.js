@@ -4,21 +4,21 @@ import { auth, addDoc, collection, db, serverTimestamp, runTransaction, doc, set
 
 // saveUserBalance funktio, jonka ainoa muutos on turhien määrittelyjen poistaminen
 const saveUserBalance = async (userId, amount, onSuccess, onError) => {
-    const balanceDocRef = doc(db, "Users", userId, "Balances", "current");
-  
-    try {
-      await setDoc(balanceDocRef, {
-        Amount: parseFloat(amount),
-        Timestamp: serverTimestamp()
-      }, { merge: true }); // Merge true varmistaa, että olemassa olevat kentät päivitetään
-  
-      onSuccess();
-    } catch (error) {
-      console.error("Error saving balance: ", error);
-      onError(error);
-    }
-  };
-  // saveUserSavingsGoal funktio, joka lisää uuden collectionin "SavingsGoal" käyttäjän tietokantaan
+  const balanceDocRef = doc(db, "Users", userId, "Balances", "current");
+
+  try {
+    await setDoc(balanceDocRef, {
+      Amount: parseFloat(amount),
+      Timestamp: serverTimestamp()
+    }, { merge: true }); // Merge true varmistaa, että olemassa olevat kentät päivitetään
+
+    onSuccess();
+  } catch (error) {
+    console.error("Error saving balance: ", error);
+    onError(error);
+  }
+};
+// saveUserSavingsGoal funktio, joka lisää uuden collectionin "SavingsGoal" käyttäjän tietokantaan
 const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) => {
   try {
     // Luodaan viite 'SavingsGoal'-alikokoelmaan
@@ -37,148 +37,148 @@ const saveUserSavingsGoal = async (userId, savingsgoalData, onSuccess, onError) 
   }
 };
 
-  const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
-    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
-  
-    try {
-      await setDoc(currencyDocRef, {
-        Symbol: String(symbol),
-        }, { merge: true }); // Merge true varmistaa, että olemassa olevat kentät päivitetään
-  
-      onSuccess();
-    } catch (error) {
-      console.error("Error saving symbol: ", error);
-      onError(error);
-    }
-  };
+const saveCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
+  const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
 
-  const updateCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
-    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
-  
-    try {
-      await updateDoc(currencyDocRef, {
-        Symbol: String(symbol)  // Only updates the Symbol field
-      });
-  
-      onSuccess("Symbol updated successfully"); // Call the success callback with a message
-    } catch (error) {
-      console.error("Error updating currency symbol: ", error);
-      onError(error);  // Call the error callback
-    }
-  };
+  try {
+    await setDoc(currencyDocRef, {
+      Symbol: String(symbol),
+    }, { merge: true }); // Merge true varmistaa, että olemassa olevat kentät päivitetään
 
-  const fetchCurrencySymbol = async (userId, onSuccess, onError) => {
-    try {
-      const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
-      const currencyDocSnap = await getDoc(currencyDocRef); // Haetaan asiakirjan tiedot
-      if (currencyDocSnap.exists()) {
-        const currencyData = currencyDocSnap.data(); // Haetaan dokumentin data
-        const symbol = currencyData.Symbol; // Haetaan valuuttasymboli
-        return symbol;
-      } else {
-        throw new Error("Currency document not found");
-      }
-    } catch (error) {
-      console.error("Error fetching symbol: ", error);
-      throw error;
-    }
-  };
+    onSuccess();
+  } catch (error) {
+    console.error("Error saving symbol: ", error);
+    onError(error);
+  }
+};
 
-  const handleCurrencySymbolChange = (userId, onUpdate) => {
-    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
-    const unsubscribe = onSnapshot(currencyDocRef, (doc) => {
-      if (doc.exists()) {
-        const currencyData = doc.data();
-        const symbol = currencyData.Symbol;
-        onUpdate(symbol);
-      } else {
-        console.error("Currency document not found");
-      }
+const updateCurrencySymbol = async (userId, symbol, onSuccess, onError) => {
+  const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+
+  try {
+    await updateDoc(currencyDocRef, {
+      Symbol: String(symbol)  // Only updates the Symbol field
     });
-    return unsubscribe;
-  };
 
+    onSuccess("Symbol updated successfully"); // Call the success callback with a message
+  } catch (error) {
+    console.error("Error updating currency symbol: ", error);
+    onError(error);  // Call the error callback
+  }
+};
 
-  const saveUserTransaction = async (userId, transactionData, onSuccess, onError) => {
-    try {
-      const transactionRef = collection(db, "Users", userId, "Transactions");
-      await addDoc(transactionRef, {
-        ...transactionData,
-      });
-      onSuccess(); // Kutsutaan onnistumisen callback, jos se on määritelty
-    } catch (error) {
-      console.error("Error adding transaction: ", error);
-      onError(error); // Kutsutaan virheenkäsittelyn callback, jos se on määritelty
+const fetchCurrencySymbol = async (userId, onSuccess, onError) => {
+  try {
+    const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+    const currencyDocSnap = await getDoc(currencyDocRef); // Haetaan asiakirjan tiedot
+    if (currencyDocSnap.exists()) {
+      const currencyData = currencyDocSnap.data(); // Haetaan dokumentin data
+      const symbol = currencyData.Symbol; // Haetaan valuuttasymboli
+      return symbol;
+    } else {
+      throw new Error("Currency document not found");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching symbol: ", error);
+    throw error;
+  }
+};
 
-  const saveUserTransactionAndUpdateBalance = async (userId, transactionData, onSuccess, onError) => {
-    const userBalanceRef = doc(db, "Users", userId, "Balances", "current"); // Oletetaan, että "current" on pysyvä saldo-dokumentti
-    const userTransactionsRef = collection(db, "Users", userId, "Transactions");
-  
-    try {
-      await runTransaction(db, async (transaction) => {
-        const userBalanceDoc = await transaction.get(userBalanceRef);
-  
-        // Jos saldo-dokumenttia ei ole, luodaan se
-        if (!userBalanceDoc.exists()) {
-          transaction.set(userBalanceRef, {
-            Amount: transactionData.isExpense ? -transactionData.amount : transactionData.amount,
-            Timestamp: serverTimestamp(),
-          });
-        } else {
-          // Jos saldo-dokumentti on olemassa, päivitetään saldoa
-          const newBalance = userBalanceDoc.data().Amount + (transactionData.isExpense ? -transactionData.amount : transactionData.amount);
-          transaction.update(userBalanceRef, {
-            Amount: newBalance,
-            Timestamp: serverTimestamp(),
-          });
-        }
-  
-        // Lisätään uusi transaktio
-        await addDoc(userTransactionsRef, {
-          ...transactionData,
+const handleCurrencySymbolChange = (userId, onUpdate) => {
+  const currencyDocRef = doc(db, "Users", userId, "Balances", "current");
+  const unsubscribe = onSnapshot(currencyDocRef, (doc) => {
+    if (doc.exists()) {
+      const currencyData = doc.data();
+      const symbol = currencyData.Symbol;
+      onUpdate(symbol);
+    } else {
+      console.error("Currency document not found");
+    }
+  });
+  return unsubscribe;
+};
+
+
+const saveUserTransaction = async (userId, transactionData, onSuccess, onError) => {
+  try {
+    const transactionRef = collection(db, "Users", userId, "Transactions");
+    await addDoc(transactionRef, {
+      ...transactionData,
+    });
+    onSuccess(); // Kutsutaan onnistumisen callback, jos se on määritelty
+  } catch (error) {
+    console.error("Error adding transaction: ", error);
+    onError(error); // Kutsutaan virheenkäsittelyn callback, jos se on määritelty
+  }
+};
+
+const saveUserTransactionAndUpdateBalance = async (userId, transactionData, onSuccess, onError) => {
+  const userBalanceRef = doc(db, "Users", userId, "Balances", "current"); // Oletetaan, että "current" on pysyvä saldo-dokumentti
+  const userTransactionsRef = collection(db, "Users", userId, "Transactions");
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const userBalanceDoc = await transaction.get(userBalanceRef);
+
+      // Jos saldo-dokumenttia ei ole, luodaan se
+      if (!userBalanceDoc.exists()) {
+        transaction.set(userBalanceRef, {
+          Amount: transactionData.isExpense ? -transactionData.amount : transactionData.amount,
           Timestamp: serverTimestamp(),
         });
+      } else {
+        // Jos saldo-dokumentti on olemassa, päivitetään saldoa
+        const newBalance = userBalanceDoc.data().Amount + (transactionData.isExpense ? -transactionData.amount : transactionData.amount);
+        transaction.update(userBalanceRef, {
+          Amount: newBalance,
+          Timestamp: serverTimestamp(),
+        });
+      }
+
+      // Lisätään uusi transaktio
+      await addDoc(userTransactionsRef, {
+        ...transactionData,
+        Timestamp: serverTimestamp(),
       });
-  
-      onSuccess("Transaction and balance updated successfully.");
-    } catch (error) {
-      console.error("Error updating balance: ", error);
-      onError("Failed to update transaction and balance.");
-    }
-  };
-
-  const getCurrentUserId = () => {
-    return auth.currentUser ? auth.currentUser.uid : null;
-    };
-
-  const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
-    const q = query(collection(db, "Users", userId, "SavingsGoal"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const goals = {};
-      const markedDates = {};
-  
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const dateStr = data.date.toDate().toISOString().split('T')[0];
-  
-        if (!markedDates[dateStr]) {
-          markedDates[dateStr] = { marked: true, dots: [] };
-          goals[dateStr] = []; // Alustetaan tyhjänä, jos ei ole vielä olemassa
-        }
-  
-        markedDates[dateStr].dots.push({ key: doc.id, color: 'red' });
-        // Lisää myös amount ja plan tiedot listaan
-        goals[dateStr].push({ plan: data.plan, amount: data.amount, date: data.date.toDate() });
-      });
-
-    
-      setMarkedDates(markedDates); // Päivitä tila merkityille päivämäärille
-      setSelectedGoals(goals); // Päivitä tila valittujen päivämäärien `SavingsGoal`-tiedoille
     });
-    
-     return unsubscribe; // Tämän pitäisi olla funktio.
+
+    onSuccess("Transaction and balance updated successfully.");
+  } catch (error) {
+    console.error("Error updating balance: ", error);
+    onError("Failed to update transaction and balance.");
+  }
+};
+
+const getCurrentUserId = () => {
+  return auth.currentUser ? auth.currentUser.uid : null;
+};
+
+const fetchSavingsGoals = async (userId, setMarkedDates, setSelectedGoals) => {
+  const q = query(collection(db, "Users", userId, "SavingsGoal"));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const goals = {};
+    const markedDates = {};
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const dateStr = data.date.toDate().toISOString().split('T')[0];
+
+      if (!markedDates[dateStr]) {
+        markedDates[dateStr] = { marked: true, dots: [] };
+        goals[dateStr] = []; // Alustetaan tyhjänä, jos ei ole vielä olemassa
+      }
+
+      markedDates[dateStr].dots.push({ key: doc.id, color: 'red' });
+      // Lisää myös amount ja plan tiedot listaan
+      goals[dateStr].push({ plan: data.plan, amount: data.amount, date: data.date.toDate() });
+    });
+
+
+    setMarkedDates(markedDates); // Päivitä tila merkityille päivämäärille
+    setSelectedGoals(goals); // Päivitä tila valittujen päivämäärien `SavingsGoal`-tiedoille
+  });
+
+  return unsubscribe; // Tämän pitäisi olla funktio.
 };
 
 const fetchSavingsGoalsForShow = async (userId, setSavingsPlans) => {
@@ -272,7 +272,7 @@ const handleSaveCustomAmount = async (
     if (setIsSavedAmountUpdated) {
       setIsSavedAmountUpdated(true);
     }
-    
+
     // Alert käyttäjälle onnistuneesta tallennuksesta
     alert("Custom savings added successfully.");
 
@@ -291,20 +291,20 @@ const updateSavedAmount = async (userId, savingsGoalId, newSavedAmount) => {
   const userRef = doc(db, "Users", userId, "SavingsGoal", savingsGoalId);
 
   try {
-      const docSnapshot = await getDoc(userRef);
-      if (docSnapshot.exists()) {
-          const currentSavedAmount = docSnapshot.data().savedAmount || 0;
-          const updatedSavedAmount = currentSavedAmount + newSavedAmount;
+    const docSnapshot = await getDoc(userRef);
+    if (docSnapshot.exists()) {
+      const currentSavedAmount = docSnapshot.data().savedAmount || 0;
+      const updatedSavedAmount = currentSavedAmount + newSavedAmount;
 
-          await updateDoc(userRef, {
-              savedAmount: updatedSavedAmount
-          });
-          console.log("Saved amount updated successfully.");
-      } else {
-          console.log("No such document!");
-      }
+      await updateDoc(userRef, {
+        savedAmount: updatedSavedAmount
+      });
+      console.log("Saved amount updated successfully.");
+    } else {
+      console.log("No such document!");
+    }
   } catch (error) {
-      console.error("Error updating saved amount: ", error);
+    console.error("Error updating saved amount: ", error);
   }
 };
 
@@ -353,7 +353,7 @@ const getUserData = async (userId) => {
   try {
     const docRef = doc(db, "Users", userId);
     const docSnapshot = await getDoc(docRef);
-    
+
     if (docSnapshot.exists()) {
       const userData = docSnapshot.data();
       return userData; // Return the entire data object if needed
@@ -378,7 +378,7 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
 
     const userDocRef = doc(db, "Users", userId);
     const userDocSnapshot = await getDoc(userDocRef);
-    
+
     if (userDocSnapshot.exists()) {
       const userData = userDocSnapshot.data();
 
@@ -400,31 +400,31 @@ const saveImageUriToDatabase = async (userId, imageUrl) => {
 
 
 
-  
-  export { 
-    saveUserBalance,
-    saveUserTransaction,
-    saveUserTransactionAndUpdateBalance,
-    getCurrentUserId,
-    saveCurrencySymbol,
-    fetchSavingsGoals,
-    fetchSavingsGoalsForShow,
-    saveCategories,
-    loadCategories,
-    saveUserSavingsGoal,
-    deleteTransaction,
-    updateTransaction,
-    fetchCurrencySymbol,
-    handleSaveCustomAmount,
-    updateSavedAmount,
-    setSavedAmountState,
-    fetchSavedAmountFromDB,
-    deleteSavingsPlanDB,
-    getUserData,
-    updateUserName,
-    saveImageUriToDatabase,
-    updateCurrencySymbol,
-    handleCurrencySymbolChange,
+
+export {
+  saveUserBalance,
+  saveUserTransaction,
+  saveUserTransactionAndUpdateBalance,
+  getCurrentUserId,
+  saveCurrencySymbol,
+  fetchSavingsGoals,
+  fetchSavingsGoalsForShow,
+  saveCategories,
+  loadCategories,
+  saveUserSavingsGoal,
+  deleteTransaction,
+  updateTransaction,
+  fetchCurrencySymbol,
+  handleSaveCustomAmount,
+  updateSavedAmount,
+  setSavedAmountState,
+  fetchSavedAmountFromDB,
+  deleteSavingsPlanDB,
+  getUserData,
+  updateUserName,
+  saveImageUriToDatabase,
+  updateCurrencySymbol,
+  handleCurrencySymbolChange,
 
 
 };

@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#34a4eb',
+    backgroundColor: 'teal',
   },
   input: {
     height: 40,

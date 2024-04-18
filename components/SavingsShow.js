@@ -234,10 +234,10 @@ const styles = StyleSheet.create({
   planText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
   },
   planItem: {
-    backgroundColor: 'gray',
+    backgroundColor: 'white',
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
