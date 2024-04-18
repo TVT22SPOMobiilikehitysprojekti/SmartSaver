@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Modal, StyleSheet, Text, Pressable, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 
@@ -21,6 +21,7 @@ const AddTransactionModal = ({ visible, onClose }) => {
   };
 
   return (
+    
     <Modal
       animationType="slide"
       transparent={true}
@@ -29,14 +30,15 @@ const AddTransactionModal = ({ visible, onClose }) => {
     >
       <TouchableWithoutFeedback onPress={handleModalClose}>
         <View style={styles.centeredView}>
-            <Text style={styles.modalTitle}>Add Transaction</Text>
             <View style={styles.modalView}>
-              <TouchableOpacity onPress={handleAddSavings}>
+              <Pressable onPress={handleAddSavings} style={styles.ButtonText}>
                 <Icon1 name='flag' size={40} color="white" style={styles.modalButton} /> 
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleAddExpense}>
+                <Text>Savings</Text>
+              </Pressable>
+              <Pressable onPress={handleAddExpense} style={styles.ButtonText}>
                 <Icon1 name='money' color="white" size={40} style={styles.modalButton} />
-              </TouchableOpacity>
+                <Text>Transactions</Text>
+              </Pressable>
             </View>
         </View>
       </TouchableWithoutFeedback>
@@ -46,47 +48,43 @@ const AddTransactionModal = ({ visible, onClose }) => {
 
 const styles = StyleSheet.create({
   centeredView: {
-    backgroundColor: 'white',
-    flex: 1,
+    flex:1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: '15%',
+    backgroundColor: 'rbga(0,0,0,0.1)',
+    bottom: '0',
+
   },
   modalView: {
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     borderRadius: 10,
     padding: 20,
     width: '80%',
-
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+     elevation: 5,
+  },
+  ButtonText: {
+    alignItems: 'center',
   },
 
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
   modalButton: {
     height: 80,
     width: 80,
     margin: 15,
     padding: 5,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor:'blue',
-    alignItems: 'center',
-    justifyContent: 'center',
+    verticalAlign: 'middle',
+    textAlign: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
      elevation: 5,
-   
   },
 
   buttonText: {
