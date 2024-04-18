@@ -14,6 +14,7 @@ const firebaseConfig = {
     storageBucket: "smartsaver-6b7d4.appspot.com",
     messagingSenderId: "1055547833369",
     appId: "1:1055547833369:web:0224daf600520d45c67e88"
+};
 
 // Initialize Firebase App
 let app;
