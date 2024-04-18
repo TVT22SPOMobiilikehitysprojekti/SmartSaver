@@ -117,18 +117,21 @@ const PieChartComponent = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: 25 ,
+    marginTop: 10,
+    marginBottom: 10,
+    width: '90%',
+    alignSelf: 'center',
+    padding: 20,
+    paddingLeft: 60,
+    backgroundColor: 'white',
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    backgroundColor: 'rbga(0,0,0,0.1)'
+    elevation: 5,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+
   },
 });
 
