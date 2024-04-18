@@ -1,8 +1,10 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApp, getApps } from "firebase/app";
-import { getFirestore, collection, addDoc, deleteDoc, setDoc, updateDoc, serverTimestamp, query, onSnapshot, doc, where, runTransaction, getDoc } from 'firebase/firestore';
-import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc,deleteDoc, setDoc, serverTimestamp, query, onSnapshot, doc, getDocFromCache, where, runTransaction, getDoc,  updateDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -12,7 +14,6 @@ const firebaseConfig = {
     storageBucket: "smartsaver-6b7d4.appspot.com",
     messagingSenderId: "1055547833369",
     appId: "1:1055547833369:web:0224daf600520d45c67e88"
-};
 
 // Initialize Firebase App
 let app;

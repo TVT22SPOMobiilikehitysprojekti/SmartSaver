@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Text, Pressable, TouchableWithoutFeedback, Keyboard, Alert, SafeAreaView } from 'react-native';
 import Modal from 'react-native-modal-datetime-picker'; // Lisätään Modal datetime picker
 import { auth } from '../firebase/Config';
-import { saveUserSavingsGoal, fetchCurrencySymbol, getCurrentUserId } from '../firebase/Shortcuts';
+import { saveUserSavingsGoal, fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange } from '../firebase/Shortcuts';
 import { Timestamp } from '@firebase/firestore';
 
 
@@ -12,21 +12,30 @@ const AddSavingScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState(null);
+  let unsubscribeCurrencySymbol;
 
 
   useEffect(() => {
     const userId = getCurrentUserId();
     if (!userId) return;
     // Haetaan käyttäjän valuuttasymboli
-    fetchCurrencySymbol(userId,
-      (symbol) => {
-        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-      },
-      (error) => {
-        console.error("Error fetching currency symbol: ", error);
-      }
-    );
-  }, []);
+    fetchCurrencySymbol(userId)
+    .then(symbol => {
+      setCurrencySymbol(symbol);
+    })
+    .catch(error => {
+      console.error("Error fetching initial currency symbol: ", error);
+    });
+
+  // Listen for currency symbol changes
+  unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+    setCurrencySymbol(symbol);
+  });
+
+  return () => {
+    unsubscribeCurrencySymbol();
+  };
+}, []);
 
 
   const dismissKeyboard = () => {

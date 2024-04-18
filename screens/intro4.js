@@ -18,7 +18,7 @@ const IntroScreen4 = () => {
       
       <Imagepicker />
 
-<Pressable style={styles.button} onPress={() => navigation.navigate('Frontpage')}>
+<Pressable style={styles.button} onPress={() => navigation.navigate('Home')}>
     <Text style={styles.buttonText}>Let's go!</Text>
   </Pressable>
     </View>
