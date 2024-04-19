@@ -79,7 +79,7 @@ const AddSavingScreen = () => {
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.container}>
       <Text style={styles.setSavingsText}>Set Savings goal</Text>
-
+      <View style={styles.inputFields}>
       <TextInput
         style={styles.input}
         placeholder={'Plan name'}
@@ -95,8 +95,9 @@ const AddSavingScreen = () => {
         onChangeText={setAmount}
         keyboardType="numeric"
       />
+    </View>
       <SafeAreaView>
-        <Text style={styles.pvm}>selected: {date.toLocaleString()}</Text>
+        <Text style={styles.pvm}>Selected Date : {date.toLocaleDateString()}</Text>
         <Pressable style={styles.showDatePickerButton} onPress={() => setShowDatePicker(true)}>
           <Text style={styles.buttonText}>Select Date</Text>
         </Pressable>
@@ -121,16 +122,27 @@ const AddSavingScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
+    padding: 20,
     justifyContent: 'center',
-    padding: 16,
-    backgroundColor: 'red',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 30,
+    margin: 20,
   },
   setSavingsText: {
-    color: 'white',
+    color: 'black',
     fontSize: 30,
-    marginBottom: 20,
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    padding: 10,
+    marginBottom: 25,
+  },
+  inputFields:{
+    width: '100%',
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    padding: 10,
+    marginBottom: 25,
   },
   input: {
     width: '100%',
@@ -138,7 +150,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     marginBottom: 20,
     padding: 10,
-    backgroundColor: 'grey',
+    backgroundColor: '#e8e8e8',
     borderRadius: 5,
   },
   showDatePickerButton: {
@@ -147,25 +159,32 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: 200,
     marginBottom: 20,
+    
   },
   setSavingsButton: {
     backgroundColor: '#4CAF50',
-    padding: 10,
+    padding: 25,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: 200,
+    width: '100%',
+    marginBottom: 25,
   },
   buttonText: {
     color: 'white',
     fontSize: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   pvm: {
-    color: 'white',
-    fontSize: 15,
-    marginBottom: 15,
+    color: 'black',
+    fontSize: 19,
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    padding: 10,
+    marginBottom: 25,
+
   },
 });
 

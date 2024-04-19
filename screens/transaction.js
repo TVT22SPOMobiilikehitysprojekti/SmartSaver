@@ -239,7 +239,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 30,
     margin: 20,
-
   },
 
   inputContainer:{
