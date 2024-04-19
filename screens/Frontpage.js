@@ -29,8 +29,8 @@ const Frontpage = () => {
           <PieChartComponent />
         </View>
 
-        <View>
          {/* WeeklyTransactionList */}
+        <View>
           <WeeklyTransactionList />
         </View>
 

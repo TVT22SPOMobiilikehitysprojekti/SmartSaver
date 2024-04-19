@@ -139,87 +139,103 @@ const AddTransactionScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-    <KeyboardAvoidingView 
-    style={styles.container}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-  >
-      {/* Lisätään Switch-komponentti tulon/menon valitsemiseksi */}
-      <Switch
-        value={isExpense}
-        onValueChange={setIsExpense}
-        trackColor={{ false: "#81b0ff", true: "#ff5c5c" }}
-        thumbColor={isExpense ? "#f4f3f4" : "#f5dd4b"}
-      />
-      <Text>{isExpense ? 'Expense' : 'Income'}</Text>
-      
-      {/* Description-kenttä */}
-      <TextInput
-        style={styles.input}
-        placeholder="Description"
-        value={description}
-        onChangeText={setDescription}
-      />
-      
-      {/* Amount-kenttä */}
-      <TextInput
-        style={styles.input}
-        placeholder={`Amount (${currencySymbol})`}
-        value={amount}
-        keyboardType="numeric"
-        onChangeText={setAmount}
-      />
-
-      {/* Näytetään kategorialista vain menoissa */}
-      {isExpense && (
-        <View style={styles.categoryContainer}>
-         <Button style={styles.selectCategoryButton}
-          title={category !== 'Select Category' ? category : 'Select Category'}
-           onPress={() => setShowModal(true)}/>
-        </View>
-      )}
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <KeyboardAvoidingView 
-    style={styles.centeredView}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-  >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalHeader}>Categories</Text>
-            <ScrollView style={{ maxHeight: 300 }}>
-              {categories.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setCategory(item);
-                    setShowModal(false);
-                  }}
-                  onLongPress={() => handleDeleteCategory(item)}
-                >
-                  <Text style={styles.categoryText}>{item}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Custom category name"
-              value={customCategory}
-              onChangeText={setCustomCategory}
-            />
-            <Button title="Save Category" onPress={handleSaveCategory} />
-          </View>
+        <View style={styles.titleText}>
+        <Text style={{fontWeight: 'bold',fontSize: 20, }}>Select Transaction Type</Text>
         </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-      </Modal>
-      <Pressable style={styles.button} onPress={handleSaveTransaction}>
-        <Text style={styles.buttonText}>Add Transaction</Text>
-      </Pressable>
+        {/* Tab selection bar */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tabItem, isExpense ? styles.activeTabExpense : null]}
+            onPress={() => setIsExpense(true)}
+          >
+            <Text style={styles.tabText}>Expense</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabItem, !isExpense ? styles.activeTab : null]}
+            onPress={() => setIsExpense(false)}
+          >
+            <Text style={styles.tabText}>Income</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.inputContainer}>
+        {/* Description field */}
+        <TextInput
+          style={styles.input}
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+        />
+      
+        {/* Amount field */}
+        <TextInput
+          style={styles.input}
+          placeholder={`Amount (${currencySymbol})`}
+          value={amount}
+          keyboardType="numeric"
+          onChangeText={setAmount}
+        />
+        </View>
+        {/* Show category list only for expenses */}
+        {isExpense && (
+          <View style={styles.categoryContainer}>
+            <Text style={{fontSize:18,marginBottom: 15,}}>Select Category</Text>
+            <View style={styles.selectCategoryButton}>
+            <Button
+
+              title={category !== 'Select Category' ? category : 'Select Category'}
+              onPress={() => setShowModal(true)}
+            />
+            </View>
+          </View>
+        )}
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={showModal}
+          onRequestClose={() => setShowModal(false)}
+        >
+          <KeyboardAvoidingView 
+            style={styles.centeredView}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <TouchableWithoutFeedback onPress={dismissKeyboard}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalHeader}>Categories</Text>
+                  <ScrollView style={{ maxHeight: 300 }}>
+                    {categories.map((item, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          setCategory(item);
+                          setShowModal(false);
+                        }}
+                        onLongPress={() => handleDeleteCategory(item)}
+                      >
+                        <Text style={styles.categoryText}>{item}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Custom category name"
+                    value={customCategory}
+                    onChangeText={setCustomCategory}
+                  />
+                  <Button title="Save Category" onPress={handleSaveCategory} />
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </Modal>
+        <Pressable style={styles.button} onPress={handleSaveTransaction}>
+          <Text style={styles.buttonText}>Add Transaction</Text>
+        </Pressable>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -227,26 +243,59 @@ const AddTransactionScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#EF2125',
+    backgroundColor: 'white',
+    borderRadius: 30,
+    margin: 20,
+  },
+
+  inputContainer:{
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    padding: 10,
+    marginBottom: 25,
+  },
+
+  titleText:{
+      padding: 20,
+      marginBottom: 25,
+      alignItems: 'center',
+      borderBottomColor: 'rgba(0,0,0, 0.2)',
+      borderBottomWidth: 1
+
   },
   input: {
-    height: 40,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#cccccc',
+    height: 45,
+    textAlign: 'center',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
     padding: 10,
     borderRadius: 5,
-    backgroundColor: '#989595',
+    backgroundColor: '#e8e8e8',
   },
   button: {
     backgroundColor: '#4CAF50', 
-    padding: 10,
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: 80,
+
   },
   buttonText: {
     color: '#ffffff', 
@@ -257,13 +306,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22,
+     
   },
   modalView: {
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
+    paddingHorizontal: 45,
+    paddingVertical: 25,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -272,42 +322,77 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    
   },
   modalHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    paddingBottom: 5,
+    marginBottom: 15,
   },
   modalInput: {
-    width: '100%',
-    height: 40,
+    height: 45,
     marginBottom: 20,
     marginTop: 10,
-    borderWidth: 1,
-    borderColor: 'green',
     padding: 10,
     borderRadius: 5,
-    backgroundColor: 'gray',
+    backgroundColor: 'rgba(0,0,0, 0.2)',
   },
   categoryContainer: {
-    marginBottom: 10,
+    marginBottom: 25,
     color: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
   },
   categoryText: {
-    fontSize: 24,
+    fontSize: 19,
     fontStyle: 'italic',
     marginBottom: 8,
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    paddingBottom: 10,
+    marginBottom: 15,
+    width: '80%'
   },
   selectCategoryButton: {
-    backgroundColor: '#4CAF50',
-    padding: 10,
-    borderRadius: 5,
+    paddingVertical: 10,
+    borderRadius: 30,
     marginBottom: 10,
+    width: '100%',
   },
   selectCategoryText: {
     color: '#ffffff',
     fontSize: 16,
     textAlign: 'center',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginBottom: 25,
+    borderBottomColor: 'rgba(0,0,0, 0.2)',
+    borderBottomWidth: 1,
+    paddingBottom: 20,
+  },
+  tabItem: {
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 5,
+    backgroundColor: 'rgba(0,0,0, 0.1)'
+  },
+  activeTab: {
+    backgroundColor: '#4CAF50',
+  },
+  activeTabExpense: {
+    backgroundColor: '#ff4545'
+  },
+  tabText: {
+    fontSize: 16,
   },
 });
 
