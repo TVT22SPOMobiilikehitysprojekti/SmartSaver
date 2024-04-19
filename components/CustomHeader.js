@@ -77,9 +77,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: 'white',
     height: 100,
-    position: 'fixed', // Fixed header
+    position: 'fixed', 
+    elevation: 5,
     top: 0,
     left: 0,
     right: 0,

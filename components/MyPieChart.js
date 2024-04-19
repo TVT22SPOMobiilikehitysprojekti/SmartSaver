@@ -21,7 +21,6 @@ const chartConfig = {
 const PieChartComponent = () => {
 
   const [transactions, setTransactions] = useState([]);
-  const [selectedSlice, setSelectedSlice] = useState({ label: '', value: '' });
   const [isLoading, setIsLoading] = useState(true); 
 
  
@@ -104,10 +103,10 @@ const PieChartComponent = () => {
               chartConfig={chartConfig}
               accessor="value"
               backgroundColor="transparent"
-              paddingLeft="0"
+              paddingLeft="20"
             />
           </TouchableOpacity>
-          <Text style={{ textAlign: 'center' }} >Press to view details</Text>
+          <Text style={{ textAlign: 'center', color:'grey'}} >Press to view details</Text>
         </>
       )}
     </View>
@@ -121,7 +120,6 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     padding: 20,
-    paddingLeft: 60,
     backgroundColor: 'white',
     borderRadius: 30,
     justifyContent: 'center',
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
   },
   piechartheader: {
     color: 'blue',
-    fontSize: 24,
+    fontSize: 20,
     textAlign: 'center',
   },
 });
