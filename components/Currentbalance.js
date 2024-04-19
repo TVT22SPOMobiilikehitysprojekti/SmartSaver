@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { db } from '../firebase/Config';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { db, doc, onSnapshot } from '../firebase/Config';
 import { set } from 'firebase/database';
-import { fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange } from '../firebase/Shortcuts';
+import { fetchCurrencySymbol, getCurrentUserId, handleCurrencySymbolChange, saveUserBalance } from '../firebase/Shortcuts';
 
 
 const CurrentbalanceComponent = ({ userId }) => {
