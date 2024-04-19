@@ -61,14 +61,12 @@ const CurrentbalanceComponent = ({ userId }) => {
 
     return (
         <View style={styles.container}>
-        <View style={styles.balance}>
             <Text style={styles.balanceValue}>
                 {currencySymbol && (
                     <Text style={styles.currencySymbol}>{currencySymbol}</Text>
                 )}
-                <Text style={styles.balanceAmount}>{balance}</Text>
-            </Text>
-        </View>
+                </Text>
+             <Text style={styles.balanceAmount}>{balance}</Text>
     </View>
     );
 }
@@ -88,17 +86,23 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.3,
         shadowRadius: 2,
+        flexDirection: 'row',
        
     },
     currencySymbol: {
         fontSize: 35,
-        marginRight: 10,
+        color: 'black',
 
     },
     balanceAmount: {
         fontSize: 35,
         color: 'black',
-        
+        marginLeft: 5,
+  
+    },
+    balance: {
+       justifyContent:'center',
+       flexDirection: 'row',
     },
 });
 
