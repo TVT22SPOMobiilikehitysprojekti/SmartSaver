@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: '#34a4eb',
         height: '100%',
         width: '100%',
 
