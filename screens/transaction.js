@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: '#EF2125',
   },
   input: {
     height: 40,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     borderColor: '#cccccc',
     padding: 10,
     borderRadius: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#989595',
   },
   button: {
     backgroundColor: '#4CAF50', 
