@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#EF2125',
+    backgroundColor: 'red',
   },
   setSavingsText: {
     color: 'white',
