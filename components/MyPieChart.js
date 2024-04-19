@@ -88,6 +88,7 @@ const PieChartComponent = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.piechartheader}>Pie Chart</Text>
       {isLoading ? ( 
         <Text>Loading...</Text>
       ) : transactions.length === 0 ? ( 
@@ -131,6 +132,11 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     overflow: 'hidden',
 
+  },
+  piechartheader: {
+    color: 'blue',
+    fontSize: 24,
+    textAlign: 'center',
   },
 });
 
