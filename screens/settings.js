@@ -90,13 +90,9 @@ const SettingsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerIcon}>⚙️</Text>
-        <Text style={styles.headerTitle}>Settings</Text>
-      </View>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.section}>
+      <View style={styles.settingsContainer}>
           <Text style={styles.sectionTitle}>General</Text>
+          <View style={styles.line}></View>
           <View style={styles.settingItem}>
             <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
               <Text style={styles.settingTitle}>Change currency ({currencySymbol})</Text>
@@ -135,19 +131,6 @@ const SettingsScreen = ({ navigation }) => {
             <Text style={styles.settingDescription}>Setting 3 description</Text>
           </View>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Additional settings</Text>
-          {/* Repeat for other settings */}
-          <View style={styles.settingItem}>
-            <Text style={styles.settingTitle}>Setting 4</Text>
-            <Text style={styles.settingDescription}>Setting 4 description</Text>
-          </View>
-          <View style={styles.settingItem}>
-            <Text style={styles.settingTitle}>Setting 5</Text>
-            <Text style={styles.settingDescription}>Setting 5 description</Text>
-          </View>
-        </View>
-      </ScrollView>
     </View>
   );
 };
@@ -155,45 +138,41 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#34a4eb',
+    padding: 20,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#000',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-  },
-  headerIcon: {
-    fontSize: 24,
-    color: 'white',
-  },
-  headerTitle: {
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
-  scrollView: {
+  settingsContainer: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#ccc',
     backgroundColor: 'white',
-  },
-  section: {
-    marginVertical: 10,
+    padding: 10,
+    paddingBottom:100,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    backgroundColor: '#EFEFEF',
+    marginBottom: 10,
     padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EFEFEF',
+    textAlign:'center',
   },
   settingItem: {
+    marginBottom: 10,
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#EFEFEF',
   },
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginBottom: 10,
+  },
   settingTitle: {
     fontSize: 16,
     fontWeight: '500',
+    marginBottom: 5,
   },
   settingDescription: {
     fontSize: 14,
@@ -201,24 +180,23 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   item: {
     padding: 10,
