@@ -14,7 +14,7 @@ const Getuserinfo = () => {
         if (user) {
             updateUserName(user.uid, name).then(() => {
                 setName('');
-                navigation.navigate('Intro2');
+                navigation.navigate('IntroStep2');
             }).catch((error) => {
                 Alert.alert("Error", error.message);
             });
