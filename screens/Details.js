@@ -90,12 +90,7 @@ const Details = ({ navigation }) => {
   
   
 
-  const handleEdit = (transaction) => {
-    setSelectedTransactionId(transaction.id);
-    setEditModalVisible(true);
-    setInitialEditValues({ amount: transaction.amount });
-  };
-
+ 
   const handleSaveEdit = async (newData) => {
     setEditModalVisible(false);
     try {

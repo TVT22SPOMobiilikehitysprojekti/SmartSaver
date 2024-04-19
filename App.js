@@ -9,7 +9,7 @@ import IntroScreen from './screens/intro1';
 import IntroScreen2 from './screens/intro2';
 import IntroScreen3 from './screens/intro3';
 import IntroScreen4 from './screens/intro4';
-import Frontpage from './screens/Frontpage';
+import Frontpage from './screens/frontpage';
 import Savings from './screens/savings';
 import SettingsScreen from './screens/settings';
 import TransactionScreen from './screens/transaction';
