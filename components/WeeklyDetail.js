@@ -1,54 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { fetchUserTransactions, getCurrentUserId } from '../firebase/Shortcuts'; // Import your functions from './Config'
+import { fetchUserTransactions, getCurrentUserId } from '../firebase/Shortcuts';
 
 const WeeklyTransactionList = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentDate, setCurrentDate] = useState(new Date()); // Initialize with current date
-    const [currentWeek, setCurrentWeek] = useState(0); // Initialize with current week
-    const [highlightedDays, setHighlightedDays] = useState([]); 
-    
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [currentWeek, setCurrentWeek] = useState(0);
+    const [transactionsByDay, setTransactionsByDay] = useState({});
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userId = getCurrentUserId(); // Get the current user's ID
-
-                if (userId) {
-                    const userTransactions = await fetchUserTransactions(userId);
-                    
-                    // Calculate start and end dates for the selected week
-                    const startOfWeek = new Date(currentDate);
-                    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + (currentWeek * 7)); // Set to first day of the selected week
-                    const endOfWeek = new Date(startOfWeek);
-                    endOfWeek.setDate(endOfWeek.getDate() + 6); // Set to last day of the selected week
-                    
-                    // Filter transactions for the selected week and day
-                    const filteredTransactions = userTransactions.filter(transaction => {
-                        const transactionDate = new Date(transaction.date.seconds * 1000); // Assuming 'date' is a Firestore Timestamp
-                        return transactionDate >= startOfWeek && transactionDate <= endOfWeek && transactionDate.getDay() === currentDate.getDay();
-                    });
-
-                    const filteredTransactionsWeek = userTransactions.filter(transaction => {
-                        const transactionDate = new Date(transaction.date.seconds * 1000); // Assuming 'date' is a Firestore Timestamp
-                        return transactionDate >= startOfWeek && transactionDate <= endOfWeek;
-                    });
-
-                    setTransactions(filteredTransactions, filteredTransactionsWeek);
-
-                    const daysWithTransactions = filteredTransactionsWeek.map(transaction => {
-                        const transactionDate = new Date(transaction.date.seconds * 1000); // Oletetaan, että 'date' on Firestore Timestamp
-                        return transactionDate.toLocaleDateString('en-US', { weekday: 'short' });
-                        
-                   
-                    });
-    
-                    setHighlightedDays([...new Set(daysWithTransactions)]); // Poistetaan duplikaatit ja asetetaan highlightetut päivät
-
-                } else {
+                const userId = getCurrentUserId();
+                if (!userId) {
                     throw new Error("User ID not available.");
                 }
+                const userTransactions = await fetchUserTransactions(userId);
+
+                const startOfWeek = new Date(currentDate);
+                startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Adjust to Monday of the current week
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6); // Sunday of the same week
+
+                const weekTransactions = userTransactions.filter(transaction => {
+                    const transactionDate = new Date(transaction.date.seconds * 1000);
+                    return transactionDate >= startOfWeek && transactionDate <= endOfWeek;
+                });
+
+                setTransactions(weekTransactions);
+                groupTransactionsByDay(weekTransactions);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -57,24 +39,34 @@ const WeeklyTransactionList = () => {
         };
 
         fetchData();
+    }, [currentDate, currentWeek]);
 
-        // Cleanup function
-        return () => {
-            // Cleanup logic if needed
-        };
-    }, [currentDate, currentWeek]); // Re-run effect whenever currentDate or currentWeek changes
+    const groupTransactionsByDay = (transactions) => {
+        const grouped = {};
+        transactions.forEach(transaction => {
+            const dateStr = new Date(transaction.date.seconds * 1000).toDateString();
+            if (!grouped[dateStr]) {
+                grouped[dateStr] = [];
+            }
+            grouped[dateStr].push(transaction);
+        });
+        setTransactionsByDay(grouped);
+    };
 
     const changeWeek = (increment) => {
+        const newCurrentDate = new Date(currentDate);
+        newCurrentDate.setDate(newCurrentDate.getDate() - newCurrentDate.getDay() + 1 + increment * 7);
+        setCurrentDate(newCurrentDate);
         setCurrentWeek(prevWeek => prevWeek + increment);
     };
 
     const setCurrentDateByDay = (day) => {
         const currentDayIndex = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(day);
-        const today = new Date();
-        const selectedDate = new Date(today.setDate(today.getDate() - today.getDay() + currentDayIndex));
-        setCurrentDate(selectedDate);
+        const newDate = new Date(currentDate);
+        newDate.setDate(newDate.getDate() - newDate.getDay() + currentDayIndex);
+        setCurrentDate(newDate);
     };
-    
+
     const getISOWeek = (date) => {
         const d = new Date(date);
         d.setHours(0, 0, 0, 0);
@@ -84,37 +76,34 @@ const WeeklyTransactionList = () => {
         return weekNo;
     };
 
-    
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Transactions</Text>
             <ScrollView style={styles.scrollContainer}>
-                {error && <Text>Error: {error}</Text>}
-                {transactions.map(transaction => (
-                    <TouchableOpacity key={transaction.id}>
-                        <View style={styles.transaction}>
-                            <Text style={styles.transactionText}>Date: {new Date(transaction.date.seconds * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'numeric', year: 'numeric' })}</Text>
-                            <Text style={styles.transactionText}>Category: {transaction.category}</Text>
-                            <Text style={styles.transactionText}>Amount: {transaction.amount}</Text>
-                            <Text style={styles.transactionText}>Description: {transaction.description}</Text>
-                           
-
-                        </View>
-                    </TouchableOpacity>
+                {loading ? <Text>Loading...</Text> : error ? <Text>Error: {error}</Text> :
+                Object.entries(transactionsByDay).map(([day, dayTransactions]) => (
+                    <View key={day}>
+                        <Text style={styles.dateHeader}>{day}</Text>
+                        {dayTransactions.map(transaction => (
+                            <TouchableOpacity key={transaction.id}>
+                                <View style={styles.transaction}>
+                                    <Text style={styles.transactionText}>Date: {new Date(transaction.date.seconds * 1000).toLocaleDateString('en-US')}</Text>
+                                    <Text style={styles.transactionText}>Category: {transaction.category}</Text>
+                                    <Text style={styles.transactionText}>Amount: {transaction.amount}</Text>
+                                    <Text style={styles.transactionText}>Description: {transaction.description}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 ))}
             </ScrollView>
             <View style={styles.dateContainer}>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-                    <Text key={index} style={[styles.date, highlightedDays.includes(day) && styles.highlighted]} onPress={() => setCurrentDateByDay(day)}>{day}</Text>
-                ))}
-            </View>
-            <View style={styles.dateContainer}>
                 <TouchableOpacity onPress={() => changeWeek(-1)}>
-                    <Text style={styles.date}>Previous Week</Text>
+                    <Text style={styles.date}>Previous</Text>
                 </TouchableOpacity>
-                <Text style={styles.date}>Week {getISOWeek(currentDate)}</Text>
+                <Text style={styles.week}>Week {getISOWeek(currentDate)}</Text>
                 <TouchableOpacity onPress={() => changeWeek(1)}>
-                    <Text style={styles.date}>Next Week</Text>
+                    <Text style={styles.date}>Next</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -126,7 +115,12 @@ const styles = {
         flex: 1,
         padding: 16,
         backgroundColor: 'white',
-        borderRadius: 25,
+        borderRadius: 30,
+        elevation: 5,
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+
 
     },
     title: {
@@ -153,18 +147,29 @@ const styles = {
         borderRadius: 5,
         width: '100%',
         height: 40,
-        alignItems: 'center',
+        alignItems: 'fixed',
+    },
+    week: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        padding: 10,
+        position: 'absolute',
+        left: '35%',
     },
     date: {
         fontSize: 14,
+        fontWeight: 'bold',
+        padding: 10,
+    },
+    dateHeader: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 5,
     },
     highlighted: {
         fontWeight: 'bold',
         color: 'blue',
-    },
-    highlighted2: {
-        
-        backgroundColor: 'yellow',
     },
 };
 
