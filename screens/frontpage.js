@@ -7,6 +7,7 @@ import CalendarComponent from '../components/Calendar';
 import { useNavigation } from '@react-navigation/native';
 import CurrentbalanceComponent from '../components/Currentbalance';
 import { getCurrentUserId } from '../firebase/Shortcuts';
+import WeeklyTransactionList from '../components/WeeklyDetail';
 
 
 
@@ -78,6 +79,9 @@ const Frontpage = () => {
         </View>
         <View>
           <PieChartComponent />
+        </View>
+        <View>
+          <WeeklyTransactionList />
         </View>
       </ScrollView>
       <Modal
