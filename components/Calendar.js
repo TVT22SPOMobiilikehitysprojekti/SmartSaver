@@ -11,7 +11,7 @@ const CalendarComponent = forwardRef((props, ref) => {
   const [showModal, setShowModal] = useState(false);
   const [currencySymbol, setCurrencySymbol] = useState('');
   let unsubscribeCurrencySymbol;
-  const [calendarHeight, setCalendarHeight] = useState(17); // Lisätty kalenterin korkeus
+  const [calendarHeight, setCalendarHeight] = useState(14); // Lisätty kalenterin korkeus
   const calendarRef = useRef(null);
 
 
@@ -57,7 +57,7 @@ const CalendarComponent = forwardRef((props, ref) => {
   }, []);
 
   const toggleCalendarSize = () => {
-    setCalendarHeight(prevHeight => prevHeight === 17 ? 320 : 17);
+    setCalendarHeight(prevHeight => prevHeight === 14 ? 320 : 14);
   };
 
   const calendarTheme = {
@@ -95,7 +95,7 @@ const CalendarComponent = forwardRef((props, ref) => {
 
 
   const renderMonthTouchable = () => {
-    const arrowIcon = calendarHeight === 17 ? '▼' : '▲';
+    const arrowIcon = calendarHeight === 14 ? '▼' : '▲';
 
 
 
