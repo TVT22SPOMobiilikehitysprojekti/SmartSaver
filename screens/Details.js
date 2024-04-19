@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     color: 'white',
-    borderRadius: 30,
+    borderRadius: 10,
 
   },
   transactionContainer: {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 30,
+    borderRadius: 10,
     padding: 10,
     marginBottom: 10,
     backgroundColor: 'white',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     marginLeft: 10,
     backgroundColor: 'red',
-    borderRadius: 30,
+    borderRadius: 10,
     padding: 10,
   },
   delete: {

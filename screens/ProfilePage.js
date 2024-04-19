@@ -129,17 +129,20 @@ const ProfilePage = () => {
                     />
                     <Icon name="pencil" size={20} style={styles.editIcon} />
                 </TouchableOpacity>
+                <View style={styles.indicatorProfile} />
             </View>
             <View style={styles.userInfoContainer}>
             <Icon name="user" size={20} style={styles.icon} />
                 <View style={styles.userInfoColumn}>
                     <Text style={styles.label}>Name:</Text>
                     <Text style={styles.value}>{userName}</Text>
+                    <View style={styles.indicator} />
                 </View>
                 <Icon name="envelope" size={20} style={styles.icon} />
                 <View style={styles.userInfoColumn}>
                     <Text style={styles.label}>Email:</Text>
                     <Text style={styles.value}>{userEmail}</Text>
+                    <View style={styles.indicator} />
                 </View>
             </View>
         </View>
@@ -170,6 +173,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
+     
         
     },
     modalContent: {
@@ -203,7 +207,7 @@ const styles = StyleSheet.create({
     profileIconContainer: {
         alignItems: 'center',
         justifyContent: 'flex-start',
-        marginVertical: 20,
+        marginBottom: 35,
     },
     profileIcon: {
         width: 150,
@@ -238,6 +242,24 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
     },
+    indicator: {
+        position: 'absolute',
+        bottom: -20,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 2,
+        borderRadius: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      },
+      indicatorProfile: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 2,
+        borderRadius: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      },
 });
 
 export default ProfilePage;
