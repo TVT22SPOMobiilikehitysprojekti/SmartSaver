@@ -106,7 +106,7 @@ const CalendarComponent = forwardRef((props, ref) => {
         activeOpacity={0.8}
       >
         <View style={{ justifyContent: 'center', paddingHorizontal: 15 }}>
-          <Text style={{ fontSize: 14, color: 'red' }}>{arrowIcon}</Text>
+          <Text style={{ fontSize: 16, color: 'red' }}>{arrowIcon}</Text>
         </View>
       </TouchableOpacity>
 

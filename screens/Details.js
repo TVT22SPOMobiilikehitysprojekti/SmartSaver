@@ -141,7 +141,6 @@ const Details = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.text}>Transaction Details</Text>
       <TouchableOpacity onPress={handleDeleteAllTransactions}>
         <Text style={styles.deleteallbutton}>Delete All Transactions</Text>
       </TouchableOpacity>
@@ -173,15 +172,10 @@ const Details = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    padding: 20,
   },
-  text: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'white',
-  },
+
   deleteallbutton: {
     marginBottom: 10,
     backgroundColor: 'red',
@@ -200,6 +194,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     backgroundColor: 'white',
+    elevation: 5,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   transactionDetails: {
     flex: 1,

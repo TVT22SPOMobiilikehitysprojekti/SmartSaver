@@ -53,7 +53,7 @@ const ProfilePage = () => {
             
         if (!cropResult.cancelled && cropResult.assets.length > 0) {
             handleUpdateProfilePic(cropResult.assets[0]);
-            setModalVisible(false); // Close the modal after selecting an image
+            setModalVisible(false); 
         }
     };
 
@@ -73,7 +73,7 @@ const ProfilePage = () => {
                 
         if (!cropResult.cancelled && cropResult.assets.length > 0) {
             handleUpdateProfilePic(cropResult.assets[0]);
-            setModalVisible(false); // Close the modal after selecting an image
+            setModalVisible(false); 
         }
     };
 
@@ -131,14 +131,14 @@ const ProfilePage = () => {
                 </TouchableOpacity>
             </View>
             <View style={styles.userInfoContainer}>
+            <Icon name="user" size={20} style={styles.icon} />
                 <View style={styles.userInfoColumn}>
-                    <Icon name="user" size={20} style={styles.icon} />
-                    <Text style={styles.label}>User Name:</Text>
+                    <Text style={styles.label}>Name:</Text>
                     <Text style={styles.value}>{userName}</Text>
                 </View>
+                <Icon name="envelope" size={20} style={styles.icon} />
                 <View style={styles.userInfoColumn}>
-                    <Icon name="envelope" size={20} style={styles.icon} />
-                    <Text style={styles.label}>User Email:</Text>
+                    <Text style={styles.label}>Email:</Text>
                     <Text style={styles.value}>{userEmail}</Text>
                 </View>
             </View>
@@ -151,8 +151,9 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
         height: '100%',
+        width: '100%',
 
     },
     profile: {
@@ -160,6 +161,8 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         padding: 20,
         elevation: 5,
+        minWidth: 300,
+  
     },
 
     modalContainer: {
@@ -167,6 +170,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        
     },
     modalContent: {
         backgroundColor: 'white',
@@ -174,6 +178,7 @@ const styles = StyleSheet.create({
         padding: 20,
         width: '80%',
         alignItems: 'center',
+
     },
     closeButton: {
         position: 'absolute',
@@ -209,18 +214,22 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        backgroundColor: 'transparent', // Adjust icon's background color as needed
+        backgroundColor: 'transparent', 
+    },
+    icon:{
+        fontSize: 35,
     },
     userInfoContainer: {
         flexDirection: 'column',
         marginVertical: 25,
-        minWidth: 200,
+        width: '100%',
         
     },
     userInfoColumn: {
         flexDirection: 'column',
         marginVertical: 15,
-        marginLeft: 5,
+        marginLeft:50,
+        top: -65,
     },
     label: {
         fontSize: 20,

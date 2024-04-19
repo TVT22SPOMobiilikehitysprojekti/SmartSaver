@@ -20,7 +20,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomBar from './components/BottomBar';
 import { useNavigation } from '@react-navigation/native';
 import AddTransactionModal from './components/AddTransactionModal';
-
+import CustomHeader from './components/CustomHeader';
 
 
 const Stack = createNativeStackNavigator();
@@ -53,9 +53,9 @@ export default function App() {
             <Stack.Screen name="Intro1" component={IntroStack} options={{ headerShown: false }} /> 
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Transaction" component={TransactionScreen} />
-            <Stack.Screen name="AddSavings" component={addSavingScreen} options={{ headerTitle: 'Add Saving' }} /> 
-            <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerTitle: 'Profile' }}/> 
-            <Stack.Screen name="ViewTransactionDetails" component={ViewTransactionDetailsScreen} options={{ headerTitle: 'Details' }} /> 
+            <Stack.Screen name="AddSavings" component={addSavingScreen} options={{headerTintColor:'blue', headerTitle: 'Add Saving' }} /> 
+            <Stack.Screen name="ProfilePage" component={ProfilePage} options={{headerTintColor:'blue', headerTitle: 'Profile' }}/> 
+            <Stack.Screen name="ViewTransactionDetails" component={ViewTransactionDetailsScreen}  options={{headerTintColor:'blue', headerTitle: 'Transaction Details' }} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -97,8 +97,10 @@ function TabStack(){
       <Tab.Navigator
         tabBar={(props) => <BottomBar {...props} activeTab={activeTab} onPressHome={handleHomePress} onPressPlus={handlePlusPress} onPressPen={handlePenPress} />}
       >
-        <Tab.Screen name="Frontpage" component={Frontpage} options={{ headerShown: false }} />
-        <Tab.Screen name="Savings" component={Savings} />
+        <Tab.Screen name="Frontpage" component={Frontpage} options={{
+        header: () => <CustomHeader title="SmartSaver" />,}}/>
+        <Tab.Screen name="Savings" component={Savings}  options={{
+        header: () => <CustomHeader title="Savings" />,}}/>
       </Tab.Navigator>
       <AddTransactionModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
