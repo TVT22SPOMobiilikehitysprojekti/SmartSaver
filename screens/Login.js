@@ -8,19 +8,22 @@ const Login = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState('testi9@foo.com');
     const [password, setPassword] = useState('123456');
+    const [error, setError] = useState(null)
 
     const dismissKeyboard = () => {
       Keyboard.dismiss();
     }
 
     const onLogin = async () => {
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-          navigation.replace('Home');
-        } catch (error) {
-          console.log(error);
-        }
-    };
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        navigation.replace('Home');
+      } catch (error) {
+        console.log(error);
+        let errorMessage = 'Incorrect credentials';
+        setError(errorMessage); 
+      }
+  };
 
     return (
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -47,14 +50,15 @@ const Login = () => {
                 placeholder="Password"
                 secureTextEntry
             />
+            {error && <Text style={styles.error}>{error}</Text>}
             <TouchableOpacity style={styles.button} onPress={onLogin}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
             <Text onPress={() => navigation.navigate('Signup')} style={styles.signUpLink}>
                 No account yet? Sign up
             </Text>
-            </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     );
 };
 
@@ -103,6 +107,12 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 20,
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 
