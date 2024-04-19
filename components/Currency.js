@@ -55,7 +55,7 @@ const Currency = () => {
             () => {
                 setSelectedCurrencyId(currency.id); // Päivitä valittu valuutta-ID
                 setTimeout(() => {
-                navigation.navigate('Intro3'); 
+                navigation.navigate('IntroStep3'); 
               }, 1000);
             },
             (error) => {
