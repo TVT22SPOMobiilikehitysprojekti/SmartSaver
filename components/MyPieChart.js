@@ -104,7 +104,7 @@ const PieChartComponent = () => {
               chartConfig={chartConfig}
               accessor="value"
               backgroundColor="transparent"
-              paddingLeft="0"
+              paddingLeft="20"
             />
           </TouchableOpacity>
           <Text style={{ textAlign: 'center' }} >Press to view details</Text>
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     padding: 20,
-    paddingLeft: 60,
     backgroundColor: 'white',
     borderRadius: 30,
     justifyContent: 'center',

@@ -42,7 +42,7 @@ const Frontpage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(0, 0, 244,0)',
   },
 
   footer: {

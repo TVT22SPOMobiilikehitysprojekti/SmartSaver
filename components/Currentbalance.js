@@ -62,7 +62,6 @@ const CurrentbalanceComponent = ({ userId }) => {
     return (
         <View style={styles.container}>
         <View style={styles.balance}>
-            <Text style={styles.balanceLabel}>Balance:</Text>
             <Text style={styles.balanceValue}>
                 {currencySymbol && (
                     <Text style={styles.currencySymbol}>{currencySymbol}</Text>
@@ -89,18 +88,17 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.3,
         shadowRadius: 2,
-    },
-    balanceLabel: {
-        fontSize: 25,
-        color: 'blue',
+       
     },
     currencySymbol: {
         fontSize: 35,
-        color: 'red',
+        marginRight: 10,
+
     },
     balanceAmount: {
         fontSize: 35,
         color: 'black',
+        
     },
 });
 
