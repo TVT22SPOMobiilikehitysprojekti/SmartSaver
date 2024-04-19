@@ -5,7 +5,6 @@ import { firestore, collection, onSnapshot, query, where } from '../firebase/Con
 import { getCurrentUserId } from '../firebase/Shortcuts';
 import { useNavigation } from '@react-navigation/native'; 
 
-
 const chartConfig = {
   backgroundGradientFrom: "#1E2923",
   backgroundGradientFromOpacity: 0,
@@ -19,41 +18,20 @@ const chartConfig = {
 };
 
 const PieChartComponent = () => {
-
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
 
- 
   const navigation = useNavigation();
 
   useEffect(() => {
-
     const currentUserID = getCurrentUserId();
     const q = query(
       collection(firestore, 'Users', currentUserID, 'Transactions'),
       where('isExpense', '==', true)
     );
     const availableColors = [
-      '#FF5733', // Red
-      '#FFC300', // Yellow
-      '#C70039', // Maroon
-      '#900C3F', // Dark Magenta
-      '#581845', // Dark Red
-      '#00CED1', // Dark Turquoise
-      '#4682B4', // Steel Blue
-      '#8A2BE2', // Blue Violet
-      '#228B22', // Forest Green
-      '#FF8C00', // Dark Orange
-      '#9932CC', // Dark Orchid
-      '#6A5ACD', // Slate Blue
-      '#4169E1', // Royal Blue
-      '#4B0082', // Indigo
-      '#20B2AA', // Light Sea Green
-      '#DC143C', // Crimson
-      '#2E8B57', // Sea Green
-      '#FF1493', // Deep Pink
-      '#8B4513', // Saddle Brown
-      '#8B0000'  // Dark Red
+      '#FF5733', '#FFC300', '#C70039', '#900C3F', '#581845', '#00CED1', '#4682B4', '#8A2BE2', '#228B22', '#FF8C00',
+      '#9932CC', '#6A5ACD', '#4169E1', '#4B0082', '#20B2AA', '#DC143C', '#2E8B57', '#FF1493', '#8B4513', '#8B0000'
     ]; 
   
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -75,15 +53,13 @@ const PieChartComponent = () => {
         }
       });
 
-      setTransactions(Object.values(tempTransactions));
+      const sortedTransactions = Object.values(tempTransactions).sort((a, b) => b.value - a.value);
+      setTransactions(sortedTransactions);
       setIsLoading(false); 
     });
   
     return unsubscribe;
   }, []);
-
-
-
 
   return (
     <View style={styles.container}>
@@ -129,7 +105,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
     overflow: 'hidden',
-
   },
   piechartheader: {
     color: 'blue',
