@@ -7,8 +7,8 @@ const WeeklyTransactionList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [currentWeek, setCurrentWeek] = useState(0);
     const [transactionsByDay, setTransactionsByDay] = useState({});
+    const [expandedDays, setExpandedDays] = useState({}); // Tila avattujen päivien hallintaan
 
     useEffect(() => {
         const fetchData = async () => {
@@ -18,11 +18,10 @@ const WeeklyTransactionList = () => {
                     throw new Error("User ID not available.");
                 }
                 const userTransactions = await fetchUserTransactions(userId);
-
                 const startOfWeek = new Date(currentDate);
-                startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Adjust to Monday of the current week
+                startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
                 const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(endOfWeek.getDate() + 6); // Sunday of the same week
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
 
                 const weekTransactions = userTransactions.filter(transaction => {
                     const transactionDate = new Date(transaction.date.seconds * 1000);
@@ -39,7 +38,7 @@ const WeeklyTransactionList = () => {
         };
 
         fetchData();
-    }, [currentDate, currentWeek]);
+    }, [currentDate]);
 
     const groupTransactionsByDay = (transactions) => {
         const grouped = {};
@@ -50,21 +49,25 @@ const WeeklyTransactionList = () => {
             }
             grouped[dateStr].push(transaction);
         });
-        setTransactionsByDay(grouped);
+        const sortedKeys = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b)); // Järjestetään päivät
+        const sortedGrouped = {};
+        sortedKeys.forEach(key => {
+            sortedGrouped[key] = grouped[key];
+        });
+        setTransactionsByDay(sortedGrouped);
+    };
+
+    const toggleDayExpansion = (day) => {
+        setExpandedDays(prevState => ({
+            ...prevState,
+            [day]: !prevState[day]
+        }));
     };
 
     const changeWeek = (increment) => {
         const newCurrentDate = new Date(currentDate);
-        newCurrentDate.setDate(newCurrentDate.getDate() - newCurrentDate.getDay() + 1 + increment * 7);
+        newCurrentDate.setDate(newCurrentDate.getDate() + increment * 7);
         setCurrentDate(newCurrentDate);
-        setCurrentWeek(prevWeek => prevWeek + increment);
-    };
-
-    const setCurrentDateByDay = (day) => {
-        const currentDayIndex = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(day);
-        const newDate = new Date(currentDate);
-        newDate.setDate(newDate.getDate() - newDate.getDay() + currentDayIndex);
-        setCurrentDate(newDate);
     };
 
     const getISOWeek = (date) => {
@@ -72,40 +75,39 @@ const WeeklyTransactionList = () => {
         d.setHours(0, 0, 0, 0);
         d.setDate(d.getDate() + 4 - (d.getDay() || 7));
         const yearStart = new Date(d.getFullYear(), 0, 1);
-        const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-        return weekNo;
+        return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Transactions</Text>
-            <ScrollView style={styles.scrollContainer}>
-                {loading ? <Text>Loading...</Text> : error ? <Text>Error: {error}</Text> :
-                Object.entries(transactionsByDay).map(([day, dayTransactions]) => (
-                    <View key={day}>
-                        <Text style={styles.dateHeader}>{day}</Text>
-                        {dayTransactions.map(transaction => (
-                            <TouchableOpacity key={transaction.id}>
-                                <View style={styles.transaction}>
-                                    <Text style={styles.transactionText}>Date: {new Date(transaction.date.seconds * 1000).toLocaleDateString('en-US')}</Text>
-                                    <Text style={styles.transactionText}>Category: {transaction.category}</Text>
-                                    <Text style={styles.transactionText}>Amount: {transaction.amount}</Text>
-                                    <Text style={styles.transactionText}>Description: {transaction.description}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                ))}
-            </ScrollView>
+            <Text style={styles.headerText}>Weekly Transactions</Text>
             <View style={styles.dateContainer}>
                 <TouchableOpacity onPress={() => changeWeek(-1)}>
-                    <Text style={styles.date}>Previous</Text>
+                    <Text style={styles.date}>Prev</Text>
                 </TouchableOpacity>
                 <Text style={styles.week}>Week {getISOWeek(currentDate)}</Text>
                 <TouchableOpacity onPress={() => changeWeek(1)}>
                     <Text style={styles.date}>Next</Text>
                 </TouchableOpacity>
             </View>
+            <ScrollView style={styles.scrollContainer}>
+                {loading ? <Text>Loading...</Text> : error ? <Text>Error: {error}</Text> :
+                Object.entries(transactionsByDay).map(([day, dayTransactions]) => (
+                    <View key={day}>
+                        <TouchableOpacity onPress={() => toggleDayExpansion(day)}>
+                            <Text style={styles.dateHeader}>{day} {expandedDays[day] ? '▲' : '▼'}</Text>
+                        </TouchableOpacity>
+                        {expandedDays[day] && dayTransactions.map(transaction => (
+                            <View key={transaction.id} style={styles.transaction}>
+                                <Text style={styles.transactionText}>Date: {new Date(transaction.date.seconds * 1000).toLocaleDateString('en-US')}</Text>
+                                <Text style={styles.transactionText}>Category: {transaction.category}</Text>
+                                <Text style={styles.transactionText}>Amount: {transaction.amount}</Text>
+                                <Text style={styles.transactionText}>Description: {transaction.description}</Text>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+            </ScrollView>
         </View>
     );
 };
@@ -120,12 +122,17 @@ const styles = {
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.3,
         shadowRadius: 2,
-
-
+        width: '90%',
+        alignSelf: 'center',
+        marginBottom: 10,
     },
-    title: {
+    headerText: {
         fontSize: 24,
-        marginBottom: 16,
+        textAlign: 'center',
+        color: 'blue'
+    },
+    scrollContainer: {
+        flex: 1,
     },
     transaction: {
         marginBottom: 8,
@@ -136,40 +143,28 @@ const styles = {
     transactionText: {
         fontSize: 16,
     },
-    scrollContainer: {
-        flex: 1,
-    },
     dateContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 20,
         backgroundColor: '#cccccc',
         borderRadius: 5,
-        width: '100%',
-        height: 40,
-        alignItems: 'fixed',
+        padding: 10,
+        alignItems: 'center',
     },
     week: {
         fontSize: 18,
         fontWeight: 'bold',
-        padding: 10,
-        position: 'absolute',
-        left: '35%',
     },
     date: {
         fontSize: 14,
         fontWeight: 'bold',
-        padding: 10,
     },
     dateHeader: {
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 10,
         marginBottom: 5,
-    },
-    highlighted: {
-        fontWeight: 'bold',
-        color: 'blue',
     },
 };
 
