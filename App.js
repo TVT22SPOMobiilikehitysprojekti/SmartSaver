@@ -63,11 +63,11 @@ export default function App() {
 
 function IntroStack() {
   return (
-    <Stack.Navigator initialRouteName='Intro1'>
-      <Stack.Screen name="Intro1" component={IntroScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Intro2" component={IntroScreen2} options={{ headerShown: false }} />
-      <Stack.Screen name="Intro3" component={IntroScreen3} options={{ headerShown: false }} />
-      <Stack.Screen name="Intro4" component={IntroScreen4} options={{ headerShown: false }} />
+    <Stack.Navigator initialRouteName='IntroStart'>
+      <Stack.Screen name="IntroStart" component={IntroScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="IntroStep2" component={IntroScreen2} options={{ headerShown: false }} />
+      <Stack.Screen name="IntroStep3" component={IntroScreen3} options={{ headerShown: false }} />
+      <Stack.Screen name="IntroStep4" component={IntroScreen4} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

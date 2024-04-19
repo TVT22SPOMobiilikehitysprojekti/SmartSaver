@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
         height: '100%',
+
     },
     profile: {
         backgroundColor: 'white',
@@ -213,6 +214,7 @@ const styles = StyleSheet.create({
     userInfoContainer: {
         flexDirection: 'column',
         marginVertical: 25,
+        minWidth: 200,
         
     },
     userInfoColumn: {

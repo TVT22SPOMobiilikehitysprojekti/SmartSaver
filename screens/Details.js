@@ -110,10 +110,41 @@ const Details = ({ navigation }) => {
       { cancelable: false }
     );
   };
+  const handleDeleteAllTransactions = () => {
+    Alert.alert(
+      "Confirm Delete",
+      "Are you sure you want to delete all transactions?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete All",
+          style: "destructive",
+          onPress: async () => {
+            Promise.all(transactions.map(transaction => deleteTransaction(getCurrentUserId(), transaction.id)))
+              .then(() => {
+                console.log("All transactions deleted successfully.");
+                setTransactions([]); // Clear the local state
+              })
+              .catch(error => {
+                console.error("Error deleting all transactions:", error);
+              });
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.text}>Transaction Details</Text>
+      <TouchableOpacity onPress={handleDeleteAllTransactions}>
+        <Text style={styles.deleteallbutton}>Delete All Transactions</Text>
+      </TouchableOpacity>
       {transactions.map((transaction) => (
         <View key={transaction.id} style={styles.transactionContainer}>
           <TouchableOpacity onPress={() => handleEdit(transaction.id)} style={styles.editButton}>
@@ -125,7 +156,7 @@ const Details = ({ navigation }) => {
             <Text style={styles.detail}>Date: {transaction.date}</Text>
           </View>
           <TouchableOpacity onPress={() => handleDelete(transaction.id)} style={styles.deleteButton}>
-            <Text>Delete</Text>
+            <Text style={styles.delete}>Delete</Text>
           </TouchableOpacity>
         </View>
       ))}
@@ -151,6 +182,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'white',
   },
+  deleteallbutton: {
+    marginBottom: 10,
+    backgroundColor: 'red',
+    padding: 10,
+    textAlign: 'center',
+    color: 'white',
+    borderRadius: 30,
+
+  },
   transactionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -172,6 +212,12 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     marginLeft: 10,
+    backgroundColor: 'red',
+    borderRadius: 30,
+    padding: 10,
+  },
+  delete: {
+    color: 'white',
   },
 });
 

@@ -31,7 +31,7 @@ const BalanceComponent = ({ onSaved }) => {
         () => {
           setAmount(''); // Tyhjennä kenttä onnistuneen tallennuksen jälkeen
           onSaved && onSaved();
-          navigation.navigate('Intro4'); // Navigoi toiselle näytölle
+          navigation.navigate('IntroStep4'); // Navigoi toiselle näytölle
         }, 
         (error) => {
           Alert.alert("Error", error.message);
