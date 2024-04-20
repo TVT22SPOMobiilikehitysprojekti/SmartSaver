@@ -232,15 +232,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   planText: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'blue',
   },
   planItem: {
     backgroundColor: 'white',
-    padding: 10,
+    padding: 20,
     marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 30,
   },
   modalContainer: {
     flex: 1,

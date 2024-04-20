@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 30,
     borderColor: '#ccc',
     backgroundColor: 'white',
     padding: 10,
