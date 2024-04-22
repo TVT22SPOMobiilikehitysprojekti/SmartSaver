@@ -1,6 +1,13 @@
+[![React](https://img.shields.io/badge/Built_with-React-blue?logo=react)](https://reactjs.org/)
+[![Expo](https://img.shields.io/badge/Built_with-Expo-9cf?logo=expo)](https://expo.dev/)
+[![Firebase](https://img.shields.io/badge/Built_with-Firebase-yellow?logo=firebase)](https://firebase.google.com/)
+
+
 # SmartSaver
 
 A simple budget tracking application built with React and Expo, designed to help you manage your expenses efficiently. This app allows users to track their expenses, categorize transactions, and visualize their spending habits.
+
+[![Contributors](https://img.shields.io/github/contributors/TVT22SPOMobiilikehitysprojekti/SmartSaver)](https://github.com/TVT22SPOMobiilikehitysprojekti/SmartSaver/graphs/contributors)
 
 ## Table of Contents
 
