@@ -2,27 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase/Config'; // Oletetaan, että auth on jo tuotu
-import { saveUserBalance, getCurrentUserId, fetchCurrencySymbol } from '../firebase/Shortcuts';
+import { saveUserBalance, getCurrentUserId, fetchCurrencySymbol, handleCurrencySymbolChange } from '../firebase/Shortcuts';
 
 const BalanceComponent = ({ onSaved }) => {
   const [amount, setAmount] = useState('');
   const navigation = useNavigation();
   const [currencySymbol, setCurrencySymbol] = useState(null);
+  let unsubscribeCurrencySymbol;
 
 
   useEffect(() => {
     const userId = getCurrentUserId();
     if (!userId) return;
     // Haetaan käyttäjän valuuttasymboli
-    fetchCurrencySymbol(userId,
-      (symbol) => {
-        setCurrencySymbol(symbol); // Asetetaan valuuttasymboli tilaan
-      },
-      (error) => {
-        console.error("Error fetching currency symbol: ", error);
-      }
-    );
-  }, []);
+    fetchCurrencySymbol(userId)
+    .then(symbol => {
+      setCurrencySymbol(symbol);
+    })
+    .catch(error => {
+      console.error("Error fetching initial currency symbol: ", error);
+    });
+
+  // Listen for currency symbol changes
+  unsubscribeCurrencySymbol = handleCurrencySymbolChange(userId, (symbol) => {
+    setCurrencySymbol(symbol);
+  });
+
+  return () => {
+    unsubscribeCurrencySymbol();
+  };
+}, []);
   
   const handleSave = () => {
     const user = auth.currentUser;
