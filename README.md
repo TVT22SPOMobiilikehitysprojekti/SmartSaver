@@ -2,6 +2,15 @@
 
 A simple budget tracking application built with React and Expo, designed to help you manage your expenses efficiently. This app allows users to track their expenses, categorize transactions, and visualize their spending habits.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [ER Diagram](#er-diagram)
+- [FIGMA](#figma)
+
+
 ## Features
 
 - **Expense Tracking**: Keep a record of your daily expenses.
