@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: '#34a4eb',
+    paddingBottom: 130,
   },
   header: {
     fontSize: 30,
